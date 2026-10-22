@@ -958,7 +958,7 @@ const DEFAULTS={
       lead:T("By road and rail, Beira connects Zimbabwe, Botswana, Malawi, Zambia and the DR Congo to the routes of international trade.",
              "Por estrada e caminho-de-ferro, a Beira liga o Zimbabué, o Botsuana, o Malawi, a Zâmbia e a RD Congo às rotas do comércio internacional."),
       cta1:T("Explore the terminals","Conhecer os terminais"),cta2:T("Compare road distances","Comparar distâncias"),image:"",
-      bg:"3d",videos:[],videoOrder:"sequence",transition:1,videoMobile:"",poster:"",videoOnMobile:false,
+      bg:"3d",videos:[],videoOrder:"sequence",transition:1,videoMobile:"",poster:"",videoOnMobile:false,mobileVid:true,
       box:{width:"medium",opacity:22,titleWeight:500,leadWeight:300}
     },
     stats:[
@@ -1144,7 +1144,7 @@ function setHero(kind,o){
   const H=data.home.hero,M=kind==="home"?H:(o.media||{});
   const mode=kind==="home"?(H.bg||(data.brand.show3D===false?"image":"3d")):(M.bg==="video"?"video":"image");
   const small=smallMQ.matches,list=vidList(M),srcs=small&&M.videoMobile?[M.videoMobile]:list;
-  const useVid=mode==="video"&&srcs.length>0&&!reduce&&(!small||!!M.videoOnMobile);
+  const saveData=!!(navigator.connection&&navigator.connection.saveData),useVid=mode==="video"&&srcs.length>0&&!reduce&&(!small||(M.mobileVid!==false&&!saveData));
   const show3D=mode==="3d";$("#hero3d").hidden=!show3D;$("#heroHint").hidden=!show3D;$("#heroHint").textContent=U("hint");
   h.classList.toggle("vid",mode==="video");
   const still=kind==="home"?H.image:o.image,img=mode==="video"?(useVid?"":(M.poster||still||"")):still;
@@ -1307,7 +1307,13 @@ const HV={key:"",list:[],i:0,cur:0,prep:-1,swapping:false,poster:""};
 const vEls=()=>[$("#heroVideo"),$("#heroVideo2")];
 function vidItems(M){const a=(M.videos||[]).map(v=>typeof v==="string"?{src:v}:(v||{})).filter(v=>v.src&&v.on!==false);if(!a.length&&M.video)a.push({src:M.video});return a}
 function vidList(M){return vidItems(M).map(v=>v.src)}
-function tryPlay(v){v.muted=true;try{const p=v.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
+function tryPlay(v){v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute("muted","");v.setAttribute("playsinline","");
+  try{const p=v.play();if(p&&p.then)p.then(vidOK,()=>vidBlocked(v))}catch(e){vidBlocked(v)}}
+/* telemóvel com arranque automático bloqueado (ex.: modo de poupança de bateria): mostra a capa e tenta de novo ao primeiro toque */
+function vidOK(){const bg=$("#heroBg");if(bg&&bg.dataset.vfb){bg.hidden=true;delete bg.dataset.vfb}}
+function vidBlocked(v){if(!v.getAttribute("src"))return;const bg=$("#heroBg");if(bg&&HV.poster&&bg.hidden){bg.hidden=false;bg.style.backgroundImage=`url("${HV.poster}")`;bg.dataset.vfb=1}
+  if(HV.wait)return;HV.wait=1;const ev=["touchend","click","keydown"],go=()=>{HV.wait=0;ev.forEach(e=>removeEventListener(e,go,true));const el=vEls()[HV.cur];if(el&&el.getAttribute("src"))tryPlay(el)};
+  ev.forEach(e=>addEventListener(e,go,{capture:true,passive:true}))}
 function stopEl(v){v.classList.remove("on");v.hidden=true;if(v.getAttribute("src")){try{v.pause()}catch(e){}v.removeAttribute("src");try{v.load()}catch(e){}}}
 /* título do topo justificado: escolhe quebras de linha e tamanho para que cada linha preencha a caixa */
 let heroWords=[],heroRO=null,mctx=null;

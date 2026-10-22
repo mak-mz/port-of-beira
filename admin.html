@@ -805,7 +805,7 @@ const DEFAULTS={
       lead:T("By road and rail, Beira connects Zimbabwe, Botswana, Malawi, Zambia and the DR Congo to the routes of international trade.",
              "Por estrada e caminho-de-ferro, a Beira liga o Zimbabué, o Botsuana, o Malawi, a Zâmbia e a RD Congo às rotas do comércio internacional."),
       cta1:T("Explore the terminals","Conhecer os terminais"),cta2:T("Compare road distances","Comparar distâncias"),image:"",
-      bg:"3d",videos:[],videoOrder:"sequence",transition:1,videoMobile:"",poster:"",videoOnMobile:false,
+      bg:"3d",videos:[],videoOrder:"sequence",transition:1,videoMobile:"",poster:"",videoOnMobile:false,mobileVid:true,
       box:{width:"medium",opacity:22,titleWeight:500,leadWeight:300}
     },
     stats:[
@@ -947,6 +947,7 @@ let published=null,draft=null,dirty=false,section="overview",editPage=null,remot
 
 /* ---------- interface do gestor em inglês ---------- */
 const CMS_EN={
+"Ligado por defeito. Desligado: em telemóvel aparece só a imagem de capa, para poupar dados. Em modo de poupança de dados o telemóvel mostra sempre a capa.":"On by default. Off: phones show only the cover image, to save data. Phones in data-saver mode always show the cover.",
 "A conta":"The account","ainda não está na lista de editores. Peça a um editor que a adicione em Dados e acesso.":"is not on the editors list yet. Ask an editor to add it in Data and access.",
 "Sessão":"Session",
 "Ligado como":"Signed in as",
@@ -1178,7 +1179,7 @@ const WEIGHTS=[["300","Light"],["400","Regular"],["500","Medium"],["700","Bold"]
 function fRange(p,l,min,max,unit,h,step){const v=+get(draft,p)||0;return`<div class="f"><label for="${id(p)}">${l}: <output id="${id(p)}_o">${v}${unit}</output></label><input type="range" id="${id(p)}" data-p="${p}" data-num data-unit="${unit}" min="${min}" max="${max}" step="${step||2}" value="${v}" style="accent-color:var(--navy)">${hint(h)}</div>`}
 function fIcon(p,l){const v=get(draft,p)||"",ic=ICONS[v];
   return`<div class="f icf"><span class="lbl">${l||"Ícone"}</span><details class="icp"><summary><span class="ico-pv">${ic?iconSVG(v,20):"—"}</span><span>${ic?ic[cmsLang==="en"?1:0]:"Sem ícone"}</span></summary><div class="icgrid">${Object.entries(ICONS).map(([k,i])=>`<button type="button" data-seticon="${p}|${k}" title="${i[cmsLang==="en"?1:0]}" aria-label="${i[cmsLang==="en"?1:0]}" aria-pressed="${k===v}">${iconSVG(k,20)}</button>`).join("")}<button type="button" class="none" data-seticon="${p}|">Sem ícone</button></div></details></div>`}
-function fSw(p,l,h){return`<label class="toggle"><span>${l}${h?`<small>${h}</small>`:""}</span><span class="sw"><input type="checkbox" id="${id(p)}" data-p="${p}" data-bool ${get(draft,p)?"checked":""}><i></i></span></label>`}
+function fSw(p,l,h,defOn){const cv=get(draft,p),on=defOn?cv!==false:!!cv;return`<label class="toggle"><span>${l}${h?`<small>${h}</small>`:""}</span><span class="sw"><input type="checkbox" id="${id(p)}" data-p="${p}" data-bool ${on?"checked":""}><i></i></span></label>`}
 function fImg(p,l,h,o={}){const v=get(draft,p);return`<div class="f"><span class="lbl">${l}</span><div class="imgf"><div class="thumb${o.dark?" dark":""}${o.cover?" cover":""}" style="${v?`background-image:url('${esc(v)}')`:""}">${v?"":"Sem imagem"}</div><div class="r"><span class="btn fb">${v?"Substituir":"Carregar imagem"}<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" data-img="${p}" data-max="${o.max||0}" aria-label="${esc(l)}"></span>${v?`<button class="btn del" data-clear="${p}">Remover</button>`:""}<input type="text" class="imgpath" data-p="${p}" data-imgpath value="${v&&!String(v).startsWith("data:")?esc(v):""}" placeholder="${v&&String(v).startsWith("data:")?"Imagem embutida · ou indique um caminho":"ou caminho: imagens/foto.jpg"}" aria-label="Caminho da imagem"></div></div>${hint(h)}</div>`}
 function ovVals(ov,home){const pc=(v,d)=>v===""||v==null||isNaN(+v)?d:+v;return{L:pc(ov.left,90),R:pc(ov.right,home?20:40),B:pc(ov.bottom,home?100:0),C:ov.color==="black"?"0,0,0":"28,28,74"}}
 function ovCSS(v){const M=(v.L+v.R)/2;return`linear-gradient(90deg,rgba(${v.C},${v.L/100}) 0%,rgba(${v.C},${M/100}) 50%,rgba(${v.C},${v.R/100}) 100%),linear-gradient(0deg,rgba(28,28,74,${v.B/100}) 0%,rgba(28,28,74,0) 35%)`}
@@ -1212,7 +1213,7 @@ function mediaBG(b,home){const M=get(draft,b);if(!Array.isArray(M.videos)){M.vid
    <div><button type="button" class="btn" data-vplay="${b}">▶ Pré-visualizar a sequência</button></div>
    <div class="vplayer" data-vplayer="${b}" hidden><video muted playsinline></video><span class="vlbl"></span><button type="button" class="btn ic" data-vstop>Parar</button></div></div>`;
   h+=fImg(b+".poster","Imagem de capa","Aparece enquanto o vídeo carrega, em telemóvel quando o vídeo está desligado e para quem reduziu o movimento.",{dark:true,cover:true})+`<div><button type="button" class="btn" data-vposter="${b}">Usar o 1.º fotograma do vídeo 1 como capa</button></div>`;
-  h+=fSw(b+".videoOnMobile","Reproduzir vídeo em telemóvel","Desligado: em telemóvel aparece só a imagem de capa, para poupar dados.");
+  h+=fSw(b+".mobileVid","Reproduzir vídeo em telemóvel","Ligado por defeito. Desligado: em telemóvel aparece só a imagem de capa, para poupar dados. Em modo de poupança de dados o telemóvel mostra sempre a capa.",true);
   h+=fVideo(b+".videoMobile","Vídeo vertical para telemóvel (opcional)","1080×1350 ou 720×1280, até 4 MB. Substitui a lista em telemóvel. Só é usado se a opção acima estiver ligada.");
   h+=overlayEditor(b,home);
   return h+"</div>"}
