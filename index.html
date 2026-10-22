@@ -1146,7 +1146,7 @@ function setHero(kind,o){
   const H=data.home.hero,M=kind==="home"?H:(o.media||{});
   const mode=kind==="home"?(H.bg||(data.brand.show3D===false?"image":"3d")):(M.bg==="video"?"video":"image");
   const small=smallMQ.matches,list=vidList(M),srcs=small&&M.videoMobile?[M.videoMobile]:list;
-  const saveData=!!(navigator.connection&&navigator.connection.saveData),useVid=mode==="video"&&srcs.length>0&&!reduce&&(!small||(M.mobileVid!==false&&!saveData));
+  const saveData=!!(navigator.connection&&navigator.connection.saveData),useVid=mode==="video"&&srcs.length>0&&(!small||(M.mobileVid!==false&&!saveData));
   HV.diag={kind,mode,small,mobileVid:M.mobileVid,videoOnMobile:M.videoOnMobile,saveData,reduce,srcs,useVid,poster:M.poster||""};
   const show3D=mode==="3d";$("#hero3d").hidden=!show3D;$("#heroHint").hidden=!show3D;$("#heroHint").textContent=U("hint");
   h.classList.toggle("vid",mode==="video");
@@ -1345,7 +1345,7 @@ vEls().forEach((v,k)=>{
     if(HV.list.length<2){if(clip&&v.currentTime>=end-.05){try{v.currentTime=0}catch(e){}}return}
     if(v.currentTime>end*.4)prepNext();if(end-v.currentTime<(HV.trans||1)*.9)swap()});
   v.addEventListener("ended",()=>{if(k===HV.cur&&HV.list.length>1)swap()});
-  v.addEventListener("error",()=>{if(!v.getAttribute("src")||!HV.key)return;
+  v.addEventListener("error",()=>{if(!v.getAttribute("src")||!HV.key)return;(HV.bad=HV.bad||[]).push(v.getAttribute("src"));
     if(k===HV.cur){HV.list.splice(HV.i,1);if(!HV.list.length)return heroFallback();HV.i%=HV.list.length;HV.prep=-1;v.loop=HV.list.length===1;v.src=HV.list[HV.i];tryPlay(v)}
     else{HV.list.splice(HV.prep,1);HV.prep=-1;if(HV.i>=HV.list.length)HV.i=0;if(HV.list.length===1)vEls()[HV.cur].loop=true}});
 });
@@ -1468,7 +1468,7 @@ document.addEventListener("click",e=>{if(e.target.closest("#hvPlay")){const el=v
 if(/[?&]diag=1/.test(location.search)){const d=document.createElement("pre");d.id="diagBox";d.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;max-height:55vh;overflow:auto;margin:0;padding:10px;background:rgba(0,0,0,.85);color:#9f9;font:11px/1.35 ui-monospace,monospace;white-space:pre-wrap;word-break:break-all;border-radius:8px";document.body.appendChild(d);
   const NS=["EMPTY","IDLE","LOADING","NO_SOURCE"],RS=["NOTHING","METADATA","CURRENT","FUTURE","ENOUGH"];
   const upd=()=>{const vs=vEls().map((v,i)=>`video${i+1}: src=${v.getAttribute("src")||"-"}\n  hidden=${v.hidden} on=${v.classList.contains("on")} paused=${v.paused} t=${v.currentTime.toFixed(1)} ready=${RS[v.readyState]} net=${NS[v.networkState]} err=${v.error?v.error.code+" "+(v.error.message||""):"-"} ${v.videoWidth}x${v.videoHeight}`).join("\n");
-    d.textContent=`DIAG ${new Date().toLocaleTimeString()}\nstore=${Store.mode} ua=${navigator.userAgent}\nwidth=${innerWidth} hero=${JSON.stringify(HV.diag||{})}\nplayErr=${HV.err||"-"} waitingTap=${!!HV.wait}\n${vs}`};
+    d.textContent=`DIAG ${new Date().toLocaleTimeString()}\nstore=${Store.mode} ua=${navigator.userAgent}\nwidth=${innerWidth} hero=${JSON.stringify(HV.diag||{})}\nplayErr=${HV.err||"-"} waitingTap=${!!HV.wait} failed=${(HV.bad||[]).join(",")||"-"} list=${HV.list.join(",")}\n${vs}`};
   upd();setInterval(upd,1000)}
 Store.init().then(()=>Store.subscribe(body=>{if(!body)return;data=merge(DEFAULTS,body);render()},{cache:true}));
 })();
