@@ -520,7 +520,7 @@ const Store=(function(){
   const KEY="cdm-port-of-beira-content-v3",IKEY="cdm-port-of-beira-inbox-v1",DBN="cdm-port-of-beira",SKEY="cdm-sb-session",CKEY="cdm-sb-cache";
   let mode="local",db=null,assets=null,user=null,downloads=null,idb=null,bc=null;
   /* ---------- Supabase (REST, sem bibliotecas externas) ---------- */
-  const CFG=(()=>{const c=window.CDM_SUPABASE||{};const url=String(c.url||"").trim().replace(/\/+$/,""),key=String(c.key||c.anonKey||"").trim();
+  const CFG=(()=>{const c=window.CDM_SUPABASE||{};const url=String(c.url||"").trim().replace(/\/+$/,"").replace(/\/(rest|auth|storage)\/v1.*$/,"").replace(/\/+$/,""),key=String(c.key||c.anonKey||"").trim();
     return url&&key&&/^(https:\/\/|http:\/\/(localhost|127\.0\.0\.1)[:/])/.test(url+"/")&&!/COLE|PASTE|xxxx/i.test(url+key)?{url,key,bucket:c.bucket||"media"}:null})();
   let sess=null,inboxCb=null,contentCb=null,lastStamp=null,timers=[];
   const lsGet=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}};
