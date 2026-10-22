@@ -123,6 +123,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .hero-bg{position:absolute;inset:0;z-index:-3;background-size:cover;background-position:center}
 .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(28,28,74,.94) 0%,rgba(28,28,74,.72) 50%,rgba(28,28,74,.4) 100%)}
 .hero-grid{position:absolute;inset:0;z-index:-3;opacity:.35;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 70% 60%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 70% 60%,#000 20%,transparent 75%)}
+.hv-play{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 108px);z-index:5;width:52px;height:52px;border-radius:50%;border:0;background:rgba(255,144,18,.95);color:#1F140F;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:pointer}.hv-play[hidden]{display:none}
 .hv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-3;pointer-events:none;opacity:0;transition:opacity var(--hvT,1s) ease}.hv.on{opacity:1}
 #hero3d{position:absolute;inset:0;z-index:-2}
 #hero3d canvas{display:block;width:100%!important;height:100%!important}
@@ -495,6 +496,7 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 <main>
   <section class="hero tall" id="hero">
     <div class="hero-bg" id="heroBg" hidden></div>
+    <button type="button" class="hv-play" id="hvPlay" hidden aria-label="Play video"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
     <video id="heroVideo" class="hv" muted playsinline autoplay preload="auto" aria-hidden="true" tabindex="-1" hidden></video>
     <video id="heroVideo2" class="hv" muted playsinline preload="none" aria-hidden="true" tabindex="-1" hidden></video>
     <div class="hero-grid"></div>
@@ -1145,6 +1147,7 @@ function setHero(kind,o){
   const mode=kind==="home"?(H.bg||(data.brand.show3D===false?"image":"3d")):(M.bg==="video"?"video":"image");
   const small=smallMQ.matches,list=vidList(M),srcs=small&&M.videoMobile?[M.videoMobile]:list;
   const saveData=!!(navigator.connection&&navigator.connection.saveData),useVid=mode==="video"&&srcs.length>0&&!reduce&&(!small||(M.mobileVid!==false&&!saveData));
+  HV.diag={kind,mode,small,mobileVid:M.mobileVid,videoOnMobile:M.videoOnMobile,saveData,reduce,srcs,useVid,poster:M.poster||""};
   const show3D=mode==="3d";$("#hero3d").hidden=!show3D;$("#heroHint").hidden=!show3D;$("#heroHint").textContent=U("hint");
   h.classList.toggle("vid",mode==="video");
   const still=kind==="home"?H.image:o.image,img=mode==="video"?(useVid?"":(M.poster||still||"")):still;
@@ -1308,10 +1311,10 @@ const vEls=()=>[$("#heroVideo"),$("#heroVideo2")];
 function vidItems(M){const a=(M.videos||[]).map(v=>typeof v==="string"?{src:v}:(v||{})).filter(v=>v.src&&v.on!==false);if(!a.length&&M.video)a.push({src:M.video});return a}
 function vidList(M){return vidItems(M).map(v=>v.src)}
 function tryPlay(v){v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute("muted","");v.setAttribute("playsinline","");
-  try{const p=v.play();if(p&&p.then)p.then(vidOK,()=>vidBlocked(v))}catch(e){vidBlocked(v)}}
+  try{const p=v.play();if(p&&p.then)p.then(vidOK,e=>{HV.err=(e&&e.name||"")+": "+(e&&e.message||"");vidBlocked(v)})}catch(e){HV.err=String(e);vidBlocked(v)}}
 /* telemóvel com arranque automático bloqueado (ex.: modo de poupança de bateria): mostra a capa e tenta de novo ao primeiro toque */
-function vidOK(){const bg=$("#heroBg");if(bg&&bg.dataset.vfb){bg.hidden=true;delete bg.dataset.vfb}}
-function vidBlocked(v){if(!v.getAttribute("src"))return;const bg=$("#heroBg");if(bg&&HV.poster&&bg.hidden){bg.hidden=false;bg.style.backgroundImage=`url("${HV.poster}")`;bg.dataset.vfb=1}
+function vidOK(){HV.err="";const pb=$("#hvPlay");if(pb)pb.hidden=true;const bg=$("#heroBg");if(bg&&bg.dataset.vfb){bg.hidden=true;delete bg.dataset.vfb}}
+function vidBlocked(v){if(!v.getAttribute("src"))return;const pb=$("#hvPlay");if(pb)pb.hidden=false;const bg=$("#heroBg");if(bg&&HV.poster&&bg.hidden){bg.hidden=false;bg.style.backgroundImage=`url("${HV.poster}")`;bg.dataset.vfb=1}
   if(HV.wait)return;HV.wait=1;const ev=["touchend","click","keydown"],go=()=>{HV.wait=0;ev.forEach(e=>removeEventListener(e,go,true));const el=vEls()[HV.cur];if(el&&el.getAttribute("src"))tryPlay(el)};
   ev.forEach(e=>addEventListener(e,go,{capture:true,passive:true}))}
 function stopEl(v){v.classList.remove("on");v.hidden=true;if(v.getAttribute("src")){try{v.pause()}catch(e){}v.removeAttribute("src");try{v.load()}catch(e){}}}
@@ -1324,7 +1327,7 @@ function fitHero(){const h1=$("#heroInner h1");if(!h1||!heroWords.length)return;
 document.fonts&&document.fonts.ready&&document.fonts.ready.then(()=>fitHero());
 try{document.fonts.addEventListener("loadingdone",()=>fitHero())}catch(e){}
 function setVideos(srcs,poster,order){const els=vEls(),key=srcs.join("|")+"#"+(order||"");HV.poster=poster;
-  if(!srcs.length){HV.key="";els.forEach(stopEl);return}
+  if(!srcs.length){HV.key="";els.forEach(stopEl);const pb=$("#hvPlay");if(pb)pb.hidden=true;return}
   if(HV.key===key){tryPlay(els[HV.cur]);return}
   HV.key=key;HV.list=srcs.slice();
   if(order==="random")for(let k=HV.list.length-1;k>0;k--){const r=Math.floor(Math.random()*(k+1));[HV.list[k],HV.list[r]]=[HV.list[r],HV.list[k]]}
@@ -1459,6 +1462,14 @@ function initHero3D(){
 /* ---------- boot ---------- */
 route=readRoute()||"home";
 render();onScroll();initHero3D();
+vEls().forEach(v=>v.addEventListener("playing",()=>{if(v.classList.contains("on"))vidOK()}));
+document.addEventListener("click",e=>{if(e.target.closest("#hvPlay")){const el=vEls()[HV.cur];if(el&&el.getAttribute("src"))tryPlay(el)}});
+/* diagnóstico: abrir o site com ?diag=1 */
+if(/[?&]diag=1/.test(location.search)){const d=document.createElement("pre");d.id="diagBox";d.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;max-height:55vh;overflow:auto;margin:0;padding:10px;background:rgba(0,0,0,.85);color:#9f9;font:11px/1.35 ui-monospace,monospace;white-space:pre-wrap;word-break:break-all;border-radius:8px";document.body.appendChild(d);
+  const NS=["EMPTY","IDLE","LOADING","NO_SOURCE"],RS=["NOTHING","METADATA","CURRENT","FUTURE","ENOUGH"];
+  const upd=()=>{const vs=vEls().map((v,i)=>`video${i+1}: src=${v.getAttribute("src")||"-"}\n  hidden=${v.hidden} on=${v.classList.contains("on")} paused=${v.paused} t=${v.currentTime.toFixed(1)} ready=${RS[v.readyState]} net=${NS[v.networkState]} err=${v.error?v.error.code+" "+(v.error.message||""):"-"} ${v.videoWidth}x${v.videoHeight}`).join("\n");
+    d.textContent=`DIAG ${new Date().toLocaleTimeString()}\nstore=${Store.mode} ua=${navigator.userAgent}\nwidth=${innerWidth} hero=${JSON.stringify(HV.diag||{})}\nplayErr=${HV.err||"-"} waitingTap=${!!HV.wait}\n${vs}`};
+  upd();setInterval(upd,1000)}
 Store.init().then(()=>Store.subscribe(body=>{if(!body)return;data=merge(DEFAULTS,body);render()},{cache:true}));
 })();
 </script>
