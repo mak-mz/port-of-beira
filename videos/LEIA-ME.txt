@@ -1,2 +1,0 @@
-Coloque aqui os vídeos do hero (ex.: inicio-01.mp4) se preferir servi-los pela Vercel.
-No CMS, indique o caminho: videos/inicio-01.mp4
