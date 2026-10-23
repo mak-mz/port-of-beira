@@ -14,6 +14,7 @@
 @font-face{font-family:"Dax";src:local("Dax-Bold"),local("Dax Bold");font-weight:700}
 @font-face{font-family:"Dax";src:local("Dax-Black"),local("Dax Black");font-weight:900}
 .lnkbtn{background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}.gate-links{text-align:center;font-size:.88rem;opacity:.9;margin:4px 0 0}.sbl{display:flex;flex-direction:column;gap:6px;margin:6px 0 12px}.sbrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;border-radius:10px;background:var(--surface-2)}
+.dsec-ed{border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:12px;padding:14px;margin:12px 0;display:flex;flex-direction:column;gap:10px;background:var(--surface)}.dsec-ed>.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.dsec-n{font-size:1rem}
 </style>
 <style id="font-uploads"></style>
 <style>
@@ -103,7 +104,7 @@ main{padding:28px max(16px,env(safe-area-inset-right,0px)) 80px max(16px,env(saf
 .f{display:flex;flex-direction:column;gap:6px;min-width:0}
 .f label,.f .lbl{font-weight:700;font-size:.82rem}
 .hint{font-size:.78rem;color:var(--muted)}
-.f input[type=text],.f input[type=password],.f textarea{width:100%;font:inherit;font-size:.95rem;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.f input[type=text],.f input[type=password],.f input[type=date],.f input[type=email],.f textarea{width:100%;font:inherit;font-size:.95rem;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
 .f textarea{min-height:92px;resize:vertical}
 .f input:focus,.f textarea:focus,.dt input:focus{outline:2px solid var(--orange);outline-offset:0;border-color:transparent}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -606,7 +607,7 @@ function richHTML(s){if(!s||!String(s).trim())return"";return RICH_RX.test(s)?sa
 
 /* textos fixos do site (editáveis no CMS em "Textos do site"); {x} = valor inserido automaticamente */
 const UI_DEFAULTS={
- en:{home:"Home",viewTerminal:"View terminal",back:"Back",download:"Download PDF",open:"Open",documents:"Documents",checkBack:"Please check back soon.",
+ en:{home:"Home",noDocsSec:"No documents have been published in this section yet.",docsCount:"{n} documents",docCount1:"1 document",viewTerminal:"View terminal",back:"Back",download:"Download PDF",open:"Open",documents:"Documents",checkBack:"Please check back soon.",
    noNews:"No news has been published yet.",noProjects:"No projects have been published yet.",noPubs:"No publications are available yet.",noMag:"No magazine issue has been published yet.",noGal:"No photos have been published yet.",noBerth:"No vessels are listed in the berth plan right now.",noDoc:"This document will be available soon.",
    latestIssue:"Latest issue",archive:"Past issues",readIssue:"Read this issue",photo:"Photo {n}",
    loadingDoc:"Loading document…",openPdf:"Open PDF",docFail:"The document could not be shown here. Use the button to open it.",page1:"1 page",pages:"{n} pages",zoomIn:"Zoom in",zoomOut:"Zoom out",fit:"Fit width",
@@ -618,7 +619,7 @@ const UI_DEFAULTS={
    wform:"Submit a report",anon:"Submit anonymously",anonHint:"Your name and contact details will not be recorded.",wtype:"Type of concern",wdesc:"Describe what happened, when and who was involved",wcontact:"How can we reach you? (optional)",wsend:"Submit report",
    wsent:"Your report has been received. Thank you for speaking up.",wtypes:["Fraud or corruption","Safety or environment","Harassment or discrimination","Breach of policy","Other"],
    notFound:"Page not found",notFoundTxt:"This page does not exist or has moved.",goHome:"Go to the home page"},
- pt:{home:"Início",viewTerminal:"Ver terminal",back:"Voltar",download:"Descarregar PDF",open:"Abrir",documents:"Documentos",checkBack:"Volte a visitar-nos em breve.",
+ pt:{home:"Início",noDocsSec:"Ainda não há documentos publicados nesta secção.",docsCount:"{n} documentos",docCount1:"1 documento",viewTerminal:"Ver terminal",back:"Voltar",download:"Descarregar PDF",open:"Abrir",documents:"Documentos",checkBack:"Volte a visitar-nos em breve.",
    noNews:"Ainda não foram publicadas notícias.",noProjects:"Ainda não foram publicados projectos.",noPubs:"Ainda não há publicações disponíveis.",noMag:"Ainda não foi publicada nenhuma edição da revista.",noGal:"Ainda não foram publicadas fotografias.",noBerth:"Neste momento não há navios no plano de atracação.",noDoc:"Este documento estará disponível em breve.",
    latestIssue:"Edição mais recente",archive:"Edições anteriores",readIssue:"Ler esta edição",photo:"Fotografia {n}",
    loadingDoc:"A carregar o documento…",openPdf:"Abrir PDF",docFail:"Não foi possível mostrar o documento aqui. Use o botão para o abrir.",page1:"1 página",pages:"{n} páginas",zoomIn:"Aumentar",zoomOut:"Reduzir",fit:"Ajustar à largura",
@@ -635,6 +636,7 @@ const UI_DEFAULTS={
 const UI_META=[
  ["home","Geral","Link para a página inicial (migalhas)","Home link (breadcrumbs)"],["back","Geral","Botão voltar","Back button"],["viewTerminal","Geral","Botão dos cartões de terminais","Terminal card button"],
  ["documents","Geral","Título da caixa de documentos","Documents box title"],["open","Geral","Botão abrir documento","Open document button"],["download","Geral","Texto de descarregar PDF","Download PDF text"],["hint","Geral","Dica da cena 3D","3D scene hint"],
+ ["noDocsSec","Listas vazias","Secção de documentos vazia","Empty document section"],["docsCount","Geral","Contagem de documentos ({n} = número)","Document count ({n} = number)"],["docCount1","Geral","Um documento","One document"],
  ["checkBack","Listas vazias","Frase por baixo das mensagens vazias","Line below empty messages"],["noNews","Listas vazias","Sem notícias","No news"],["noProjects","Listas vazias","Sem projectos","No projects"],["noPubs","Listas vazias","Sem publicações","No publications"],["noMag","Listas vazias","Sem revista","No magazine"],["noGal","Listas vazias","Galeria vazia","Empty gallery"],["noBerth","Listas vazias","Plano de atracação vazio","Empty berth plan"],["noDoc","Listas vazias","Documento PDF ainda não carregado","PDF not uploaded yet"],
  ["latestIssue","Revista e galeria","Edição mais recente","Latest issue"],["archive","Revista e galeria","Edições anteriores","Past issues"],["readIssue","Revista e galeria","Botão ler edição","Read issue button"],["photo","Revista e galeria","Fotografia sem legenda ({n} = número)","Photo without caption ({n} = number)"],
  ["loadingDoc","Leitor de PDF","A carregar","Loading"],["openPdf","Leitor de PDF","Botão abrir PDF","Open PDF button"],["docFail","Leitor de PDF","Erro ao mostrar","Display error"],["page1","Leitor de PDF","1 página","1 page"],["pages","Leitor de PDF","Várias páginas ({n} = número)","Several pages ({n} = number)"],["zoomIn","Leitor de PDF","Aumentar","Zoom in"],["zoomOut","Leitor de PDF","Reduzir","Zoom out"],["fit","Leitor de PDF","Ajustar à largura","Fit width"],
@@ -898,7 +900,12 @@ const DEFAULTS={
     "tariffs":{type:"content",group:T("Tariffs and Procedures","Tarifas e Procedimentos"),title:T("Tariffs and Procedures","Tarifas e Procedimentos"),
       intro:T("Tariff documents and operating procedures for port users.","Documentos de tarifas e procedimentos operacionais para os utilizadores do porto."),
       body:T("",""),items:[],specs:[],
-      docs:[{title:T("Document effective 1 April 2012","Documento em vigor desde 1 de Abril de 2012"),url:"https://api.cornelder.co.mz/documents/1638369421.pdf"}],image:"",badge:T("","")},
+      docs:[],image:"",badge:T("",""),
+      docSections:[
+        {id:"roc",title:T("Operating and Commercial Regulations (ROC)","Regulamento de Operações e Comercial (ROC)"),intro:T("The rules that govern operations and commercial relations at the Port of Beira terminals.","As regras que regem as operações e as relações comerciais nos terminais do Porto da Beira."),docs:[]},
+        {id:"tariff-book",title:T("Tariff Book","Livro de Tarifas"),intro:T("Tariffs in force for port services.","Tarifas em vigor para os serviços portuários."),docs:[{title:T("Tariff Book effective 1 April 2012","Livro de Tarifas em vigor desde 1 de Abril de 2012"),ref:"",date:"2012-04-01",url:"https://api.cornelder.co.mz/documents/1638369421.pdf"}]},
+        {id:"circulars",title:T("Circulars","Circulares"),intro:T("Notices and updates for port users.","Avisos e actualizações para os utilizadores do porto."),docs:[]}
+      ]},
     "news":{type:"news",title:T("News","Notícias"),intro:T("News from Cornelder de Moçambique and the Port of Beira.","Notícias da Cornelder de Moçambique e do Porto da Beira."),image:""},
     "publications":{type:"publications",title:T("Publications","Publicações"),intro:T("Company profiles, directories and other documents to download.","Perfis da empresa, directórios e outros documentos para descarregar."),image:""},
     "magazine":{type:"magazine",title:T("Magazine","Revista"),intro:T("The latest issue of the Cornelder de Moçambique magazine and past editions.","A edição mais recente da revista da Cornelder de Moçambique e as edições anteriores."),image:""},
@@ -947,6 +954,19 @@ let published=null,draft=null,dirty=false,section="overview",editPage=null,remot
 
 /* ---------- interface do gestor em inglês ---------- */
 const CMS_EN={
+"Secções de documentos":"Document sections",
+"Cada secção aparece no site com título próprio e uma grelha de 4 documentos por linha, ordenados pela data de publicação (o mais recente primeiro).":"Each section appears on the site with its own title and a grid of 4 documents per row, sorted by publication date (newest first).",
+"Título da secção":"Section title",
+"Descrição curta":"Short description",
+"Data de publicação":"Publication date",
+"Define a ordem no site.":"Sets the order on the site.",
+"Referência (opcional)":"Reference (optional)",
+"Aparece no canto do cartão.":"Shown in the corner of the card.",
+"+ Documento nesta secção":"+ Document in this section",
+"+ Nova secção":"+ New section",
+"Secção sem título":"Untitled section",
+"documentos":"documents",
+"documento":"document",
 "Ligado por defeito. Desligado: em telemóvel aparece só a imagem de capa, para poupar dados. Em modo de poupança de dados o telemóvel mostra sempre a capa.":"On by default. Off: phones show only the cover image, to save data. Phones in data-saver mode always show the cover.",
 "A conta":"The account","ainda não está na lista de editores. Peça a um editor que a adicione em Dados e acesso.":"is not on the editors list yet. Ask an editor to add it in Data and access.",
 "Sessão":"Session",
@@ -1056,6 +1076,7 @@ const CMS_EN={
 "Edição da revista ":"Magazine issue ","0% = sem caixa, só o texto.":"0% = no box, text only.","1 página":"1 page","1080×1350 ou 720×1280, até 4 MB. Substitui a lista em telemóvel. Só é usado se a opção acima estiver ligada.":"1080×1350 or 720×1280, up to 4 MB. Replaces the list on phones. Only used if the option above is on.","2560 px (alta definição)":"2560 px (high definition)","1280 px (leve)":"1280 px (light)","1600 px":"1600 px","1920 px (recomendado)":"1920 px (recommended)","80% é quase indistinguível do original e reduz muito o peso.":"80% is almost indistinguishable from the original and greatly reduces file size.","Sobre Nós":"About Us","Topo das páginas":"Page heroes","Destaque a laranja (alternativa)":"Orange highlight (alternative)","Excerto exacto do título, em cada língua. Só funciona se não escolher cores no editor acima.":"Exact excerpt of the title, in each language. Only works if you don't pick colours in the editor above.","Mudar de linha":"New line","Seleccione palavras e escolha uma cor para as destacar. Enter ou ↵ muda de linha.":"Select words and pick a colour to highlight them. Enter or ↵ starts a new line.","Alinhamento":"Alignment","Justificado à caixa":"Justified to the box","À esquerda":"Left","Centrado":"Centred","Automático (ajusta à caixa)":"Automatic (fits the box)","Manual":"Manual","Tamanho manual":"Manual size","Tamanho manual:":"Manual size:","Em ecrãs pequenos reduz-se na mesma proporção.":"On small screens it shrinks in proportion.","Pré-visualização":"Preview","Inserir imagem":"Insert image","Carregar imagem":"Upload image","ou":"or","caminho ou endereço: imagens/foto.jpg":"path or address: imagens/foto.jpg","Caminho ou endereço da imagem":"Image path or address","Inserir":"Insert","Imagem seleccionada":"Selected image","Largura da imagem":"Image width","Posição da imagem":"Image position","Centro":"Centre","Esquerda, com texto ao lado":"Left, with text alongside","Direita, com texto ao lado":"Right, with text alongside","Legenda (opcional)":"Caption (optional)","Texto alternativo (descrição para leitores de ecrã)":"Alt text (description for screen readers)","Texto alternativo":"Alt text","Remover imagem":"Remove image","Fechar":"Close","Indique o caminho ou o endereço da imagem.":"Enter the image path or address.","Título, introdução e etiqueta que aparecem no topo azul de cada página. O topo da página inicial edita-se em Página inicial.":"Title, introduction and label shown in the blue hero at the top of each page. The home page hero is edited in Home page.","Editar o topo da página inicial":"Edit the home page hero","Fundo e mais opções":"Background and more options","Texto por baixo do título, no topo da página.":"Text below the title, at the top of the page.","Aparece por cima do título, ao lado de Início.":"Appears above the title, next to Home.","Texto do topo (hero)":"Hero text","Instalações Portuárias":"Port Facilities","Saído":"Sailed","Estreita":"Narrow","Contacto ":"Contact ","Rede social":"Social network","Selecionar":"Select"
 };
 const CMS_RX=[
+ [/^(\d+)\. Secção sem título$/,m=>m[1]+". Untitled section"],[/^· (\d+) documentos?$/,m=>"· "+m[1]+" document"+(m[1]==="1"?"":"s")],
  [/^A transferir (\d+) ficheiro\(s\) para o Supabase…$/,m=>"Transferring "+m[1]+" file(s) to Supabase…"],[/^Ficheiros transferidos: (\d+) de (\d+)$/,m=>"Files transferred: "+m[1]+" of "+m[2]],[/^Importado: (\d+) ficheiro\(s\) transferidos para o Supabase\. Clique em Publicar\.$/,m=>"Imported: "+m[1]+" file(s) transferred to Supabase. Click Publish."],[/^Importado\. (\d+) ficheiro\(s\) não foram transferidos e ficaram embutidos\. Clique em Publicar\.$/,m=>"Imported. "+m[1]+" file(s) could not be transferred and stayed embedded. Click Publish."],
  [/^(.+) \((EN|PT)\)$/,m=>trText(m[1])+" ("+m[2]+")"],
  [/^Cor: (.+)$/,m=>"Colour: "+trText(m[1])],
@@ -1102,6 +1123,8 @@ const TPL={
   spec:()=>({v:"",u:"",l:T("","")}),
   item:()=>({title:T("",""),text:T("","")}),
   doc:()=>({title:T("",""),url:""}),
+  docSec:()=>({id:uid("sec"),title:T("",""),intro:T("",""),docs:[]}),
+  sdoc:()=>({title:T("",""),ref:"",date:new Date().toISOString().slice(0,10),url:""}),
   extra:()=>({label:T("",""),value:""}),
   news:()=>({id:uid("n"),date:new Date().toISOString().slice(0,10),title:T("",""),summary:T("",""),body:T("",""),image:"",docs:[]}),
   project:()=>({id:uid("p"),date:new Date().toISOString().slice(0,10),status:T("Ongoing","Em curso"),title:T("",""),summary:T("",""),body:T("",""),image:"",docs:[]}),
@@ -1344,6 +1367,14 @@ function collection(key,eyebrow,title,desc,tpl,addLbl){const A=draft[key];
      ${fT(`${key}.${i}.title`,"Título")}${fT(`${key}.${i}.summary`,"Resumo",{area:true})}${fRich(`${key}.${i}.body`,"Texto completo")}
      ${fImg(`${key}.${i}.image`,"Imagem principal","",{cover:true})}
      <span class="lbl" style="font-weight:700;font-size:.82rem">Documentos anexos</span>${(n.docs||[]).map((x,k)=>docEditor(`${key}.${i}.docs`,k,n.docs.length)).join("")}<button class="btn add" data-add="${key}.${i}.docs" data-tpl="doc">+ Documento</button></div></details>`).join(""):`<div class="card"><p class="hint">Ainda não há itens. A página mostra uma mensagem a dizer que ainda não há conteúdo.</p></div>`)}
+function fDate(p,l,h){return`<div class="f"><label for="${id(p)}">${l}</label><input type="date" id="${id(p)}" data-p="${p}" value="${esc(get(draft,p)||"")}">${hint(h)}</div>`}
+function docSecEditor(b,p){const S=p.docSections||[];
+  return`<div class="card"><div class="card-h"><h3>Secções de documentos</h3></div><span class="hint">Cada secção aparece no site com título próprio e uma grelha de 4 documentos por linha, ordenados pela data de publicação (o mais recente primeiro).</span>
+   ${S.map((x,i)=>{const sp=`${b}.docSections.${i}`,D=x.docs||[];return`<div class="dsec-ed"><div class="row"><b class="dsec-n">${i+1}. ${esc(PT(x.title)||"Secção sem título")} <small class="hint">· ${D.length} ${D.length===1?"documento":"documentos"}</small></b>${tools(b+".docSections",i,S.length)}</div>
+     <div class="g2"><div>${fT(sp+".title","Título da secção")}</div><div>${fT(sp+".intro","Descrição curta")}</div></div>
+     ${D.map((d,k)=>{const dp=`${sp}.docs.${k}`;return`<div class="lnk"><div class="row"><div>${fT(dp+".title","Título do documento")}</div>${tools(sp+".docs",k,D.length)}</div><div class="g2">${fDate(dp+".date","Data de publicação","Define a ordem no site.")}${fText(dp+".ref","Referência (opcional)","Aparece no canto do cartão.","Ex.: Circular 05/2026")}</div>${fFile(dp+".url","Ficheiro PDF")}</div>`}).join("")}
+     <button class="btn add" data-add="${sp}.docs" data-tpl="sdoc" data-front>+ Documento nesta secção</button></div>`}).join("")}
+   <button class="btn pri add" data-add="${b}.docSections" data-tpl="docSec">+ Nova secção</button></div>`}
 function docEditor(path,i,n){const p=path+"."+i;return`<div class="lnk"><div class="row"><div>${fT(p+".title","Título do documento")}</div>${tools(path,i,n)}</div>${fFile(p+".url","Ficheiro PDF")}</div>`}
 function pagesList(){const d=draft,groups={};Object.keys(d.pages).forEach(k=>{const g=PT(d.pages[k].group)||"Outras páginas";(groups[g]=groups[g]||[]).push(k)});
   return head("Conteúdo","Páginas","Todas as páginas do site. As páginas de colecção (notícias, galeria…) editam o título aqui e os itens na secção própria.")
@@ -1364,7 +1395,7 @@ function pageEditor(slug){const p=draft.pages[slug],b=`pages.${slug}`,isSys=slug
    +(rich?`<div class="card"><div class="card-h"><h3>Texto</h3></div>${fRich(b+".body","Texto da página")}</div>
    <div class="card"><div class="card-h"><h3>Números-chave</h3></div><span class="hint">Aparecem por baixo do cabeçalho. O primeiro aparece também no cartão da página inicial.</span>${(p.specs||[]).map((s,i)=>`<div class="lnk"><div class="row"><div class="g3i">${fIcon(`${b}.specs.${i}.icon`)}${fText(`${b}.specs.${i}.v`,"Valor")}${fText(`${b}.specs.${i}.u`,"Unidade")}</div>${tools(b+".specs",i,p.specs.length)}</div>${fT(`${b}.specs.${i}.l`,"Descrição")}</div>`).join("")}<button class="btn add" data-add="${b}.specs" data-tpl="spec">+ Número</button></div>
    <div class="card"><div class="card-h"><h3>Cartões</h3></div><span class="hint">Ex.: valores, serviços, áreas de actuação.</span>${fSel(b+".itemsStyle","Marcador dos cartões",[["number","Números (1, 2, 3…)"],["icon","Ícones"]],"Ícones e números usam o mesmo desenho: quadrado azul com o símbolo a laranja.")}${(p.items||[]).map((s,i)=>`<div class="lnk"><div class="row"><div>${p.itemsStyle==="icon"?fIcon(`${b}.items.${i}.icon`):""}${fT(`${b}.items.${i}.title`,"Título")}</div>${tools(b+".items",i,p.items.length)}</div>${fT(`${b}.items.${i}.text`,"Texto",{area:true})}</div>`).join("")}<button class="btn add" data-add="${b}.items" data-tpl="item">+ Cartão</button></div>
-   <div class="card"><div class="card-h"><h3>Documentos</h3></div>${(p.docs||[]).map((x,k)=>docEditor(b+".docs",k,p.docs.length)).join("")}<button class="btn add" data-add="${b}.docs" data-tpl="doc">+ Documento</button></div>`:"")
+   <div class="card"><div class="card-h"><h3>Documentos</h3></div>${(p.docs||[]).map((x,k)=>docEditor(b+".docs",k,p.docs.length)).join("")}<button class="btn add" data-add="${b}.docs" data-tpl="doc">+ Documento</button></div>`+docSecEditor(b,p):"")
    +(isSys?"":`<div class="card"><div class="card-h"><h3>Apagar página</h3></div>${confirmKey==="page"?`<div class="banner"><span>Apagar esta página? Os links do menu para ela deixam de funcionar.</span><button class="btn del" data-delpage>Sim, apagar</button><button class="btn" data-nocf>Cancelar</button></div>`:`<button class="btn del add" data-cf="page">Apagar página…</button>`}</div>`)}
 
 /* ---------- render ---------- */
@@ -1429,7 +1460,7 @@ document.addEventListener("change",async e=>{const el=e.target;if(!draft)return;
     try{set(draft,el.dataset.video,await Store.upload(f,null,/\.webm$/i.test(f.name)?"video/webm":"video/mp4"));changed(true);toast(mb>8?"Vídeo carregado. Tem "+mb.toFixed(1)+" MB: a página pode demorar a abrir.":"Vídeo carregado. Publique para aplicar.")}
     catch(err){box.classList.remove("busy");toast("Não foi possível carregar o vídeo. Use MP4 (H.264) até 20 MB.")}}
   if(el.dataset.file&&el.files&&el.files[0]){const f=el.files[0],box=el.closest(".f");box.classList.add("busy");
-    try{set(draft,el.dataset.file,await Store.upload(f,await readURL(f),"application/pdf"));if(/\.pdfs\.\d+\.url$/.test(el.dataset.file))set(draft,el.dataset.file.replace(/url$/,"updated"),new Date().toISOString().slice(0,10));changed(true);toast("PDF carregado. Publique para aplicar.")}catch(err){box.classList.remove("busy");toast("Não foi possível carregar o PDF.")}}
+    try{set(draft,el.dataset.file,await Store.upload(f,await readURL(f),"application/pdf"));if(/\.docSections\.\d+\.docs\.\d+\.url$/.test(el.dataset.file)&&!get(draft,el.dataset.file.replace(/url$/,"date")))set(draft,el.dataset.file.replace(/url$/,"date"),new Date().toISOString().slice(0,10));if(/\.pdfs\.\d+\.url$/.test(el.dataset.file))set(draft,el.dataset.file.replace(/url$/,"updated"),new Date().toISOString().slice(0,10));changed(true);toast("PDF carregado. Publique para aplicar.")}catch(err){box.classList.remove("busy");toast("Não foi possível carregar o PDF.")}}
   if(el.dataset.gallery!==undefined&&el.files&&el.files.length){const box=el.closest(".card");box.classList.add("busy");let n=0;
     let tb=0,ta=0;for(const f of el.files){try{const r=await compress(f,0);tb+=r.before;ta+=r.after;draft.gallery.push({image:await Store.upload(r.blob,r.url,r.blob&&r.blob.type),caption:T("","")});n++}catch(err){}}
     changed(true);toast(n+" fotografias adicionadas ("+kb(tb)+" → "+kb(ta)+")")}
@@ -1533,7 +1564,7 @@ document.addEventListener("click",async e=>{const t=e.target;if(!draft)return;co
   if(t.closest("[data-today]")){D.berth.updated=new Date().toISOString().slice(0,10);changed(true);return}
   if(t.closest("[data-newpage]")){const ti=$("#np_title").value.trim(),sl=($("#np_slug").value.trim()||ti).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
     if(!ti||!sl)return toast("Indique o título da página.");if(D.pages[sl]||sl==="home")return toast("Já existe uma página com esse endereço.");
-    D.pages[sl]={type:"content",title:T(ti,""),group:T("",""),eyebrow:T("",""),intro:T("",""),body:T("",""),items:[],specs:[],docs:[],image:"",badge:T("","")};editPage=sl;changed(true);return}
+    D.pages[sl]={type:"content",title:T(ti,""),group:T("",""),eyebrow:T("",""),intro:T("",""),body:T("",""),items:[],specs:[],docs:[],docSections:[],image:"",badge:T("","")};editPage=sl;changed(true);return}
   if(t.closest("[data-delpage]")){delete D.pages[editPage];D.home.facilities.pages=D.home.facilities.pages.filter(k=>k!==editPage);editPage=null;confirmKey=null;changed(true);return}
   if(t.closest("[data-loadremote]")){draft=hydrate(published);dirty=false;remoteChanged=false;renderAll(true);return}
   const rd=t.closest("[data-read]");if(rd){await Store.inboxUpdate(rd.dataset.read,{read:rd.dataset.v==="1"},l=>{inbox=l;renderNav();renderMain(true)});return}
