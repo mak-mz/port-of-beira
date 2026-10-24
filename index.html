@@ -709,6 +709,16 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 .pg-slot:hover .pg-zoom,.pg-slot:focus-visible .pg-zoom{opacity:1;transform:none}
 @media (hover:none){.pg-cap{opacity:1;transform:none}.pg-slot::after{opacity:1}}
 @media (max-width:640px){.pgrid.mosaic.n3{aspect-ratio:4/5;grid-template-columns:1fr 1fr;grid-template-rows:1.4fr 1fr}.pgrid.mosaic.n3 .pg-slot:first-child{grid-row:auto;grid-column:span 2}.pgrid.row.n3{grid-template-columns:1fr 1fr}.pgrid.row.n3 .pg-slot:first-child{grid-column:span 2;aspect-ratio:16/9}}
+.m-tools{display:none}
+@media (max-width:1180px){
+  .m-tools{display:flex;align-items:center;gap:10px;margin-left:auto}
+  .m-tools+.menu-btn{margin-left:2px}
+  .m-tools .wx{font-size:.82rem;opacity:1}
+  .m-tools .lang button{padding:3px 9px}
+}
+@media (max-width:520px){.wx-m span{display:none}.m-tools{gap:8px}.brand{height:40px}.brand img{max-width:40vw}}
+@media (max-width:400px){.brand img{max-width:36vw}.m-tools .lang button{padding:3px 7px}}
+@media (max-width:350px){.wx-m svg{display:none}}
 </style>
 
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -719,6 +729,7 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
   <div class="wrap bar">
     <a class="brand" href="#home" id="brand"></a>
     <nav class="nav" id="nav" aria-label="Main"></nav>
+    <div class="m-tools"><span class="wx wx-m" data-wx hidden></span><span class="lang" id="langM" role="group" aria-label="Language"></span></div>
     <button class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
   </div>
 </header>
@@ -1372,21 +1383,21 @@ async function loadWX(force){const W=data.weather||{};if(W.show===false){wxData=
   const lat=+W.lat||-19.83,lon=+W.lon||34.84,key="cdm-wx-"+lat+","+lon;
   try{const c=JSON.parse(localStorage.getItem(key)||"null");if(!force&&c&&Date.now()-c.t<30*60e3){wxData=c.d;paintWX();return}}catch(e){}
   try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,is_day&timezone=auto`);if(!r.ok)throw 0;const j=await r.json(),cur=j.current||{};
-    wxData={t:Math.round(cur.temperature_2m),c:cur.weather_code,d:cur.is_day!==0};try{localStorage.setItem(key,JSON.stringify({t:Date.now(),d:wxData}))}catch(e){}}catch(e){}
-  paintWX();clearTimeout(wxT);wxT=setTimeout(()=>loadWX(true),30*60e3)}
+    wxData={t:Math.round(cur.temperature_2m),c:cur.weather_code,d:cur.is_day!==0};try{localStorage.setItem(key,JSON.stringify({t:Date.now(),d:wxData}))}catch(e){}}catch(e){var failed=true}
+  paintWX();clearTimeout(wxT);wxT=setTimeout(()=>loadWX(true),failed?60e3:30*60e3)}
 function wxHTML(){if(!wxData||!isFinite(wxData.t))return"";const W=data.weather||{},k=wxKind(wxData.c,wxData.d);
   return`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${WX_ICO[k]}</svg><span>${esc(L(W.label)||"Beira")}</span><b>${wxData.t}°C</b>`}
 function paintWX(){const h=wxHTML();document.querySelectorAll("[data-wx]").forEach(el=>{el.innerHTML=h;el.hidden=!h});const t=$("#wxTop");if(t){t.innerHTML=h;t.hidden=!h;t.title=h?`${L((data.weather||{}).label)||"Beira"} · ${wxData.t}°C`:""}}
 function renderHeader(){
   $("#brand").innerHTML=brandHTML();$("#brand").setAttribute("aria-label",data.brand.name+" — "+U("home"));
   $("#topnav").innerHTML=(data.topnav||[]).map(it=>`<a ${linkAttrs(it)}>${esc(L(it.label))}</a>`).join("");
-  $("#socTop").innerHTML=socHTML();setTimeout(()=>{paintWX();if(!wxData&&!loadWX.started){loadWX.started=1;loadWX()}},0);$("#langTop").innerHTML=langHTML();
+  $("#socTop").innerHTML=socHTML();$("#langM").innerHTML=langHTML();setTimeout(()=>{paintWX();if(!wxData&&!loadWX.started){loadWX.started=1;loadWX()}},0);$("#langTop").innerHTML=langHTML();
   const half=Math.ceil((data.menu||[]).length/2);
   const items=(list,lv,rt)=>list.map((it,i)=>{const kids=(it.children||[]).filter(Boolean);
     return kids.length?`<li class="has-sub${rt||(lv===0&&i>=half)?" rt":""}"><button class="${lv?"sub-b":"top-a"}${isCur(it)?" cur":""}" aria-expanded="false" data-sub>${esc(L(it.label))}${chev}</button><ul class="sub lv${lv+1}">${items(kids,lv+1,rt||(lv===0&&i>=half))}</ul></li>`
       :`<li><a ${lv?"":'class="top-a" '}${linkAttrs(it)}>${esc(L(it.label))}${lv&&it.url&&/^https?:/i.test(it.url)&&!it.url.includes(location.host)?'<span class="ext">↗</span>':""}</a></li>`}).join("");
   $("#nav").innerHTML=`<ul>${items(data.menu||[],0,false)}
-    <li class="m-only"><div class="m-row">${(data.topnav||[]).map(it=>`<a ${linkAttrs(it)}>${esc(L(it.label))}</a>`).join("")}</div><div class="m-row"><span class="wx" data-wx hidden></span>${socHTML()}<span class="lang" role="group" aria-label="Language">${langHTML()}</span></div></li></ul>`;
+    <li class="m-only"><div class="m-row">${(data.topnav||[]).map(it=>`<a ${linkAttrs(it)}>${esc(L(it.label))}</a>`).join("")}</div><div class="m-row">${socHTML()}</div></li></ul>`;
 }
 function renderFooter(){
   const f=data.footer,c=data.contacts;
