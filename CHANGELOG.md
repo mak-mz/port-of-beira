@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.13.0** (24 Out 2026).
+**Versão actual: 2.14.0** (25 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.13.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.14.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,13 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.14.0 · 25 Out 2026
+- **Textos uniformes:** todo o texto corrido (páginas, notícias, projectos e localização) segue agora um único padrão de tamanho, entrelinha e espaçamento. **[S]**
+  - O texto ocupa toda a largura da coluna e fica alinhado com a grelha de fotografias e com os cartões. Os limites de largura antigos deixam de existir.
+  - Os subtítulos (por exemplo, "Who we are", "Our vision") têm o mesmo tamanho em todas as páginas, com espaço acima e abaixo consistente.
+- **Correcção automática de formatação:** um parágrafo escrito como título (mais de 90 caracteres) passa a ser mostrado como texto normal. Títulos e parágrafos vazios são removidos. **[S, C]**
+  - A correcção também se aplica ao editor do CMS: ao abrir uma página, o texto aparece já como "Parágrafo".
 
 ### 2.13.0 · 24 Out 2026
 - **Notícias e projectos:** cada artigo passa a ter a sua **grelha de fotografias**. **[S, C]**
