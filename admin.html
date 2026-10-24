@@ -167,7 +167,8 @@ mono,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78
 /* gate */
 .gate{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:var(--navy-deep);color:#fff;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
 .gate-card{width:min(400px,100%);display:flex;flex-direction:column;gap:16px}
-.gate h1{font-weight:900;font-size:2rem}
+.gate,.gate *{font-family:"Dax","Fira Sans",system-ui,sans-serif!important;font-weight:400!important;letter-spacing:0}
+.gate h1{font-size:2.1rem;line-height:1.15}
 .gate p{color:rgba(255,255,255,.75)}
 .gate .f label{color:#fff}
 .gate input{width:100%;font:inherit;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff}
@@ -607,7 +608,7 @@ function richHTML(s){if(!s||!String(s).trim())return"";return RICH_RX.test(s)?sa
 
 /* textos fixos do site (editáveis no CMS em "Textos do site"); {x} = valor inserido automaticamente */
 const UI_DEFAULTS={
- en:{home:"Home",noDocsSec:"No documents have been published in this section yet.",docsCount:"{n} documents",docCount1:"1 document",viewTerminal:"View terminal",back:"Back",download:"Download PDF",open:"Open",documents:"Documents",checkBack:"Please check back soon.",
+ en:{home:"Home",readMore:"Read more",otherPorts:"Other ports",fullTable:"See all distances",chooseDest:"Choose a destination",mapAria:"Map of southern Africa with road routes from the ports to the hinterland",featured:"Featured",allNews:"All news",noDocsSec:"No documents have been published in this section yet.",docsCount:"{n} documents",docCount1:"1 document",viewTerminal:"View terminal",back:"Back",download:"Download PDF",open:"Open",documents:"Documents",checkBack:"Please check back soon.",
    noNews:"No news has been published yet.",noProjects:"No projects have been published yet.",noPubs:"No publications are available yet.",noMag:"No magazine issue has been published yet.",noGal:"No photos have been published yet.",noBerth:"No vessels are listed in the berth plan right now.",noDoc:"This document will be available soon.",
    latestIssue:"Latest issue",archive:"Past issues",readIssue:"Read this issue",photo:"Photo {n}",
    loadingDoc:"Loading document…",openPdf:"Open PDF",docFail:"The document could not be shown here. Use the button to open it.",page1:"1 page",pages:"{n} pages",zoomIn:"Zoom in",zoomOut:"Zoom out",fit:"Fit width",
@@ -619,7 +620,7 @@ const UI_DEFAULTS={
    wform:"Submit a report",anon:"Submit anonymously",anonHint:"Your name and contact details will not be recorded.",wtype:"Type of concern",wdesc:"Describe what happened, when and who was involved",wcontact:"How can we reach you? (optional)",wsend:"Submit report",
    wsent:"Your report has been received. Thank you for speaking up.",wtypes:["Fraud or corruption","Safety or environment","Harassment or discrimination","Breach of policy","Other"],
    notFound:"Page not found",notFoundTxt:"This page does not exist or has moved.",goHome:"Go to the home page"},
- pt:{home:"Início",noDocsSec:"Ainda não há documentos publicados nesta secção.",docsCount:"{n} documentos",docCount1:"1 documento",viewTerminal:"Ver terminal",back:"Voltar",download:"Descarregar PDF",open:"Abrir",documents:"Documentos",checkBack:"Volte a visitar-nos em breve.",
+ pt:{home:"Início",readMore:"Ler mais",otherPorts:"Outros portos",fullTable:"Ver todas as distâncias",chooseDest:"Escolha um destino",mapAria:"Mapa da África Austral com as rotas rodoviárias dos portos para o hinterland",featured:"Destaque",allNews:"Todas as notícias",noDocsSec:"Ainda não há documentos publicados nesta secção.",docsCount:"{n} documentos",docCount1:"1 documento",viewTerminal:"Ver terminal",back:"Voltar",download:"Descarregar PDF",open:"Abrir",documents:"Documentos",checkBack:"Volte a visitar-nos em breve.",
    noNews:"Ainda não foram publicadas notícias.",noProjects:"Ainda não foram publicados projectos.",noPubs:"Ainda não há publicações disponíveis.",noMag:"Ainda não foi publicada nenhuma edição da revista.",noGal:"Ainda não foram publicadas fotografias.",noBerth:"Neste momento não há navios no plano de atracação.",noDoc:"Este documento estará disponível em breve.",
    latestIssue:"Edição mais recente",archive:"Edições anteriores",readIssue:"Ler esta edição",photo:"Fotografia {n}",
    loadingDoc:"A carregar o documento…",openPdf:"Abrir PDF",docFail:"Não foi possível mostrar o documento aqui. Use o botão para o abrir.",page1:"1 página",pages:"{n} páginas",zoomIn:"Aumentar",zoomOut:"Reduzir",fit:"Ajustar à largura",
@@ -636,6 +637,7 @@ const UI_DEFAULTS={
 const UI_META=[
  ["home","Geral","Link para a página inicial (migalhas)","Home link (breadcrumbs)"],["back","Geral","Botão voltar","Back button"],["viewTerminal","Geral","Botão dos cartões de terminais","Terminal card button"],
  ["documents","Geral","Título da caixa de documentos","Documents box title"],["open","Geral","Botão abrir documento","Open document button"],["download","Geral","Texto de descarregar PDF","Download PDF text"],["hint","Geral","Dica da cena 3D","3D scene hint"],
+ ["readMore","Notícias","Ler mais","Read more"],["otherPorts","Distâncias","Legenda: outros portos","Legend: other ports"],["fullTable","Distâncias","Botão da tabela completa","Full table button"],["chooseDest","Distâncias","Rótulo dos destinos (leitores de ecrã)","Destinations label (screen readers)"],["featured","Notícias","Etiqueta de destaque","Featured tag"],["allNews","Notícias","Botão todas as notícias","All news button"],
  ["noDocsSec","Listas vazias","Secção de documentos vazia","Empty document section"],["docsCount","Geral","Contagem de documentos ({n} = número)","Document count ({n} = number)"],["docCount1","Geral","Um documento","One document"],
  ["checkBack","Listas vazias","Frase por baixo das mensagens vazias","Line below empty messages"],["noNews","Listas vazias","Sem notícias","No news"],["noProjects","Listas vazias","Sem projectos","No projects"],["noPubs","Listas vazias","Sem publicações","No publications"],["noMag","Listas vazias","Sem revista","No magazine"],["noGal","Listas vazias","Galeria vazia","Empty gallery"],["noBerth","Listas vazias","Plano de atracação vazio","Empty berth plan"],["noDoc","Listas vazias","Documento PDF ainda não carregado","PDF not uploaded yet"],
  ["latestIssue","Revista e galeria","Edição mais recente","Latest issue"],["archive","Revista e galeria","Edições anteriores","Past issues"],["readIssue","Revista e galeria","Botão ler edição","Read issue button"],["photo","Revista e galeria","Fotografia sem legenda ({n} = número)","Photo without caption ({n} = number)"],
@@ -728,16 +730,17 @@ function typoVal(typo,role){const r=TYPO_ROLES.find(x=>x[0]===role),t=(typo||{})
 function googleHref(typo){const fams={};TYPO_ROLES.forEach(([r])=>{const v=typoVal(typo,r),f=FONTS[v.font];if(f&&f.g){(fams[f.g]=fams[f.g]||{f,ws:new Set()}).ws.add(v.weight)}});
   const parts=Object.values(fams).map(({f,ws})=>{const want=[...new Set([400,...ws].map(w=>f.w.reduce((a,b)=>Math.abs(b-w)<Math.abs(a-w)?b:a)))].sort((a,b)=>a-b);return"family="+encodeURIComponent(f.g).replace(/%20/g,"+")+":wght@"+want.join(";")});
   return parts.length?"https://fonts.googleapis.com/css2?"+parts.join("&")+"&display=swap":""}
-function applyTypo(root,typo){TYPO_ROLES.forEach(([r])=>{const v=typoVal(typo,r);root.style.setProperty(`--${r}-f`,typoFont(v.font));root.style.setProperty(`--${r}-w`,v.weight);root.style.setProperty(`--${r}-k`,v.k.toFixed(4))});
+function applyTypo(root,typo){const ls=(k,d)=>{const v=(typo||{})[k];return(v===""||v==null||isNaN(+v)?d:+v)/100+"em"};root.style.setProperty("--ls-title",ls("lsTitle",-1));root.style.setProperty("--ls-label",ls("lsLabel",12));root.style.setProperty("--ls-body",ls("lsBody",0));TYPO_ROLES.forEach(([r])=>{const v=typoVal(typo,r);root.style.setProperty(`--${r}-f`,typoFont(v.font));root.style.setProperty(`--${r}-w`,v.weight);root.style.setProperty(`--${r}-k`,v.k.toFixed(4))});
   const href=googleHref(typo);let l=document.getElementById("typoFonts");
   if(href){if(!l){l=document.createElement("link");l.id="typoFonts";l.rel="stylesheet";document.head.appendChild(l)}if(l.getAttribute("href")!==href)l.setAttribute("href",href)}else if(l)l.remove()}
 const T=(en,pt)=>({en:en,pt:pt==null?en:pt});
 const DEFAULTS={
+  _mig:["berth-link"],
   layout:{side:8},
   media:{format:"webp",quality:80,maxWidth:1920,lazy:true},
   ui:{en:{},pt:{}},
   header:{top:92,bottom:70,color:"deep",blur:true},
-  typography:{heroTitle:{font:"dax",weight:500,size:46},pageTitle:{font:"dax",weight:900,size:58},section:{font:"dax",weight:900,size:50},sub:{font:"dax",weight:900,size:23},
+  typography:{lsTitle:-1,lsLabel:12,lsBody:0,heroTitle:{font:"dax",weight:500,size:46},pageTitle:{font:"dax",weight:900,size:58},section:{font:"dax",weight:900,size:50},sub:{font:"dax",weight:900,size:23},
     lead:{font:"dax",weight:300,size:19},body:{font:"dax",weight:400,size:17},numbers:{font:"dax",weight:900,size:42},label:{font:"fira-c",weight:700,size:12.5},nav:{font:"dax",weight:500,size:15}},
   brand:{name:"Cornelder de Moçambique",logo:"",logoWhite:"",show3D:true,fonts:{}},
   topnav:[
@@ -779,6 +782,7 @@ const DEFAULTS={
       {label:T("News","Notícias"),page:"news"},
       {label:T("Social Responsibilities","Responsabilidade Social"),page:"social-responsibilities"},
       {label:T("Port Position","Posição do Porto"),page:"port-position"},
+      {label:T("Berth Plan","Plano de Atracação"),page:"berth-plan"},
       {label:T("Contact Us","Contactos"),page:"contacts"}]}
   ],
   social:[
@@ -820,6 +824,7 @@ const DEFAULTS={
     facilities:{eyebrow:T("Port facilities","Instalações portuárias"),title:T("Three terminals, one gateway.","Três terminais, uma porta de entrada."),
       intro:T("From deep-water container handling to bulk grain, each terminal is equipped for the cargo the corridor moves.","Do manuseamento de contentores em águas profundas aos cereais a granel, cada terminal está equipado para a carga que o corredor movimenta."),
       pages:["container-terminal","general-cargo","grain-terminal"]},
+    newsEyebrow:T("Highlights","Destaques"),newsCount:"3",
     newsTitle:T("Latest news","Últimas notícias")
   },
   distances:{
@@ -838,10 +843,10 @@ const DEFAULTS={
       {city:"Lilongwe",country:T("Malawi","Malawi"),lat:-13.97,lon:33.79}
     ],
     ports:[
-      {name:T("Beira","Beira"),values:[559,726,1054,1370,1600,812,950]},
-      {name:T("Durban","Durban"),values:[1711,1454,2380,2707,2611,2323,2678]},
-      {name:T("Dar es Salaam","Dar es Salaam"),values:[2634,3028,1985,1951,2290,2031,1667]},
-      {name:T("Walvis Bay","Walvis Bay"),values:[2297,1856,2078,2294,2480,2907,2752]}
+      {name:T("Beira","Beira"),lat:-19.83,lon:34.84,values:[559,726,1054,1370,1600,812,950]},
+      {name:T("Durban","Durban"),lat:-29.86,lon:31.02,values:[1711,1454,2380,2707,2611,2323,2678]},
+      {name:T("Dar es Salaam","Dar es Salaam"),lat:-6.8,lon:39.28,values:[2634,3028,1985,1951,2290,2031,1667]},
+      {name:T("Walvis Bay","Walvis Bay"),lat:-22.95,lon:14.5,values:[2297,1856,2078,2294,2480,2907,2752]}
     ]
   },
   location:{
@@ -954,6 +959,41 @@ let published=null,draft=null,dirty=false,section="overview",editPage=null,remot
 
 /* ---------- interface do gestor em inglês ---------- */
 const CMS_EN={
+"Código dos vídeos desta página":"Video code for this page",
+"Procurar até":"Look up to",
+"Detectar vídeos":"Detect videos",
+"Só gerar os nomes":"Just generate the names",
+"Ou carregar vídeos daqui":"Or upload videos from here",
+"Ficam no Supabase e preenchem as posições vazias. Até 50 MB cada.":"They are stored in Supabase and fill the empty slots. Up to 50 MB each.",
+"A procurar…":"Searching…",
+"Enquadramento no telemóvel":"Framing on phones",
+"Vídeo completo (16:9), texto por baixo":"Full video (16:9), text below",
+"Ecrã inteiro (corta os lados)":"Full screen (crops the sides)",
+"Vídeo completo mostra todo o enquadramento do vídeo horizontal.":"Full video shows the whole frame of the landscape video.",
+"Ponto de foco no ecrã inteiro":"Focus point in full screen",
+"Esquerda":"Left",
+"Parte do vídeo que fica visível quando é cortado.":"The part of the video that stays visible when it is cropped.",
+"+ Link com URL":"+ Link with URL",
+"Endereço (URL) directo…":"Direct address (URL)…",
+"Endereço (URL)":"Address (URL)",
+"Página do site (ex.: #tariffs ou https://port-of-beira.vercel.app/#news), outro site ou um PDF.":"A page of the site (e.g. #tariffs or https://port-of-beira.vercel.app/#news), another site or a PDF.",
+"Abrir num novo separador":"Open in a new tab",
+"Espaçamento entre letras":"Letter spacing",
+"Igual no computador e no telemóvel. Valores em centésimos do tamanho da letra (−1 = ligeiramente mais junto).":"Same on computers and phones. Values in hundredths of the font size (−1 = slightly tighter).",
+"Títulos":"Headings",
+"Etiquetas em maiúsculas":"Uppercase labels",
+"Recomendado: −1.":"Recommended: −1.",
+"Recomendado: 0.":"Recommended: 0.",
+"Recomendado: 12.":"Recommended: 12.",
+"Notícias em destaque":"Featured news",
+"Último bloco antes do rodapé. Aparece quando houver notícias publicadas.":"Last block before the footer. Appears when news has been published.",
+"Bloco de notícias em destaque":"Featured news block",
+"Mostra primeiro as notícias marcadas como “Destaque na página inicial” (em Notícias) e completa com as mais recentes.":"Shows the news marked “Featured on the home page” (in News) first, then the most recent.",
+"Número de notícias":"Number of articles",
+"Destaque na página inicial":"Featured on the home page",
+"Aparece primeiro no bloco de notícias da página inicial.":"Appears first in the home page news block.",
+"Destaque":"Featured",
+"Latitude e longitude colocam cada cidade e cada porto no mapa real; a rota segue as principais estradas da região. País em EN / PT.":"Latitude and longitude place each city and port on the real map; the route follows the main roads of the region. Country in EN / PT.",
 "Secções de documentos":"Document sections",
 "Cada secção aparece no site com título próprio e uma grelha de 4 documentos por linha, ordenados pela data de publicação (o mais recente primeiro).":"Each section appears on the site with its own title and a grid of 4 documents per row, sorted by publication date (newest first).",
 "Título da secção":"Section title",
@@ -1076,6 +1116,12 @@ const CMS_EN={
 "Edição da revista ":"Magazine issue ","0% = sem caixa, só o texto.":"0% = no box, text only.","1 página":"1 page","1080×1350 ou 720×1280, até 4 MB. Substitui a lista em telemóvel. Só é usado se a opção acima estiver ligada.":"1080×1350 or 720×1280, up to 4 MB. Replaces the list on phones. Only used if the option above is on.","2560 px (alta definição)":"2560 px (high definition)","1280 px (leve)":"1280 px (light)","1600 px":"1600 px","1920 px (recomendado)":"1920 px (recommended)","80% é quase indistinguível do original e reduz muito o peso.":"80% is almost indistinguishable from the original and greatly reduces file size.","Sobre Nós":"About Us","Topo das páginas":"Page heroes","Destaque a laranja (alternativa)":"Orange highlight (alternative)","Excerto exacto do título, em cada língua. Só funciona se não escolher cores no editor acima.":"Exact excerpt of the title, in each language. Only works if you don't pick colours in the editor above.","Mudar de linha":"New line","Seleccione palavras e escolha uma cor para as destacar. Enter ou ↵ muda de linha.":"Select words and pick a colour to highlight them. Enter or ↵ starts a new line.","Alinhamento":"Alignment","Justificado à caixa":"Justified to the box","À esquerda":"Left","Centrado":"Centred","Automático (ajusta à caixa)":"Automatic (fits the box)","Manual":"Manual","Tamanho manual":"Manual size","Tamanho manual:":"Manual size:","Em ecrãs pequenos reduz-se na mesma proporção.":"On small screens it shrinks in proportion.","Pré-visualização":"Preview","Inserir imagem":"Insert image","Carregar imagem":"Upload image","ou":"or","caminho ou endereço: imagens/foto.jpg":"path or address: imagens/foto.jpg","Caminho ou endereço da imagem":"Image path or address","Inserir":"Insert","Imagem seleccionada":"Selected image","Largura da imagem":"Image width","Posição da imagem":"Image position","Centro":"Centre","Esquerda, com texto ao lado":"Left, with text alongside","Direita, com texto ao lado":"Right, with text alongside","Legenda (opcional)":"Caption (optional)","Texto alternativo (descrição para leitores de ecrã)":"Alt text (description for screen readers)","Texto alternativo":"Alt text","Remover imagem":"Remove image","Fechar":"Close","Indique o caminho ou o endereço da imagem.":"Enter the image path or address.","Título, introdução e etiqueta que aparecem no topo azul de cada página. O topo da página inicial edita-se em Página inicial.":"Title, introduction and label shown in the blue hero at the top of each page. The home page hero is edited in Home page.","Editar o topo da página inicial":"Edit the home page hero","Fundo e mais opções":"Background and more options","Texto por baixo do título, no topo da página.":"Text below the title, at the top of the page.","Aparece por cima do título, ao lado de Início.":"Appears above the title, next to Home.","Texto do topo (hero)":"Hero text","Instalações Portuárias":"Port Facilities","Saído":"Sailed","Estreita":"Narrow","Contacto ":"Contact ","Rede social":"Social network","Selecionar":"Select"
 };
 const CMS_RX=[
+ [/^Grave na pasta videos\/ do site os ficheiros (\S+), (\S+)… e clique em Detectar vídeos: a lista fica só com os que existem, pela ordem do número\. Cada página tem o seu código \(ex\.: hero = página inicial, tc = Terminal de Contentores, tcg = Carga Geral\)\.$/,m=>"Save files named "+m[1]+", "+m[2]+"… in the site's videos/ folder and click Detect videos: the list keeps only the ones that exist, in number order. Each page has its own code (e.g. hero = home page, tc = Container Terminal, tcg = General Cargo)."],
+ [/^(\d+) vídeos? encontrados?: (.+)\. Publique para aplicar\.$/,m=>m[1]+" video"+(m[1]==="1"?"":"s")+" found: "+m[2]+". Publish to apply."],
+ [/^Nenhum vídeo encontrado com o código (.+)\. Confirme os nomes na pasta videos\/ \(ex\.: (.+)\)\.$/,m=>"No video found with the code "+m[1]+". Check the names in the videos/ folder (e.g. "+m[2]+")."],
+ [/^(\d+) nomes gerados\. Grave os ficheiros com esses nomes na pasta videos\/\.$/,m=>m[1]+" names generated. Save the files with those names in the videos/ folder."],
+ [/^Abra o gestor no site publicado .*$/,m=>"Open the CMS on the published site (…/admin) to detect the videos. Here you can use Just generate the names."],
+ [/^Plano de atracação acrescentado aos Links úteis\. Clique em Publicar para aplicar\.$/,m=>"Berth Plan added to Useful Links. Click Publish to apply."],
  [/^(\d+)\. Secção sem título$/,m=>m[1]+". Untitled section"],[/^· (\d+) documentos?$/,m=>"· "+m[1]+" document"+(m[1]==="1"?"":"s")],
  [/^A transferir (\d+) ficheiro\(s\) para o Supabase…$/,m=>"Transferring "+m[1]+" file(s) to Supabase…"],[/^Ficheiros transferidos: (\d+) de (\d+)$/,m=>"Files transferred: "+m[1]+" of "+m[2]],[/^Importado: (\d+) ficheiro\(s\) transferidos para o Supabase\. Clique em Publicar\.$/,m=>"Imported: "+m[1]+" file(s) transferred to Supabase. Click Publish."],[/^Importado\. (\d+) ficheiro\(s\) não foram transferidos e ficaram embutidos\. Clique em Publicar\.$/,m=>"Imported. "+m[1]+" file(s) could not be transferred and stayed embedded. Click Publish."],
  [/^(.+) \((EN|PT)\)$/,m=>trText(m[1])+" ("+m[2]+")"],
@@ -1111,11 +1157,18 @@ function trDOM(root){if(cmsLang!=="en"||!root)return;const w=document.createTree
 
 /* ---------- model ---------- */
 function hydrate(o){return merge(clone(DEFAULTS),clone(o||{}))}
+/* pequenas actualizações automáticas ao conteúdo já publicado (aplicadas uma vez; ficam no rascunho para publicar) */
+function migrate(d,src){const done=d._mig=Array.isArray(src&&src._mig)?src._mig.slice():[],msgs=[];
+  if(!done.includes("berth-link")){done.push("berth-link");const has=(d.footerMenus||[]).some(m=>(m.links||[]).some(l=>l.page==="berth-plan"));
+    if(!has&&d.pages["berth-plan"]){const fm=(d.footerMenus||[]).find(m=>/useful|úteis|uteis/i.test((m.title&&(m.title.en+" "+m.title.pt))||""))||(d.footerMenus||[])[d.footerMenus.length-1];
+      if(fm){const L2=fm.links=fm.links||[],k=L2.findIndex(l=>l.page==="port-position");L2.splice(k>=0?k+1:L2.length,0,{label:T("Berth Plan","Plano de Atracação"),page:"berth-plan"});msgs.push("Plano de atracação acrescentado aos Links úteis")}}}
+  return msgs}
 function strip(d){const c=clone(d);delete c.updatedAt;return c}
 
 const TYPES={content:"Página de conteúdo",news:"Notícias",projects:"Projectos",publications:"Publicações",magazine:"Revista",gallery:"Galeria",berth:"Plano de atracação",position:"Posição do porto",contacts:"Contactos",whistle:"Denúncias"};
 const TPL={
   link:()=>({label:T("",""),page:"home"}),
+  urlLink:()=>({label:T("",""),url:""}),
   menuItem:()=>({label:T("",""),page:"home"}),
   footMenu:()=>({title:T("",""),links:[]}),
   social:()=>({net:"instagram",name:"",url:""}),
@@ -1215,6 +1268,8 @@ function overlayEditor(b,home){const M=get(draft,b);if(!M.overlay||typeof M.over
    <div class="g2">${fRange(b+".overlay.left","Esquerda (por trás do texto)",0,100,"%")}${fRange(b+".overlay.right","Direita",0,100,"%")}</div>
    <div class="g2">${fRange(b+".overlay.bottom","Escurecer em baixo",0,100,"%","Liga o fundo à faixa seguinte.")}${fSel(b+".overlay.color","Cor do degradê",[["navy","Azul CdM"],["black","Preto"]])}</div>
    <button class="btn add" data-ovreset="${b}" data-home="${home?1:0}">Repor valores recomendados</button></div>`}
+const VCODES={"home.hero":"hero","about-us":"about","safety":"asso","projects":"proj","container-terminal":"tc","general-cargo":"tcg","grain-terminal":"tgr","equipment":"equip","tariffs":"tar","news":"news","publications":"pub","magazine":"mag","whistleblowing":"den","social-responsibilities":"csr","port-position":"pp","berth-plan":"berth","gallery":"gal","contacts":"cont"};
+function vcodeFor(b){if(b==="home.hero")return"hero";const sl=b.split(".")[1]||"";return VCODES[sl]||sl.replace(/[^a-z0-9]/g,"").slice(0,8)||"pag"}
 function mediaBG(b,home){const M=get(draft,b);if(!Array.isArray(M.videos)){M.videos=M.video?[M.video]:[];delete M.video}
   const mode=M.bg||(home?"3d":"image"),local=!Store.remote;
   const opts=home?[["3d","Cena 3D animada"],["video","Vídeo"],["image","Imagem estática"]]:[["image","Imagem (ou fundo azul liso)"],["video","Vídeo"]];
@@ -1222,20 +1277,21 @@ function mediaBG(b,home){const M=get(draft,b);if(!Array.isArray(M.videos)){M.vid
     video:home?"Por vídeo: MP4 (H.264), 1920×1080, 10 a 20 s, até 8 MB.":"O cabeçalho é baixo: por vídeo, 6 a 12 s, 1920×1080, até 4 MB."}[mode];
   let h=`<div class="card"><div class="card-h"><h3>${home?"Fundo do topo":"Fundo do cabeçalho"}</h3></div>${fSel(b+".bg","Tipo de fundo",opts,tip)}`;
   if(mode!=="video")return h+fImg(b+".image",mode==="3d"?"Imagem por trás da cena 3D (opcional)":"Imagem de fundo","",{dark:true,cover:true})+(mode==="image"&&M.image?overlayEditor(b,home):"")+"</div>";
-  const minSlots=home?5:1;M.videos=M.videos.map(v=>typeof v==="string"?{src:v,on:true,clip:""}:Object.assign({src:"",on:true,clip:""},v||{}));while(M.videos.length<minSlots)M.videos.push({src:"",on:true,clip:""});
+  const minSlots=1,code=M.vcode||vcodeFor(b);M.videos=M.videos.map(v=>typeof v==="string"?{src:v,on:true,clip:""}:Object.assign({src:"",on:true,clip:""},v||{}));while(M.videos.length<minSlots)M.videos.push({src:"",on:true,clip:""});
   const act=M.videos.filter(v=>v.src&&v.on!==false).length,gid=b.replace(/\W/g,"_");
   h+=`<div class="vpl"><div class="vpl-h"><b>Lista de vídeos</b><span class="tag ${act?"o":""}">${act} ${act===1?"vídeo activo":"vídeos activos"}</span><span class="hint">Passam em loop, pela ordem da lista, com transição suave. O seguinte só começa a carregar a meio do anterior.</span></div>
-   ${local?`<div class="vgen"><div class="f"><label for="vg_dir_${gid}">Pasta</label><input type="text" id="vg_dir_${gid}" value="videos/"></div><div class="f"><label for="vg_pre_${gid}">Início do nome</label><input type="text" id="vg_pre_${gid}" value="${home?"inicio-":"pagina-"}"></div><div class="f"><label for="vg_n_${gid}">Quantidade</label><input type="number" id="vg_n_${gid}" value="${Math.max(minSlots,M.videos.length)}" min="1" max="12"></div><div class="f"><label for="vg_ext_${gid}">Formato</label><select id="vg_ext_${gid}"><option>mp4</option><option>webm</option></select></div><button type="button" class="btn pri" data-vgen="${b}" data-gid="${gid}">Gerar caminhos</button></div>
-     <span class="hint">Gera videos/inicio-01.mp4, videos/inicio-02.mp4… Coloque os ficheiros com esses nomes numa pasta "videos" ao lado do index.html.</span>`
-   :`<div><span class="btn pri fb">Carregar vários vídeos de uma vez<input type="file" accept="video/mp4,video/webm" multiple data-vmulti="${b}" aria-label="Carregar vários vídeos"></span> <span class="hint">Preenchem as posições vazias pela ordem escolhida. Até 20 MB cada.</span></div>`}
+   <div class="vgen"><div class="f"><label for="vg_pre_${gid}">Código dos vídeos desta página</label><input type="text" id="vg_pre_${gid}" data-p="${b}.vcode" value="${esc(code)}" autocomplete="off"></div><div class="f"><label for="vg_n_${gid}">Procurar até</label><input type="number" id="vg_n_${gid}" value="${Math.max(10,M.videos.length)}" min="1" max="30"></div><button type="button" class="btn pri" data-vdetect="${b}" data-gid="${gid}">Detectar vídeos</button><button type="button" class="btn" data-vgen="${b}" data-gid="${gid}">Só gerar os nomes</button></div>
+   <span class="hint">Grave na pasta videos/ do site os ficheiros ${esc(code)}01.mp4, ${esc(code)}02.mp4… e clique em Detectar vídeos: a lista fica só com os que existem, pela ordem do número. Cada página tem o seu código (ex.: hero = página inicial, tc = Terminal de Contentores, tcg = Carga Geral).</span>
+   ${local?"":`<div><span class="btn fb">Ou carregar vídeos daqui<input type="file" accept="video/mp4,video/webm" multiple data-vmulti="${b}" aria-label="Carregar vários vídeos"></span> <span class="hint">Ficam no Supabase e preenchem as posições vazias. Até 50 MB cada.</span></div>`}
    ${M.videos.map((v,i)=>`<div class="vslot${v.on===false?" off":""}${v.src?"":" empty"}"><span class="vnum">${i+1}</span><div class="vprev">${v.src?`<video src="${esc(v.src)}" muted playsinline preload="metadata" data-vmeta="${b}.videos.${i}"></video>`:"<span>Vazio</span>"}</div>
-     <div class="vbody"><div class="vrow"><input type="text" data-p="${b}.videos.${i}.src" value="${esc(v.src)}" placeholder="${local?"videos/"+(home?"inicio-":"pagina-")+String(i+1).padStart(2,"0")+".mp4":"Carregue ou indique https://…"}" aria-label="Vídeo ${i+1}">${local?"":`<span class="btn fb ic">${v.src?"Substituir":"Carregar"}<input type="file" accept="video/mp4,video/webm" data-video="${b}.videos.${i}.src" aria-label="Carregar vídeo ${i+1}"></span>`}</div>
+     <div class="vbody"><div class="vrow"><input type="text" data-p="${b}.videos.${i}.src" value="${esc(v.src)}" placeholder="${"videos/"+esc(code)+String(i+1).padStart(2,"0")+".mp4"}" aria-label="Vídeo ${i+1}">${local?"":`<span class="btn fb ic">${v.src?"Substituir":"Carregar"}<input type="file" accept="video/mp4,video/webm" data-video="${b}.videos.${i}.src" aria-label="Carregar vídeo ${i+1}"></span>`}</div>
      <div class="vrow2"><label class="mini"><input type="checkbox" data-p="${b}.videos.${i}.on" data-bool ${v.on!==false?"checked":""}> Activo</label><label class="mini">Mostrar durante <input type="number" min="0" step="1" data-p="${b}.videos.${i}.clip" data-num value="${esc(v.clip)}" placeholder="todo" aria-label="Segundos"> s</label><span class="hint" data-vdur="${b}.videos.${i}"></span></div></div>${tools(b+".videos",i,M.videos.length)}</div>`).join("")}
    <button type="button" class="btn add" data-add="${b}.videos" data-tpl="vslot">+ Mais um vídeo</button>
    <div class="g2">${fSel(b+".videoOrder","Ordem",[["sequence","Pela ordem da lista"],["random","Aleatória em cada visita"]])}${fRange(b+".transition","Transição entre vídeos",0.2,3," s","Duração do esbatimento entre um vídeo e o seguinte.",0.2)}</div>
    <div><button type="button" class="btn" data-vplay="${b}">▶ Pré-visualizar a sequência</button></div>
    <div class="vplayer" data-vplayer="${b}" hidden><video muted playsinline></video><span class="vlbl"></span><button type="button" class="btn ic" data-vstop>Parar</button></div></div>`;
   h+=fImg(b+".poster","Imagem de capa","Aparece enquanto o vídeo carrega, em telemóvel quando o vídeo está desligado e para quem reduziu o movimento.",{dark:true,cover:true})+`<div><button type="button" class="btn" data-vposter="${b}">Usar o 1.º fotograma do vídeo 1 como capa</button></div>`;
+  h+=`<div class="g2">${fSel(b+".mobileFrame","Enquadramento no telemóvel",[["wide","Vídeo completo (16:9), texto por baixo"],["cover","Ecrã inteiro (corta os lados)"]],"Vídeo completo mostra todo o enquadramento do vídeo horizontal.")}${fSel(b+".focus","Ponto de foco no ecrã inteiro",[["center","Centro"],["left","Esquerda"],["right","Direita"]],"Parte do vídeo que fica visível quando é cortado.")}</div>`;
   h+=fSw(b+".mobileVid","Reproduzir vídeo em telemóvel","Ligado por defeito. Desligado: em telemóvel aparece só a imagem de capa, para poupar dados. Em modo de poupança de dados o telemóvel mostra sempre a capa.",true);
   h+=fVideo(b+".videoMobile","Vídeo vertical para telemóvel (opcional)","1080×1350 ou 720×1280, até 4 MB. Substitui a lista em telemóvel. Só é usado se a opção acima estiver ligada.");
   h+=overlayEditor(b,home);
@@ -1246,10 +1302,10 @@ function fSel(p,l,opts,h){const v=get(draft,p);return`<div class="f"><label for=
 const tools=(path,i,n,extra)=>`<span class="tools">${extra||""}${i>0?`<button class="btn ic" data-mv="${path}" data-i="${i}" data-dir="-1" aria-label="Subir">↑</button>`:""}${i<n-1?`<button class="btn ic" data-mv="${path}" data-i="${i}" data-dir="1" aria-label="Descer">↓</button>`:""}<button class="btn del ic" data-del="${path}" data-i="${i}" aria-label="Remover">✕</button></span>`;
 function pageOptions(){return Object.keys(draft.pages).map(k=>[k,PT(draft.pages[k].title)+" ("+k+")"]).concat([["home","Início (home)"]])}
 function linkEditor(path,i,n,o={}){const it=get(draft,path)[i],p=path+"."+i,isUrl="url"in it&&!("page"in it&&it.page);
-  const opts=[["home","Início"]].concat(Object.keys(draft.pages).map(k=>[k,PT(draft.pages[k].title)])).concat([["__url","Link externo / PDF…"]]);
+  const opts=[["home","Início"]].concat(Object.keys(draft.pages).map(k=>[k,PT(draft.pages[k].title)])).concat([["__url","Endereço (URL) directo…"]]);
   return`<div class="lnk"><div class="row"><div>${fT(p+".label",o.labelName||"Texto")}</div>${tools(path,i,n)}</div>
-   <div class="tgt"><div class="f"><label for="${id(p)}_t">Destino</label><select id="${id(p)}_t" data-link="${p}">${opts.map(([k,t])=>`<option value="${esc(k)}" ${(isUrl?"__url":it.page)===k?"selected":""}>${esc(t)}</option>`).join("")}</select></div>${isUrl?fText(p+".url","Endereço","Abre num novo separador.","https://"):"<span></span>"}</div>
-   ${o.kids?`<div class="kids">${(it.children||[]).map((c,k)=>linkEditor(p+".children",k,it.children.length)).join("")}<button class="btn add" data-add="${p}.children" data-tpl="link">+ Item de submenu</button></div>`:""}</div>`}
+   <div class="tgt"><div class="f"><label for="${id(p)}_t">Destino</label><select id="${id(p)}_t" data-link="${p}">${opts.map(([k,t])=>`<option value="${esc(k)}" ${(isUrl?"__url":it.page)===k?"selected":""}>${esc(t)}</option>`).join("")}</select></div>${isUrl?`<div>${fText(p+".url","Endereço (URL)","Página do site (ex.: #tariffs ou https://port-of-beira.vercel.app/#news), outro site ou um PDF.","https://")}<label class="mini"><input type="checkbox" data-p="${p}.newTab" data-bool ${it.newTab===true||(it.newTab!==false&&/^https?:/i.test(it.url||"")&&!/port-of-beira|cornelder/i.test(it.url||""))?"checked":""}> Abrir num novo separador</label></div>`:"<span></span>"}</div>
+   ${o.kids?`<div class="kids">${(it.children||[]).map((c,k)=>linkEditor(p+".children",k,it.children.length)).join("")}<button class="btn add" data-add="${p}.children" data-tpl="link">+ Item de submenu</button> <button class="btn add" data-add="${p}.children" data-tpl="urlLink">+ Link com URL</button></div>`:""}</div>`}
 
 /* ---------- sections ---------- */
 const SECTIONS=[["overview","Visão geral"],["uitexts","Textos do site"],["brand","Marca e fontes"],["type","Tipografia"],["menus","Menus e redes"],["home","Página inicial"],["heroes","Topo das páginas"],["position","Distâncias e localização"],["pages","Páginas"],["news","Notícias"],["projects","Projectos"],["pubs","Publicações e revista"],["gallery","Galeria"],["berth","Plano de atracação"],["portpos","Posição do porto"],["contacts","Contactos e rodapé"],["inbox","Mensagens"],["data","Dados e acesso"]];
@@ -1286,9 +1342,11 @@ case"brand":return head("Identidade","Marca e fontes","Logótipos e fonte corpor
 case"type":{const T=draft.typography=draft.typography||{};
   return head("Identidade","Tipografia","Tipo de letra, peso e tamanho de cada tipo de texto do site. O tamanho indicado é o do computador; em ecrãs pequenos reduz-se na mesma proporção. As alterações aparecem na pré-visualização e no site depois de publicar.")
    +`<div class="banner info"><span>"Dax" usa os ficheiros carregados em Marca e fontes, ou a Dax instalada no computador de quem visita. As outras fontes vêm do Google Fonts e precisam de internet.</span></div>`
+   +`<div class="card"><div class="card-h"><h3>Espaçamento entre letras</h3></div><span class="hint">Igual no computador e no telemóvel. Valores em centésimos do tamanho da letra (−1 = ligeiramente mais junto).</span>
+     <div class="g2">${fRange("typography.lsTitle","Títulos",-5,5,"",`Recomendado: −1.`,0.5)}${fRange("typography.lsBody","Texto corrido",-3,5,"",`Recomendado: 0.`,0.5)}</div>${fRange("typography.lsLabel","Etiquetas em maiúsculas",0,30,"",`Recomendado: 12.`,1)}</div>`
    +TYPO_ROLES.map(([r,name,def,min,max,sample])=>{const v=typoVal(T,r);if(!T[r])T[r]={font:v.font,weight:v.weight,size:v.size};
      return`<div class="card"><div class="card-h"><h3>${name}</h3><button class="btn ic" data-typoreset="${r}">Repor</button></div>
-      <div data-typoprev="${r}" style="padding:14px 16px;border-radius:10px;background:var(--surface-2);overflow:hidden;line-height:1.15;font-family:${esc(typoFont(v.font))};font-weight:${v.weight};font-size:${Math.min(v.size,56)}px;${r==="label"?"letter-spacing:.14em;":""}">${esc(sample)}</div>
+      <div data-typoprev="${r}" style="padding:14px 16px;border-radius:10px;background:var(--surface-2);overflow:hidden;line-height:1.15;font-family:${esc(typoFont(v.font))};font-weight:${v.weight};font-size:${Math.min(v.size,56)}px;${r==="label"?`letter-spacing:${(+T.lsLabel||12)/100}em;text-transform:uppercase;`:/^(heroTitle|pageTitle|section|sub)$/.test(r)?`letter-spacing:${(T.lsTitle==null?-1:+T.lsTitle)/100}em;`:""}">${esc(sample)}</div>
       ${v.size>56?`<span class="hint">Pré-visualização limitada a 56 px; no site aparece com ${v.size} px.</span>`:""}
       <div class="g2">${fSel(`typography.${r}.font`,"Tipo de letra",Object.entries(FONTS).map(([k,f])=>[k,f.name]))}${fSel(`typography.${r}.weight`,"Peso",WEIGHTS)}</div>
       ${fRange(`typography.${r}.size`,"Tamanho",min,max," px",`Original: ${def} px.`,r==="label"?0.5:1)}</div>`}).join("")
@@ -1303,9 +1361,9 @@ case"menus":return head("Navegação","Menus e redes sociais","Menu principal co
      <span class="hint" style="position:absolute;left:12px;bottom:8px;color:#1B1A33;background:rgba(255,255,255,.75);padding:2px 8px;border-radius:6px">${bgimg?"Sobre a imagem de capa do topo":"Exemplo com fundo claro"}</span></div>
     <div class="g2">${fRange("header.top","Opacidade em cima",0,100,"%")}${fRange("header.bottom","Opacidade em baixo",0,100,"%","Igual ao valor de cima = faixa sólida.")}</div>
     <div class="g2">${fSel("header.color","Cor",Object.entries(HB_COLORS).map(([k,v])=>[k,v[0]]))}<div>${fSw("header.blur","Desfocar o fundo","Desfoca o vídeo por trás da faixa.")}</div></div></div>`})()
-  +`<div class="card"><div class="card-h"><h3>Menu principal</h3></div><span class="hint">Um item com submenu abre uma lista; o próprio item deixa de ser link.</span>${d.menu.map((m,i)=>linkEditor("menu",i,d.menu.length,{kids:true})).join("")}<button class="btn pri add" data-add="menu" data-tpl="menuItem">+ Item do menu</button></div>
-   <div class="card"><div class="card-h"><h3>Barra superior</h3></div>${d.topnav.map((m,i)=>linkEditor("topnav",i,d.topnav.length)).join("")}<button class="btn add" data-add="topnav" data-tpl="link">+ Link</button></div>
-   ${d.footerMenus.map((fm,i)=>`<div class="card"><div class="card-h"><h3>Rodapé: ${esc(PT(fm.title)||"Novo menu")}</h3>${tools("footerMenus",i,d.footerMenus.length)}</div>${fT(`footerMenus.${i}.title`,"Título da coluna")}${fm.links.map((l,k)=>linkEditor(`footerMenus.${i}.links`,k,fm.links.length)).join("")}<button class="btn add" data-add="footerMenus.${i}.links" data-tpl="link">+ Link</button></div>`).join("")}
+  +`<div class="card"><div class="card-h"><h3>Menu principal</h3></div><span class="hint">Um item com submenu abre uma lista; o próprio item deixa de ser link.</span>${d.menu.map((m,i)=>linkEditor("menu",i,d.menu.length,{kids:true})).join("")}<button class="btn pri add" data-add="menu" data-tpl="menuItem">+ Item do menu</button> <button class="btn add" data-add="menu" data-tpl="urlLink">+ Link com URL</button></div>
+   <div class="card"><div class="card-h"><h3>Barra superior</h3></div>${d.topnav.map((m,i)=>linkEditor("topnav",i,d.topnav.length)).join("")}<button class="btn add" data-add="topnav" data-tpl="link">+ Link</button> <button class="btn add" data-add="topnav" data-tpl="urlLink">+ Link com URL</button></div>
+   ${d.footerMenus.map((fm,i)=>`<div class="card"><div class="card-h"><h3>Rodapé: ${esc(PT(fm.title)||"Novo menu")}</h3>${tools("footerMenus",i,d.footerMenus.length)}</div>${fT(`footerMenus.${i}.title`,"Título da coluna")}${fm.links.map((l,k)=>linkEditor(`footerMenus.${i}.links`,k,fm.links.length)).join("")}<button class="btn add" data-add="footerMenus.${i}.links" data-tpl="link">+ Link</button> <button class="btn add" data-add="footerMenus.${i}.links" data-tpl="urlLink">+ Link com URL</button></div>`).join("")}
    <button class="btn add" data-add="footerMenus" data-tpl="footMenu">+ Coluna no rodapé</button>
    <div class="card"><div class="card-h"><h3>Redes sociais</h3></div><span class="hint">Os ícones aparecem na barra superior, no rodapé e na página de contactos.</span>${d.social.map((s,i)=>{if(!s.net)s.net=socialNet(s);return`<div class="lnk"><div class="row"><div class="soc-row"><span class="soc-pv">${socialSVG(s.net,22)}</span>${fSel(`social.${i}.net`,"Rede",Object.entries(SOCIAL).map(([k,v])=>[k,v.name]))}${fText(`social.${i}.url`,"Endereço","","https://")}</div>${tools("social",i,d.social.length)}</div></div>`}).join("")}<button class="btn add" data-add="social" data-tpl="social">+ Rede social</button></div>`;
 case"home":{const h=d.home;return head("Página inicial","Página inicial","Topo com cena 3D, números em destaque e blocos da página inicial.")
@@ -1316,15 +1374,16 @@ case"home":{const h=d.home;return head("Página inicial","Página inicial","Topo
     <p class="hint">Tipo, peso e tamanho de letra do título e do texto: <button class="btn ic" data-go="type">Tipografia</button></p></div>
    ${mediaBG("home.hero",true)}
    <div class="card"><div class="card-h"><h3>Números em destaque</h3></div>${h.stats.map((s,i)=>`<div class="lnk"><div class="row"><div class="g3i">${fIcon(`home.stats.${i}.icon`)}${fText(`home.stats.${i}.v`,"Valor")}${fText(`home.stats.${i}.u`,"Unidade")}</div>${tools("home.stats",i,h.stats.length)}</div>${fT(`home.stats.${i}.l`,"Descrição")}</div>`).join("")}<button class="btn add" data-add="home.stats" data-tpl="stat">+ Número</button></div>
-   <div class="card"><div class="card-h"><h3>Blocos</h3></div>${fSw("home.showFacilities","Instalações portuárias")}${fSw("home.showDistances","Distâncias rodoviárias")}${fSw("home.showLocation","Localização e mapa")}${fSw("home.showNews","Últimas notícias","Aparece quando houver notícias.")}</div>
+   <div class="card"><div class="card-h"><h3>Blocos</h3></div>${fSw("home.showFacilities","Instalações portuárias")}${fSw("home.showDistances","Distâncias rodoviárias")}${fSw("home.showLocation","Localização e mapa")}${fSw("home.showNews","Notícias em destaque","Último bloco antes do rodapé. Aparece quando houver notícias publicadas.")}</div>
+   <div class="card"><div class="card-h"><h3>Bloco de notícias em destaque</h3></div><span class="hint">Mostra primeiro as notícias marcadas como “Destaque na página inicial” (em Notícias) e completa com as mais recentes.</span>${fT("home.newsEyebrow","Etiqueta")}${fT("home.newsTitle","Título")}${fSel("home.newsCount","Número de notícias",[["3","3"],["4","4"],["5","5"]])}</div>
    <div class="card"><div class="card-h"><h3>Bloco de instalações</h3></div>${fT("home.facilities.eyebrow","Etiqueta")}${fT("home.facilities.title","Título")}${fT("home.facilities.intro","Introdução",{area:true})}
-    <div class="f"><span class="lbl">Páginas mostradas em cartões</span>${Object.keys(d.pages).filter(k=>d.pages[k].type==="content").map(k=>`<label class="tg" style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-facility="${k}" ${h.facilities.pages.includes(k)?"checked":""}> ${esc(PT(d.pages[k].title))}</label>`).join("")}</div>${fT("home.newsTitle","Título das últimas notícias")}</div>`}
+    <div class="f"><span class="lbl">Páginas mostradas em cartões</span>${Object.keys(d.pages).filter(k=>d.pages[k].type==="content").map(k=>`<label class="tg" style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-facility="${k}" ${h.facilities.pages.includes(k)?"checked":""}> ${esc(PT(d.pages[k].title))}</label>`).join("")}</div></div>`}
 case"position":{const D=d.distances;return head("Módulos","Distâncias e localização","Usados na página inicial e na página Posição do Porto. O primeiro porto da tabela é a referência destacada.")
   +`<div class="card">${fT("distances.eyebrow","Etiqueta")}${fT("distances.title","Título",{area:true})}${fT("distances.intro","Introdução",{area:true})}${fT("distances.note","Nota por baixo da tabela")}</div>
-   <div class="card"><div class="card-h"><h3>Tabela (km)</h3><span class="r"><button class="btn" data-add-dest>+ Destino</button><button class="btn" data-add-port>+ Porto</button></span></div><span class="hint">Latitude e longitude colocam cada cidade no mapa esquemático. País em EN / PT.</span>
+   <div class="card"><div class="card-h"><h3>Tabela (km)</h3><span class="r"><button class="btn" data-add-dest>+ Destino</button><button class="btn" data-add-port>+ Porto</button></span></div><span class="hint">Latitude e longitude colocam cada cidade e cada porto no mapa real; a rota segue as principais estradas da região. País em EN / PT.</span>
    <div class="dt"><table><thead><tr><th>Porto (EN / PT)</th>${D.destinations.map((x,c)=>`<th><div class="stack"><input class="w" data-p="distances.destinations.${c}.city" value="${esc(x.city)}" aria-label="Cidade" placeholder="Cidade"><input class="w" data-p="distances.destinations.${c}.country.en" value="${esc(x.country.en)}" aria-label="País EN" placeholder="Country (EN)"><input class="w" data-p="distances.destinations.${c}.country.pt" value="${esc(x.country.pt)}" aria-label="País PT" placeholder="País (PT)"><span class="ll"><input data-p="distances.destinations.${c}.lat" data-num value="${esc(x.lat)}" aria-label="Latitude" placeholder="lat"><input data-p="distances.destinations.${c}.lon" data-num value="${esc(x.lon)}" aria-label="Longitude" placeholder="lon"></span><button class="btn del ic" data-del-dest="${c}" aria-label="Remover ${esc(x.city)}">✕</button></div></th>`).join("")}</tr></thead>
-   <tbody>${D.ports.map((p,r)=>`<tr class="${r?"":"home"}"><td><div class="stack"><input class="w" data-p="distances.ports.${r}.name.en" value="${esc(p.name.en)}" aria-label="Porto EN"><input class="w" data-p="distances.ports.${r}.name.pt" value="${esc(p.name.pt)}" aria-label="Porto PT">${r?`<button class="btn del ic" data-del="distances.ports" data-i="${r}" aria-label="Remover porto">✕</button>`:'<span class="hint">Referência</span>'}</div></td>${D.destinations.map((_,c)=>`<td><input inputmode="numeric" data-p="distances.ports.${r}.values.${c}" data-num value="${esc(p.values[c]??"")}" aria-label="km"></td>`).join("")}</tr>`).join("")}</tbody></table></div></div>
-   <div class="card"><div class="card-h"><h3>Localização</h3></div>${fT("location.eyebrow","Etiqueta")}${fT("location.title","Título")}${fT("location.subtitle","Subtítulo")}${fRich("location.text","Texto")}${fT("location.markets","Mercados servidos",{area:true,h:"Um por linha."})}${fT("location.mapLabel","Texto do botão do mapa")}${fText("location.mapUrl","Link do mapa")}<div class="g2">${fText("location.portLat","Latitude do porto")}${fText("location.portLon","Longitude do porto")}</div>${fImg("location.image","Imagem no lugar do mapa","Opcional. Sem imagem, aparece o mapa interactivo.",{cover:true})}</div>`}
+   <tbody>${D.ports.map((p,r)=>`<tr class="${r?"":"home"}"><td><div class="stack"><input class="w" data-p="distances.ports.${r}.name.en" value="${esc(p.name.en)}" aria-label="Porto EN"><input class="w" data-p="distances.ports.${r}.name.pt" value="${esc(p.name.pt)}" aria-label="Porto PT"><span class="ll"><input data-p="distances.ports.${r}.lat" data-num value="${esc(p.lat??"")}" aria-label="Latitude" placeholder="lat"><input data-p="distances.ports.${r}.lon" data-num value="${esc(p.lon??"")}" aria-label="Longitude" placeholder="lon"></span>${r?`<button class="btn del ic" data-del="distances.ports" data-i="${r}" aria-label="Remover porto">✕</button>`:'<span class="hint">Referência</span>'}</div></td>${D.destinations.map((_,c)=>`<td><input inputmode="numeric" data-p="distances.ports.${r}.values.${c}" data-num value="${esc(p.values[c]??"")}" aria-label="km"></td>`).join("")}</tr>`).join("")}</tbody></table></div></div>
+   <div class="card"><div class="card-h"><h3>Localização</h3></div>${fT("location.eyebrow","Etiqueta")}${fT("location.title","Título")}${fT("location.subtitle","Subtítulo")}${fRich("location.text","Texto")}${fT("location.markets","Mercados servidos",{area:true,h:"Um por linha."})}${fT("location.mapLabel","Texto do botão do mapa")}${fText("location.mapUrl","Link do mapa")}<div class="g2">${fText("location.portLat","Latitude do porto")}${fText("location.portLon","Longitude do porto")}</div></div>`}
 case"pages":return editPage&&d.pages[editPage]?pageEditor(editPage):pagesList();
 case"news":return collection("news","Notícias","Notícias","Artigos mostrados na página Notícias e nas últimas notícias da página inicial.","news","Nova notícia");
 case"projects":return collection("projects","Projectos","Projectos","Projectos mostrados na página Projectos (Sobre Nós).","project","Novo projecto");
@@ -1362,8 +1421,9 @@ case"data":return head("Sistema","Dados e acesso","Cópias de segurança, transf
 function L_(x){return x&&typeof x==="object"?(x.en||x.pt||""):(x||"")}
 function collection(key,eyebrow,title,desc,tpl,addLbl){const A=draft[key];
   return head("Colecção",title,desc)+heroCard(key,false)+`<button class="btn pri add" data-add="${key}" data-tpl="${tpl}" data-front>+ ${addLbl}</button>`
-   +(A.length?A.map((n,i)=>`<details class="card collapse" ${n.title.en||n.title.pt?"":"open"}><summary>${esc(PT(n.title)||"Sem título")} <small class="hint">${esc(n.date||"")}</small><span class="r">${tools(key,i,A.length)}</span></summary><div>
+   +(A.length?A.map((n,i)=>`<details class="card collapse" ${n.title.en||n.title.pt?"":"open"}><summary>${n.featured?'<span class="tag o">Destaque</span>':""}${esc(PT(n.title)||"Sem título")} <small class="hint">${esc(n.date||"")}</small><span class="r">${tools(key,i,A.length)}</span></summary><div>
      <div class="g2">${fText(`${key}.${i}.date`,"Data","AAAA-MM-DD")}${key==="projects"?fT(`${key}.${i}.status`,"Estado"):"<span></span>"}</div>
+     ${key==="news"?fSw(`news.${i}.featured`,"Destaque na página inicial","Aparece primeiro no bloco de notícias da página inicial."):""}
      ${fT(`${key}.${i}.title`,"Título")}${fT(`${key}.${i}.summary`,"Resumo",{area:true})}${fRich(`${key}.${i}.body`,"Texto completo")}
      ${fImg(`${key}.${i}.image`,"Imagem principal","",{cover:true})}
      <span class="lbl" style="font-weight:700;font-size:.82rem">Documentos anexos</span>${(n.docs||[]).map((x,k)=>docEditor(`${key}.${i}.docs`,k,n.docs.length)).join("")}<button class="btn add" data-add="${key}.${i}.docs" data-tpl="doc">+ Documento</button></div></details>`).join(""):`<div class="card"><p class="hint">Ainda não há itens. A página mostra uma mensagem a dizer que ainda não há conteúdo.</p></div>`)}
@@ -1538,8 +1598,18 @@ document.addEventListener("click",async e=>{const t=e.target;if(!draft)return;co
     if(rcol.dataset.rtcolor){document.execCommand("styleWithCSS",false,true);document.execCommand("foreColor",false,rcol.dataset.rtcolor);document.execCommand("styleWithCSS",false,false)}else clearColor(ed);richSync(ed);return}
   if(t.closest("[data-rtlinkok]")||t.closest("[data-rtlinkno]")){const w=t.closest("[data-rt]"),lk=w.querySelector(".rt-link"),ed=w.querySelector(`[data-rich="${w.dataset.rt}.${richTab[w.dataset.rt]||"en"}"]`),url=lk.querySelector("input").value.trim();lk.hidden=true;
     if(t.closest("[data-rtlinkok]")&&url&&url!=="https://"){if(!/^(https?:|mailto:|tel:|#)/i.test(url))return toast("Use um endereço que comece por https://, mailto: ou tel:");restoreSel(ed);document.execCommand("createLink",false,url);richSync(ed)}return}
-  const vg=t.closest("[data-vgen]");if(vg){const g=vg.dataset.gid,b=vg.dataset.vgen,M=get(D,b),dir=($("#vg_dir_"+g).value.trim()||"").replace(/([^/])$/,"$1/"),pre=$("#vg_pre_"+g).value.trim(),n=Math.max(1,Math.min(12,+$("#vg_n_"+g).value||5)),ext=$("#vg_ext_"+g).value;
-    for(let k=0;k<n;k++){const src=dir+pre+String(k+1).padStart(2,"0")+"."+ext;if(M.videos[k])M.videos[k].src=src;else M.videos.push({src,on:true,clip:""})}changed(true);toast(n+" caminhos gerados. Coloque os ficheiros com esses nomes na pasta indicada.");return}
+  const vg=t.closest("[data-vgen]");if(vg){const g=vg.dataset.gid,b=vg.dataset.vgen,M=get(D,b),pre=($("#vg_pre_"+g).value.trim()||vcodeFor(b)),n=Math.max(1,Math.min(30,+$("#vg_n_"+g).value||5));M.vcode=pre;
+    const keep=(M.videos||[]).filter(v=>v.src&&!/^videos\//.test(v.src));M.videos=keep.concat(Array.from({length:n},(_,k)=>({src:"videos/"+pre+String(k+1).padStart(2,"0")+".mp4",on:true,clip:""})));changed(true);toast(n+" nomes gerados. Grave os ficheiros com esses nomes na pasta videos/.");return}
+  const vd=t.closest("[data-vdetect]");if(vd){const g=vd.dataset.gid,b=vd.dataset.vdetect,M=get(D,b),pre=($("#vg_pre_"+g).value.trim()||vcodeFor(b)).replace(/[^\w.-]/g,""),n=Math.max(1,Math.min(30,+$("#vg_n_"+g).value||10));M.vcode=pre;
+    if(location.protocol==="file:")return toast("Abra o gestor no site publicado (…/admin) para detectar os vídeos. Aqui pode usar Só gerar os nomes.");
+    vd.disabled=true;vd.textContent="A procurar…";
+    const cands=[];for(let k=1;k<=n;k++){const nn=String(k).padStart(2,"0");for(const nm of[pre+nn,pre+"-"+nn,pre+k])for(const ext of["mp4","webm"])cands.push({k,src:"videos/"+nm+"."+ext})}
+    const ok=await Promise.all(cands.map(c=>fetch(c.src,{method:"HEAD",cache:"no-store"}).then(r=>r.ok&&/video|octet/.test(r.headers.get("content-type")||"video")).catch(()=>false)));
+    const found=[],seen=new Set();cands.forEach((c,i)=>{if(ok[i]&&!seen.has(c.k)){seen.add(c.k);found.push(c)}});found.sort((a,b2)=>a.k-b2.k);
+    const prev=new Map((M.videos||[]).map(v=>[v.src,v])),keep=(M.videos||[]).filter(v=>v.src&&!/^videos\//.test(v.src));
+    if(!found.length){vd.disabled=false;vd.textContent="Detectar vídeos";return toast("Nenhum vídeo encontrado com o código "+pre+". Confirme os nomes na pasta videos/ (ex.: "+pre+"01.mp4).")}
+    M.videos=found.map(c=>Object.assign({src:c.src,on:true,clip:""},prev.get(c.src)?{on:prev.get(c.src).on,clip:prev.get(c.src).clip}:{})).concat(keep);
+    if(M.bg!=="video")M.bg="video";changed(true);toast(found.length+(found.length===1?" vídeo encontrado":" vídeos encontrados")+": "+found.map(c=>c.src.replace("videos/","")).join(", ")+". Publique para aplicar.");return}
   const vp=t.closest("[data-vplay]");if(vp){vplayStart(vp.dataset.vplay);return}
   if(t.closest("[data-vstop]")){vplayStop();return}
   const vpo=t.closest("[data-vposter]");if(vpo){await grabPoster(vpo.dataset.vposter);return}
@@ -1638,11 +1708,12 @@ async function sha(s){try{const b=await crypto.subtle.digest("SHA-256",new TextE
 function gate(html){$("#gate").hidden=false;$("#gate").innerHTML='<div class="gate-card">'+html+'<div class="lang-cms on-dark" role="group" aria-label="Idioma do gestor"><button data-cmslang="pt">PT</button><button data-cmslang="en">EN</button></div></div>';renderLangBtns();trDOM($("#gate"))}
 function start(){let first=true;
   Store.subscribe((body,meta)=>{if(meta&&meta.hasPendingWrites)return;if(meta&&meta.error){if(first)gate(`<h1>Sem ligação ao conteúdo</h1><p>Não foi possível ler o conteúdo publicado no Supabase. Verifique a ligação à internet e o ficheiro config.js.</p><button class="tbtn pub" onclick="location.reload()">Tentar de novo</button>`);return}published=body?strip(hydrate(body)):null;lastUpdated=body&&body.updatedAt||null;
-    if(first){first=false;draft=hydrate(body);$("#gate").hidden=true;renderAll(false);return}
+    if(first){first=false;draft=hydrate(body);const mg=body?migrate(draft,body):[];if(mg.length)dirty=true;$("#gate").hidden=true;renderAll(false);if(mg.length)toast(mg.join(" · ")+". Clique em Publicar para aplicar.");return}
     if(!dirty){draft=hydrate(body);renderAll(true)}else{remoteChanged=true;if(section==="overview")renderMain(true)}},{poll:20000});
   Store.inbox(list=>{inbox=list;if(draft){renderNav();if(section==="inbox"||section==="overview")renderMain(true)}});
 }
 async function boot(){const mode=await Store.init();
+  if(!boot.f){boot.f=1;try{let un=null,done=false;un=Store.subscribe(b=>{if(done)return;done=true;const f=b&&b.brand&&b.brand.fonts||{},w={light:300,regular:400,medium:500,bold:700,black:900};let css="";for(const k in w)if(f[k])css+=`@font-face{font-family:"Dax";src:url("${f[k]}");font-weight:${w[k]}}\n`;if(css&&!$("#font-uploads").textContent)$("#font-uploads").textContent=css;setTimeout(()=>{try{un&&un()}catch(e){}},0)})}catch(e){}}
   if(mode==="supabase"){sbGate();return}
   if(mode==="cloud"){let can=true;try{if(Store.user)can=await Store.user.canEdit()}catch(e){}
     if(!can){gate('<h1>Sem acesso de edição</h1><p>Este gestor publica o conteúdo do site do Porto da Beira. Peça ao dono do artefacto acesso de edição para continuar.</p><a class="tbtn pub" href="./">Ver o site</a>');return}
