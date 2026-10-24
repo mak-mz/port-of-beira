@@ -328,12 +328,13 @@ button{font:inherit;color:inherit;cursor:pointer}
 .hn time{color:var(--muted);font-size:.82rem}
 .hn h3{font-size:calc(1.08rem * var(--sub-k,1));line-height:1.25}
 .hn .more{color:var(--accent);font-weight:500;font-size:.88rem;display:inline-flex;align-items:center;gap:6px;margin-top:auto}.hn .more svg{width:16px;height:16px}
-.hn.lead{grid-row:span 4;grid-template-columns:1fr;align-items:stretch}
+.hn.lead{grid-row:span 4;}.hn-grid.n2 .hn.lead{grid-row:span 1}.hn-grid.n3 .hn.lead{grid-row:span 2}.hn-grid.n4 .hn.lead{grid-row:span 3}
+.hn.lead{grid-template-columns:1fr;align-items:stretch}
 .hn.lead .im{aspect-ratio:16/9;height:auto;min-height:0}
 .hn.lead .tx{padding:20px 22px 22px}
 .hn.lead h3{font-size:calc(clamp(1.35rem,2.2vw,1.75rem) * var(--sub-k,1))}
 .hn.lead p{color:var(--muted);margin:0}
-@media (max-width:900px){.hn-grid{grid-template-columns:1fr}.hn.lead{grid-row:auto}}
+@media (max-width:900px){.hn-grid{grid-template-columns:1fr}.hn-grid .hn.lead{grid-row:auto}}
 @media (max-width:520px){.hn{grid-template-columns:110px minmax(0,1fr);gap:12px}.hn .im{min-height:110px}.hn .tx{padding:12px 12px 12px 0}.hn .more{display:none}.hn.lead{grid-template-columns:1fr}.hn.lead .more{display:inline-flex}}
 /* ---------- Stats ---------- */
 .stats{background:var(--navy);color:#fff}
@@ -1084,7 +1085,7 @@ function applyTypo(root,typo){const ls=(k,d)=>{const v=(typo||{})[k];return(v===
   if(href){if(!l){l=document.createElement("link");l.id="typoFonts";l.rel="stylesheet";document.head.appendChild(l)}if(l.getAttribute("href")!==href)l.setAttribute("href",href)}else if(l)l.remove()}
 const T=(en,pt)=>({en:en,pt:pt==null?en:pt});
 const DEFAULTS={
-  _mig:["berth-link","weights-medium"],
+  _mig:["berth-link","weights-medium","news5"],
   layout:{side:8},
   media:{format:"webp",quality:80,maxWidth:1920,lazy:true},
   ui:{en:{},pt:{}},
@@ -1173,7 +1174,7 @@ const DEFAULTS={
     facilities:{eyebrow:T("Port facilities","Instalações portuárias"),title:T("Three terminals, one gateway.","Três terminais, uma porta de entrada."),
       intro:T("From deep-water container handling to bulk grain, each terminal is equipped for the cargo the corridor moves.","Do manuseamento de contentores em águas profundas aos cereais a granel, cada terminal está equipado para a carga que o corredor movimenta."),
       pages:["container-terminal","general-cargo","grain-terminal"]},
-    newsEyebrow:T("Highlights","Destaques"),newsCount:"3",
+    newsEyebrow:T("Highlights","Destaques"),newsCount:"5",
     newsTitle:T("Latest news","Últimas notícias")
   },
   distances:{
@@ -1551,7 +1552,7 @@ function render(){
   renderHeader();renderFooter();
   const v=$("#view");let parts=route.split("~"),slug=parts[0]||"home";
   if(slug==="home"){setHero("home");const h=data.home,fac=(h.facilities.pages||[]).filter(s=>data.pages[s]);
-    const allN=sortNews((data.news||[]).filter(n=>L(n.title))),news=allN.filter(n=>n.featured).concat(allN.filter(n=>!n.featured)).slice(0,Math.max(1,Math.min(6,+h.newsCount||3)));
+    const allN=sortNews((data.news||[]).filter(n=>L(n.title))),news=allN.filter(n=>n.featured).concat(allN.filter(n=>!n.featured)).slice(0,Math.max(1,Math.min(5,+h.newsCount||5)));
     v.innerHTML=statsHTML()
      +(h.showFacilities&&fac.length?`<section class="block" id="facilities"><div class="wrap"><div class="sec-head"><div><p class="eyebrow">${esc(L(h.facilities.eyebrow))}</p>${TT(h.facilities.title,"h2")}</div><p>${esc(L(h.facilities.intro))}</p></div><div class="terms">${fac.map(facilityCard).join("")}</div></div></section>`:"")
      +(h.showDistances?geoHTML(h.showLocation!==false):(h.showLocation?locationHTML():""))
