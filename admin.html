@@ -740,6 +740,7 @@ const T=(en,pt)=>({en:en,pt:pt==null?en:pt});
 const DEFAULTS={
   _mig:["berth-link","weights-medium","news5"],
   layout:{side:8},
+  weather:{show:true,label:T("Beira","Beira"),lat:-19.83,lon:34.84},
   media:{format:"webp",quality:80,maxWidth:1920,lazy:true},
   ui:{en:{},pt:{}},
   header:{top:92,bottom:70,color:"deep",blur:true},
@@ -963,6 +964,7 @@ let published=null,draft=null,dirty=false,section="overview",editPage=null,remot
 
 /* ---------- interface do gestor em inglês ---------- */
 const CMS_EN={
+"Temperatura na barra superior":"Temperature in the top bar","Mostra a temperatura actual e o estado do tempo junto às redes sociais. Actualiza a cada 30 minutos (dados Open-Meteo).":"Shows the current temperature and weather next to the social icons. Updates every 30 minutes (Open-Meteo data).","Mostrar temperatura":"Show temperature","Cidade":"City",
 "Cartões iguais aos das páginas, 4 por linha (4 notícias enchem uma linha).":"Same cards as the pages, 4 per row (4 articles fill one row).",
 "Número de notícias (até 5)":"Number of articles (up to 5)","A primeira aparece em grande; as restantes ficam ao lado, umas por baixo das outras.":"The first one is shown large; the others are stacked beside it.",
 "Aparecem em linhas de 4, por baixo do texto, com imagem, breve introdução e “Saiba mais”. Sem imagem, o cartão mostra o número ou o ícone.":"Shown in rows of 4 below the text, with image, short introduction and “Learn more”. Without an image the card shows the number or icon.",
@@ -1392,6 +1394,7 @@ case"menus":return head("Navegação","Menus e redes sociais","Menu principal co
    <div class="card"><div class="card-h"><h3>Barra superior</h3></div>${d.topnav.map((m,i)=>linkEditor("topnav",i,d.topnav.length)).join("")}<button class="btn add" data-add="topnav" data-tpl="link">+ Link</button> <button class="btn add" data-add="topnav" data-tpl="urlLink">+ Link com URL</button></div>
    ${d.footerMenus.map((fm,i)=>`<div class="card"><div class="card-h"><h3>Rodapé: ${esc(PT(fm.title)||"Novo menu")}</h3>${tools("footerMenus",i,d.footerMenus.length)}</div>${fT(`footerMenus.${i}.title`,"Título da coluna")}${fm.links.map((l,k)=>linkEditor(`footerMenus.${i}.links`,k,fm.links.length)).join("")}<button class="btn add" data-add="footerMenus.${i}.links" data-tpl="link">+ Link</button> <button class="btn add" data-add="footerMenus.${i}.links" data-tpl="urlLink">+ Link com URL</button></div>`).join("")}
    <button class="btn add" data-add="footerMenus" data-tpl="footMenu">+ Coluna no rodapé</button>
+   <div class="card"><div class="card-h"><h3>Temperatura na barra superior</h3></div><span class="hint">Mostra a temperatura actual e o estado do tempo junto às redes sociais. Actualiza a cada 30 minutos (dados Open-Meteo).</span>${fSw("weather.show","Mostrar temperatura")}<div class="g2">${fT("weather.label","Cidade")}<div class="g2">${fText("weather.lat","Latitude")}${fText("weather.lon","Longitude")}</div></div></div>
    <div class="card"><div class="card-h"><h3>Redes sociais</h3></div><span class="hint">Os ícones aparecem na barra superior, no rodapé e na página de contactos.</span>${d.social.map((s,i)=>{if(!s.net)s.net=socialNet(s);return`<div class="lnk"><div class="row"><div class="soc-row"><span class="soc-pv">${socialSVG(s.net,22)}</span>${fSel(`social.${i}.net`,"Rede",Object.entries(SOCIAL).map(([k,v])=>[k,v.name]))}${fText(`social.${i}.url`,"Endereço","","https://")}</div>${tools("social",i,d.social.length)}</div></div>`}).join("")}<button class="btn add" data-add="social" data-tpl="social">+ Rede social</button></div>`;
 case"home":{const h=d.home;return head("Página inicial","Página inicial","Topo com cena 3D, números em destaque e blocos da página inicial.")
   +`<div class="card"><div class="card-h"><h3>Texto do topo (hero)</h3></div>${fT("home.hero.eyebrow","Etiqueta superior")}${heroTitleEditor()}${fT("home.hero.highlight","Destaque a laranja (alternativa)",{h:"Excerto exacto do título, em cada língua. Só funciona se não escolher cores no editor acima."})}${fT("home.hero.lead","Texto de apoio",{area:true})}${fT("home.hero.cta1","Botão principal",{h:"Desce até aos terminais."})}${fT("home.hero.cta2","Botão secundário",{h:"Desce até às distâncias."})}

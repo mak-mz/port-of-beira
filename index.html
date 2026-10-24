@@ -61,6 +61,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .util nav{display:flex;gap:18px}
 .util a{text-decoration:none;opacity:.8}.util a:hover,.util a[aria-current="page"]{opacity:1;color:var(--orange)}
 .util-r{margin-left:auto;display:flex;align-items:center;gap:16px}
+.wx{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;opacity:.9;font-variant-numeric:tabular-nums}.wx b{font-weight:500;color:var(--orange)}.wx svg{flex:0 0 auto}.wx[hidden]{display:none}
 .soc{display:flex;gap:12px}
 .lang{display:inline-flex;border-radius:999px;box-shadow:inset 0 0 0 1px currentColor;padding:2px;gap:2px;opacity:.9}
 .lang button{border:0;background:none;padding:2px 9px;border-radius:999px;font-family:var(--label-f,var(--f-data));font-weight:500;font-size:.72rem;letter-spacing:var(--ls-label)}
@@ -696,7 +697,7 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 </head>
 <body>
 <header class="hdr" id="hdr">
-  <div class="util"><div class="wrap util-in"><nav id="topnav" aria-label="Quick links"></nav><div class="util-r"><div class="soc" id="socTop"></div><div class="lang" id="langTop" role="group" aria-label="Language"></div></div></div></div>
+  <div class="util"><div class="wrap util-in"><nav id="topnav" aria-label="Quick links"></nav><div class="util-r"><span class="wx" id="wxTop" hidden></span><div class="soc" id="socTop"></div><div class="lang" id="langTop" role="group" aria-label="Language"></div></div></div></div>
   <div class="wrap bar">
     <a class="brand" href="#home" id="brand"></a>
     <nav class="nav" id="nav" aria-label="Main"></nav>
@@ -1101,6 +1102,7 @@ const T=(en,pt)=>({en:en,pt:pt==null?en:pt});
 const DEFAULTS={
   _mig:["berth-link","weights-medium","news5"],
   layout:{side:8},
+  weather:{show:true,label:T("Beira","Beira"),lat:-19.83,lon:34.84},
   media:{format:"webp",quality:80,maxWidth:1920,lazy:true},
   ui:{en:{},pt:{}},
   header:{top:92,bottom:70,color:"deep",blur:true},
@@ -1344,16 +1346,29 @@ const emptyHTML=k=>`<div class="empty"><b>${esc(U(k))}</b>${esc(U("checkBack"))}
 function brandHTML(){const b=data.brand,c=b.logo||LOGO_COLOR,w=b.logoWhite||LOGO_WHITE;
   return`<img class="lg-white" src="${esc(w)}" alt="${esc(b.name)}"><img class="lg-color" src="${esc(c)}" alt="${esc(b.name)}">`}
 function isCur(it){if(it.page&&(it.page===route||route.startsWith(it.page+"~")))return true;return(it.children||[]).some(isCur)}
+/* temperatura da Beira (Open-Meteo, sem chave); guarda 30 min no navegador */
+const WX_ICO={sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/>',partly:'<path d="M8 3v1M3.3 5.3l.7.7M2 10h1"/><path d="M5.5 10.5A3.5 3.5 0 0 1 12 8"/><path d="M8 20h9a4 4 0 1 0-1-7.9A5.5 5.5 0 0 0 6 14a3 3 0 0 0 2 6Z"/>',cloud:'<path d="M7 19h10a4.5 4.5 0 1 0-1.2-8.8A6 6 0 0 0 4.5 12.5 3.5 3.5 0 0 0 7 19Z"/>',fog:'<path d="M4 10h16M3 14h18M6 18h12"/>',rain:'<path d="M7 15h10a4.5 4.5 0 1 0-1.2-8.8A6 6 0 0 0 4.5 8.5 3.5 3.5 0 0 0 7 15Z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>',storm:'<path d="M7 14h10a4.5 4.5 0 1 0-1.2-8.8A6 6 0 0 0 4.5 7.5 3.5 3.5 0 0 0 7 14Z"/><path d="m12 15-2 4h3l-2 4"/>'};
+function wxKind(c,day){c=+c;if(c===0||c===1)return day?"sun":"moon";if(c===2)return"partly";if(c===3)return"cloud";if(c===45||c===48)return"fog";if(c>=95)return"storm";if((c>=51&&c<=67)||(c>=80&&c<=82))return"rain";return"cloud"}
+let wxData=null,wxT=null;
+async function loadWX(force){const W=data.weather||{};if(W.show===false){wxData=null;paintWX();return}
+  const lat=+W.lat||-19.83,lon=+W.lon||34.84,key="cdm-wx-"+lat+","+lon;
+  try{const c=JSON.parse(localStorage.getItem(key)||"null");if(!force&&c&&Date.now()-c.t<30*60e3){wxData=c.d;paintWX();return}}catch(e){}
+  try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,is_day&timezone=auto`);if(!r.ok)throw 0;const j=await r.json(),cur=j.current||{};
+    wxData={t:Math.round(cur.temperature_2m),c:cur.weather_code,d:cur.is_day!==0};try{localStorage.setItem(key,JSON.stringify({t:Date.now(),d:wxData}))}catch(e){}}catch(e){}
+  paintWX();clearTimeout(wxT);wxT=setTimeout(()=>loadWX(true),30*60e3)}
+function wxHTML(){if(!wxData||!isFinite(wxData.t))return"";const W=data.weather||{},k=wxKind(wxData.c,wxData.d);
+  return`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${WX_ICO[k]}</svg><span>${esc(L(W.label)||"Beira")}</span><b>${wxData.t}°C</b>`}
+function paintWX(){const h=wxHTML();document.querySelectorAll("[data-wx]").forEach(el=>{el.innerHTML=h;el.hidden=!h});const t=$("#wxTop");if(t){t.innerHTML=h;t.hidden=!h;t.title=h?`${L((data.weather||{}).label)||"Beira"} · ${wxData.t}°C`:""}}
 function renderHeader(){
   $("#brand").innerHTML=brandHTML();$("#brand").setAttribute("aria-label",data.brand.name+" — "+U("home"));
   $("#topnav").innerHTML=(data.topnav||[]).map(it=>`<a ${linkAttrs(it)}>${esc(L(it.label))}</a>`).join("");
-  $("#socTop").innerHTML=socHTML();$("#langTop").innerHTML=langHTML();
+  $("#socTop").innerHTML=socHTML();setTimeout(()=>{paintWX();if(!wxData&&!loadWX.started){loadWX.started=1;loadWX()}},0);$("#langTop").innerHTML=langHTML();
   const half=Math.ceil((data.menu||[]).length/2);
   const items=(list,lv,rt)=>list.map((it,i)=>{const kids=(it.children||[]).filter(Boolean);
     return kids.length?`<li class="has-sub${rt||(lv===0&&i>=half)?" rt":""}"><button class="${lv?"sub-b":"top-a"}${isCur(it)?" cur":""}" aria-expanded="false" data-sub>${esc(L(it.label))}${chev}</button><ul class="sub lv${lv+1}">${items(kids,lv+1,rt||(lv===0&&i>=half))}</ul></li>`
       :`<li><a ${lv?"":'class="top-a" '}${linkAttrs(it)}>${esc(L(it.label))}${lv&&it.url&&/^https?:/i.test(it.url)&&!it.url.includes(location.host)?'<span class="ext">↗</span>':""}</a></li>`}).join("");
   $("#nav").innerHTML=`<ul>${items(data.menu||[],0,false)}
-    <li class="m-only"><div class="m-row">${(data.topnav||[]).map(it=>`<a ${linkAttrs(it)}>${esc(L(it.label))}</a>`).join("")}</div><div class="m-row">${socHTML()}<span class="lang" role="group" aria-label="Language">${langHTML()}</span></div></li></ul>`;
+    <li class="m-only"><div class="m-row">${(data.topnav||[]).map(it=>`<a ${linkAttrs(it)}>${esc(L(it.label))}</a>`).join("")}</div><div class="m-row"><span class="wx" data-wx hidden></span>${socHTML()}<span class="lang" role="group" aria-label="Language">${langHTML()}</span></div></li></ul>`;
 }
 function renderFooter(){
   const f=data.footer,c=data.contacts;
