@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.11.0** (24 Out 2026).
+**Versão actual: 2.12.0** (24 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.11.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.12.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,11 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.12.0 · 24 Out 2026
+- **Menus com submenu e página própria:** um item com submenu pode também abrir a sua página geral (por exemplo, Responsabilidade Social). **[S, C]**
+  - **No site:** clicar no texto abre a página e a seta abre o submenu. No computador, passar o rato continua a mostrar o submenu. No telemóvel, o texto abre a página e a seta (área de toque maior) abre o submenu.
+  - **No CMS:** no campo "Destino" de um item com submenu, escolha a página geral, ou "— Sem página própria (só abre o submenu) —" para manter o comportamento anterior.
 
 ### 2.11.0 · 24 Out 2026 · Segurança (auditoria AppSec, OWASP Top 10)
 

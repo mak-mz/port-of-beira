@@ -720,6 +720,24 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 @media (max-width:520px){.wx-m span{display:none}.m-tools{gap:8px}.brand{height:40px}.brand img{max-width:40vw}}
 @media (max-width:400px){.brand img{max-width:36vw}.m-tools .lang button{padding:3px 7px}}
 @media (max-width:350px){.wx-m svg{display:none}}
+/* item de menu com página própria + submenu: o texto abre a página, a seta abre o submenu */
+.nav li.split{display:flex;align-items:center}
+.nav li.split>.top-a{padding-right:4px}
+.nav .sub-t{display:inline-grid;place-items:center;width:26px;height:30px;margin-left:-2px;border:0;background:none;color:inherit;border-radius:999px;cursor:pointer;padding:0}
+.nav .sub-t:hover,.nav li.split:focus-within>.sub-t{background:color-mix(in srgb,currentColor 12%,transparent)}
+.nav>ul>li.split:hover>.sub-t .chev,.nav>ul>li.split.open>.sub-t .chev{transform:rotate(180deg)}
+.sub li.split>.sub-a{flex:1;display:flex;padding:10px 12px;border-radius:9px;text-decoration:none;font-family:var(--nav-f,inherit);font-weight:var(--nav-w,500);font-size:calc(.93rem * var(--nav-k,1))}
+.sub li.split>.sub-a:hover{background:var(--surface-2)}.sub li.split>.sub-a.cur{color:var(--accent-ink)}
+.sub li.split>.sub-t{width:30px;height:34px;border-radius:9px}
+@media (min-width:1181px){.sub li.split>.sub-t .chev{transform:rotate(-90deg)}.has-sub.rt .sub li.split>.sub-t .chev{transform:rotate(90deg)}}
+@media (max-width:1180px){
+  .nav li.split{flex-wrap:wrap;border-bottom:1px solid var(--line)}
+  .nav li.split>.top-a{flex:1;width:auto;border-bottom:0}
+  .nav li.split>.sub-t{width:48px;height:48px;border-radius:10px}
+  .nav li.split>.sub{flex-basis:100%}
+  .sub li.split{border-bottom:0}.sub li.split>.sub-a{padding:12px 8px;font-size:calc(1rem * var(--nav-k,1))}
+  .nav li.split.open>.sub-t .chev{transform:rotate(180deg)}
+}
 </style>
 
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -754,9 +772,9 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.11.0"></script>
+<script src="assets/store.js?v=2.12.0"></script>
 <script src="vendor/three-r128.min.js"></script>
-<script src="assets/site.js?v=2.11.0"></script>
+<script src="assets/site.js?v=2.12.0"></script>
 
 </body>
 </html>
