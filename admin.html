@@ -16,6 +16,7 @@
 .lnkbtn{background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}.gate-links{text-align:center;font-size:.88rem;opacity:.9;margin:4px 0 0}.sbl{display:flex;flex-direction:column;gap:6px;margin:6px 0 12px}.sbrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;border-radius:10px;background:var(--surface-2)}
 .dsec-ed{border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:12px;padding:14px;margin:12px 0;display:flex;flex-direction:column;gap:10px;background:var(--surface)}.dsec-ed>.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.dsec-n{font-size:1rem}
 .kids .kids{margin-left:14px;border-left:2px dashed var(--line);padding-left:12px}.kids-h{display:block;font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 6px}
+.pg-ed{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}.pg-ed .lnk>.row{display:flex;justify-content:space-between;align-items:center}
 </style>
 <style id="font-uploads"></style>
 <style>
@@ -964,6 +965,7 @@ let published=null,draft=null,dirty=false,section="overview",editPage=null,remot
 
 /* ---------- interface do gestor em inglês ---------- */
 const CMS_EN={
+"Grelha de fotografias":"Photo grid","Três fotografias por baixo do texto da página. Com mais de 3 (até 9), as fotografias vão rodando suavemente. Clicar abre em ecrã inteiro.":"Three photos below the page text. With more than 3 (up to 9) the photos rotate smoothly. Clicking opens them full screen.","Disposição":"Layout","Mosaico: 1 grande + 2 pequenas":"Mosaic: 1 large + 2 small","Três iguais lado a lado":"Three equal side by side","+ Fotografia":"+ Photo","Legenda":"Caption","Máximo de 9 fotografias.":"Maximum of 9 photos.",
 "Temperatura na barra superior":"Temperature in the top bar","Mostra a temperatura actual e o estado do tempo junto às redes sociais. Actualiza a cada 30 minutos (dados Open-Meteo).":"Shows the current temperature and weather next to the social icons. Updates every 30 minutes (Open-Meteo data).","Mostrar temperatura":"Show temperature","Cidade":"City",
 "Cartões iguais aos das páginas, 4 por linha (4 notícias enchem uma linha).":"Same cards as the pages, 4 per row (4 articles fill one row).",
 "Número de notícias (até 5)":"Number of articles (up to 5)","A primeira aparece em grande; as restantes ficam ao lado, umas por baixo das outras.":"The first one is shown large; the others are stacked beside it.",
@@ -1204,6 +1206,7 @@ const TPL={
   spec:()=>({v:"",u:"",l:T("","")}),
   item:()=>({title:T("",""),text:T("","")}),
   doc:()=>({title:T("",""),url:""}),
+  pgPhoto:()=>({image:"",caption:T("","")}),
   docSec:()=>({id:uid("sec"),title:T("",""),intro:T("",""),docs:[]}),
   sdoc:()=>({title:T("",""),ref:"",date:new Date().toISOString().slice(0,10),url:""}),
   extra:()=>({label:T("",""),value:""}),
@@ -1466,6 +1469,11 @@ function docSecEditor(b,p){const S=p.docSections||[];
      ${D.map((d,k)=>{const dp=`${sp}.docs.${k}`;return`<div class="lnk"><div class="row"><div>${fT(dp+".title","Título do documento")}</div>${tools(sp+".docs",k,D.length)}</div><div class="g2">${fDate(dp+".date","Data de publicação","Define a ordem no site.")}${fText(dp+".ref","Referência (opcional)","Aparece no canto do cartão.","Ex.: Circular 05/2026")}</div>${fFile(dp+".url","Ficheiro PDF")}</div>`}).join("")}
      <button class="btn add" data-add="${sp}.docs" data-tpl="sdoc" data-front>+ Documento nesta secção</button></div>`}).join("")}
    <button class="btn pri add" data-add="${b}.docSections" data-tpl="docSec">+ Nova secção</button></div>`}
+function photoGridEditor(b,p){const P=p.photos||[];
+  return`<div class="card"><div class="card-h"><h3>Grelha de fotografias</h3></div><span class="hint">Três fotografias por baixo do texto da página. Com mais de 3 (até 9), as fotografias vão rodando suavemente. Clicar abre em ecrã inteiro.</span>
+   ${fSel(b+".photosLayout","Disposição",[["mosaic","Mosaico: 1 grande + 2 pequenas"],["row","Três iguais lado a lado"]])}
+   <div class="pg-ed">${P.map((x,i)=>`<div class="lnk"><div class="row"><b>Fotografia ${i+1}</b>${tools(b+".photos",i,P.length)}</div>${fImg(`${b}.photos.${i}.image`,"Imagem","",{max:1600,cover:true})}${fT(`${b}.photos.${i}.caption`,"Legenda")}</div>`).join("")}</div>
+   ${P.length<9?`<button class="btn add" data-add="${b}.photos" data-tpl="pgPhoto">+ Fotografia</button>`:`<span class="hint">Máximo de 9 fotografias.</span>`}</div>`}
 function cardItemEditor(b,p,it,i){const ip=`${b}.items.${i}`,isUrl="url"in it&&!it.page,opts=[["","— Sem link —"],["home","Início"]].concat(Object.keys(draft.pages).map(k=>[k,PT(draft.pages[k].title)])).concat([["__url","Endereço (URL)…"]]);
   return`<div class="lnk"><div class="row"><div>${p.itemsStyle==="icon"?fIcon(`${ip}.icon`):""}${fT(`${ip}.title`,"Título")}</div>${tools(b+".items",i,p.items.length)}</div>${fT(`${ip}.text`,"Breve introdução",{area:true})}
    ${fImg(`${ip}.image`,"Imagem do cartão","Proporção 16:11, por exemplo 1200×825 px.",{max:1200,cover:true})}
@@ -1491,7 +1499,7 @@ function pageEditor(slug){const p=draft.pages[slug],b=`pages.${slug}`,isSys=slug
    +(rich?`<div class="card"><div class="card-h"><h3>Texto</h3></div>${fRich(b+".body","Texto da página")}</div>
    <div class="card"><div class="card-h"><h3>Números-chave</h3></div><span class="hint">Aparecem por baixo do cabeçalho. O primeiro aparece também no cartão da página inicial.</span>${(p.specs||[]).map((s,i)=>`<div class="lnk"><div class="row"><div class="g3i">${fIcon(`${b}.specs.${i}.icon`)}${fText(`${b}.specs.${i}.v`,"Valor")}${fText(`${b}.specs.${i}.u`,"Unidade")}</div>${tools(b+".specs",i,p.specs.length)}</div>${fT(`${b}.specs.${i}.l`,"Descrição")}</div>`).join("")}<button class="btn add" data-add="${b}.specs" data-tpl="spec">+ Número</button></div>
    <div class="card"><div class="card-h"><h3>Cartões</h3></div><span class="hint">Aparecem em linhas de 4, por baixo do texto, com imagem, breve introdução e “Saiba mais”. Sem imagem, o cartão mostra o número ou o ícone.</span>${fSel(b+".itemsStyle","Marcador dos cartões",[["number","Números (1, 2, 3…)"],["icon","Ícones"]],"Marcador mostrado quando o cartão não tem imagem.")}${(p.items||[]).map((s,i)=>cardItemEditor(b,p,s,i)).join("")}<button class="btn add" data-add="${b}.items" data-tpl="item">+ Cartão</button></div>
-   <div class="card"><div class="card-h"><h3>Documentos</h3></div>${(p.docs||[]).map((x,k)=>docEditor(b+".docs",k,p.docs.length)).join("")}<button class="btn add" data-add="${b}.docs" data-tpl="doc">+ Documento</button></div>`+docSecEditor(b,p):"")
+   <div class="card"><div class="card-h"><h3>Documentos</h3></div>${(p.docs||[]).map((x,k)=>docEditor(b+".docs",k,p.docs.length)).join("")}<button class="btn add" data-add="${b}.docs" data-tpl="doc">+ Documento</button></div>`+photoGridEditor(b,p)+docSecEditor(b,p):"")
    +(isSys?"":`<div class="card"><div class="card-h"><h3>Apagar página</h3></div>${confirmKey==="page"?`<div class="banner"><span>Apagar esta página? Os links do menu para ela deixam de funcionar.</span><button class="btn del" data-delpage>Sim, apagar</button><button class="btn" data-nocf>Cancelar</button></div>`:`<button class="btn del add" data-cf="page">Apagar página…</button>`}</div>`)}
 
 /* ---------- render ---------- */
