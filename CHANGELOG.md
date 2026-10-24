@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.12.0** (24 Out 2026).
+**Versão actual: 2.13.0** (24 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.12.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.13.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,11 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.13.0 · 24 Out 2026
+- **Notícias e projectos:** cada artigo passa a ter a sua **grelha de fotografias**. **[S, C]**
+  - No site, a grelha aparece por baixo do texto do artigo, com mosaico ou três iguais, rotação com mais de 3 fotografias (até 9) e abertura em ecrã inteiro.
+- **CMS:** ao editar uma notícia ou um projecto, o cartão já não fecha quando se acrescenta uma fotografia, um documento ou outro elemento. **[C]**
 
 ### 2.12.0 · 24 Out 2026
 - **Menus com submenu e página própria:** um item com submenu pode também abrir a sua página geral (por exemplo, Responsabilidade Social). **[S, C]**
