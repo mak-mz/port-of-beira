@@ -676,6 +676,20 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:95;background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-weight:500;font-size:.9rem;box-shadow:var(--shadow)}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+/* ---------- padrão único de cartões: 4 por linha, imagem 16:11, título, breve introdução, "Saiba mais" ---------- */
+.pcards,.terms,.grid3,.pubs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;perspective:1200px}
+@media (max-width:1100px){.pcards,.terms,.grid3,.pubs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:820px){.pcards,.terms,.grid3,.pubs{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+@media (max-width:520px){.pcards,.terms,.grid3{grid-template-columns:1fr}}
+.tcard .tbody,.ncard .tx{padding:18px 18px 20px;gap:8px}
+.tcard .tbody h3,.ncard h3{font-size:calc(1.15rem * var(--sub-k,1));line-height:1.25}
+.tcard .tbody p,.ncard p{font-size:.92em;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.ncard{border-radius:18px;box-shadow:var(--shadow)}
+.ncard .im{aspect-ratio:16/11}
+.ncard .im .badge{position:absolute;left:16px;top:16px;background:rgba(255,144,18,.95);color:#1F140F;z-index:2}
+.ncard .topen{margin-top:auto;padding-top:8px}
+.ncard:hover .topen svg{transform:translateX(4px)}
+.tph .big{font-size:calc(clamp(1.8rem,2.6vw,2.6rem) * var(--numbers-k,1))}
 </style>
 
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -1465,7 +1479,7 @@ function mapSVG(){const d=data.distances,l=data.location,ok=v=>v!==""&&v!=null&&
 function facilityCard(slug){const p=data.pages[slug];if(!p)return"";const s=(p.specs||[])[0];
   return`<a class="tcard" href="#${esc(slug)}"><span class="glare"></span><div class="tmedia">${L(p.badge)?`<span class="badge">${esc(L(p.badge))}</span>`:""}${p.image?`<img src="${esc(p.image)}" alt="" ${(data.media||{}).lazy!==false?'loading="lazy"':""} decoding="async">`:`<div class="tph"><div class="stack">${"<i></i>".repeat(9)}</div>${s?`<div class="big">${esc(s.v)}${s.u?`<small>${esc(s.u)}</small>`:""}</div><div class="cap">${esc(L(s.l))}</div>`:""}</div>`}</div>
    <div class="tbody">${L(p.eyebrow)?`<span class="badge">${esc(L(p.eyebrow))}</span>`:""}<h3>${esc(L(p.title))}</h3><p>${esc(L(p.intro))}</p><span class="topen">${esc(U("viewTerminal"))} ${arrow}</span></div></a>`}
-function newsCard(n,prefix){return`<a class="ncard" href="#${prefix}~${esc(n.id)}"><div class="im">${n.image?`<img src="${esc(n.image)}" alt="" ${(data.media||{}).lazy!==false?'loading="lazy"':""} decoding="async">`:`<span class="mk">CdM</span>`}</div><div class="tx">${n.date?`<time>${fdate(n.date)}</time>`:""}${n.status&&L(n.status)?`<span class="badge">${esc(L(n.status))}</span>`:""}${TT(n.title,"h3")}${L(n.summary)?`<p>${esc(L(n.summary))}</p>`:""}</div></a>`}
+function newsCard(n,prefix){return`<a class="ncard" href="#${prefix}~${esc(n.id)}"><div class="im">${n.image?`<img src="${esc(n.image)}" alt="" ${(data.media||{}).lazy!==false?'loading="lazy"':""} decoding="async">`:`<span class="mk">CdM</span>`}${prefix==="news"&&n.featured&&route==="home"?`<span class="badge">${esc(U("featured"))}</span>`:""}</div><div class="tx">${n.date?`<time>${fdate(n.date)}</time>`:""}${n.status&&L(n.status)?`<span class="badge">${esc(L(n.status))}</span>`:""}${TT(n.title,"h3")}${L(n.summary)?`<p>${esc(L(n.summary))}</p>`:""}<span class="topen">${esc(U("readMore"))} ${arrow}</span></div></a>`}
 const sortNews=a=>a.slice().sort((x,y)=>String(y.date||"").localeCompare(String(x.date||"")));
 
 /* ---------- pages ---------- */
@@ -1556,7 +1570,7 @@ function render(){
     v.innerHTML=statsHTML()
      +(h.showFacilities&&fac.length?`<section class="block" id="facilities"><div class="wrap"><div class="sec-head"><div><p class="eyebrow">${esc(L(h.facilities.eyebrow))}</p>${TT(h.facilities.title,"h2")}</div><p>${esc(L(h.facilities.intro))}</p></div><div class="terms">${fac.map(facilityCard).join("")}</div></div></section>`:"")
      +(h.showDistances?geoHTML(h.showLocation!==false):(h.showLocation?locationHTML():""))
-     +(h.showNews&&news.length?`<section class="block hnews" id="highlights"><div class="wrap"><div class="sec-head"><div>${L(h.newsEyebrow)?`<p class="eyebrow">${esc(L(h.newsEyebrow))}</p>`:""}${TT(h.newsTitle,"h2")}</div><p><a class="btn btn-line" href="#news">${esc(U("allNews"))} ${arrow}</a></p></div><div class="hn-grid n${news.length}">${news.map((n,i)=>`<a class="hn${i?"":" lead"}" href="#news~${esc(n.id)}"><div class="im">${n.image?`<img src="${esc(n.image)}" alt="" ${(data.media||{}).lazy!==false?'loading="lazy"':""} decoding="async">`:`<span class="mk">CdM</span>`}${n.featured?`<span class="badge">${esc(U("featured"))}</span>`:""}</div><div class="tx">${n.date?`<time>${fdate(n.date)}</time>`:""}${TT(n.title,"h3")}${i===0&&L(n.summary)?`<p>${esc(L(n.summary))}</p>`:""}<span class="more">${esc(U("readMore"))} ${arrow}</span></div></a>`).join("")}</div></div></section>`:"");
+     +(h.showNews&&news.length?`<section class="block hnews" id="highlights"><div class="wrap"><div class="sec-head"><div>${L(h.newsEyebrow)?`<p class="eyebrow">${esc(L(h.newsEyebrow))}</p>`:""}${TT(h.newsTitle,"h2")}</div><p><a class="btn btn-line" href="#news">${esc(U("allNews"))} ${arrow}</a></p></div><div class="grid3">${news.map(n=>newsCard(n,"news")).join("")}</div></div></section>`:"");
   }else{
     const p=data.pages[slug];
     if(!p){setHero("page",{title:U("notFound"),intro:U("notFoundTxt")});v.innerHTML=`<section class="block"><div class="wrap"><a class="btn btn-navy" href="#home">${esc(U("goHome"))} ${arrow}</a></div></section>`}
