@@ -1,0 +1,244 @@
+# Histórico de versões · Port of Beira (site + CMS)
+
+Cornelder de Moçambique · site institucional do Porto da Beira.
+
+**Versão actual: 2.11.0** (24 Out 2026).
+
+## Onde ver a versão
+
+- **No CMS:** no rodapé da barra lateral ("Versão 2.11.0").
+- **No site:** no código da página, na etiqueta `<meta name="generator">`.
+
+## Numeração
+
+A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
+
+- **MAIOR:** mudança de arquitectura. A versão 1 funcionava com conteúdo guardado no navegador ou no artefacto do Claude. A versão 2 usa Supabase e Vercel.
+- **MENOR:** funcionalidade nova.
+- **CORRECÇÃO:** acerto ou correcção, sem funcionalidade nova.
+
+## Ficheiros afectados
+
+| Sigla | Ficheiro |
+|---|---|
+| S | `index.html` (site) |
+| C | `admin.html` (CMS) |
+| B | Supabase (SQL) |
+| V | `vercel.json` |
+| M | Ficheiros de média |
+
+---
+
+## Versão 2: Supabase + Vercel
+
+### 2.11.0 · 24 Out 2026 · Segurança (auditoria AppSec, OWASP Top 10)
+
+- **Bibliotecas próprias:** as bibliotecas passam a ser servidas pelo próprio site (`vendor/`). A dependência do CDN cdnjs deixa de existir (three.js r128 e PDF.js 3.11.174). **[S, repo]**
+- **Código externo:** o código JavaScript passa para ficheiros externos (`assets/store.js`, `assets/site.js`, `assets/admin.js`). Isto permite uma CSP sem `'unsafe-inline'` nos scripts. **[S, C, repo]**
+- **Cabeçalhos de segurança:** novos cabeçalhos no `vercel.json`. **[V]**
+  - Content-Security-Policy, Permissions-Policy e Cross-Origin-Opener-Policy.
+  - Cache longa para `vendor/`.
+- **Links e endereços:** os endereços editáveis passam a ser validados. `javascript:`, `vbscript:` e `data:` em links passam a `#`. Os endereços em `url()` de CSS também são escapados. **[S]**
+- **Textos do site:** escapados em todas as mensagens dos formulários. **[S]**
+- **Links externos:** passam a ter `rel="noopener noreferrer"`. **[S, editor]**
+- **Leitor de PDF no modo local:** o iframe de recurso passa a ter `sandbox` e `referrerpolicy="no-referrer"`. **[S]**
+- **Formulários:**
+  - campo-isco anti-robô;
+  - tempo mínimo de preenchimento;
+  - `maxlength` em todos os campos;
+  - limites de tamanho. **[S]**
+- **Novo: `supabase/03-seguranca.sql`** **[B]**
+  - Gatilho anti-spam: 5 mensagens por IP em 10 minutos e 200 por hora no total.
+  - Rejeição do campo-isco e validação do tipo e do tamanho dos campos.
+  - O IP é guardado apenas como hash diário com sal.
+- **CMS:** **[C]**
+  - removido o handler inline `onclick`;
+  - removida a palavra-passe por defeito ("cornelder") do modo local; no primeiro acesso é obrigatório definir uma;
+  - hash com sal;
+  - mínimo de 8 caracteres.
+
+### 2.10.0 · 24 Out 2026
+- **Novo:** o número da versão aparece no CMS (rodapé da barra lateral) e no código do site. **[C, S]**
+- **Novo:** este histórico de versões (`CHANGELOG.md`). **[repo]**
+- **Novo:** o manual de utilização do CMS (`Manual-CMS-Port-of-Beira.docx`). **[documentação]**
+
+### 2.9.0 · 24 Out 2026
+- **Novo:** botão **"Sequência aleatória"** na lista de vídeos de cada página. Com o botão ligado, cada visita começa num vídeo diferente e baralha a ordem. **[C]**
+- **Novo:** em Topo das páginas → Ordem dos vídeos, os botões "Aleatória em todas as páginas" e "Pela ordem em todas". **[C]**
+
+### 2.8.1 · 24 Out 2026
+- **Telemóvel:** os botões EN/PT e a temperatura ficam fixos na barra de topo, ao lado do menu. **[S]**
+- **Telemóvel:** o logótipo fica ligeiramente mais pequeno em ecrãs estreitos, para nada se sobrepor. **[S]**
+- **Corrigido:** a temperatura não aparecia no telemóvel. Se o serviço de meteorologia falhar, o site tenta de novo ao fim de 1 minuto. **[S]**
+
+### 2.8.0 · 24 Out 2026
+- **Novo:** grelha dinâmica de 3 fotografias por baixo do texto das páginas de conteúdo. **[S, C]**
+  - Disposição em mosaico (1 grande + 2) ou em três iguais.
+  - Zoom ao passar o rato, legenda e abertura em ecrã inteiro.
+  - Com mais de 3 fotografias (até 9), a grelha roda suavemente.
+- **Novo:** cartão **Grelha de fotografias** em todas as páginas de conteúdo do CMS. **[C]**
+
+### 2.7.0 · 24 Out 2026
+- **Novo:** temperatura actual da Beira na barra superior, com ícone do estado do tempo. **[S]**
+  - Os dados vêm do Open-Meteo e actualizam a cada 30 minutos.
+- **Novo:** em Menus e redes → **Temperatura na barra superior**: ligar ou desligar, cidade, latitude e longitude. **[C]**
+
+### 2.6.0 · 24 Out 2026
+- **Padrão único de cartões** (4 por linha, imagem 16:11, título, breve introdução, "Saiba mais"). Aplica-se a: **[S]**
+  - notícias em destaque;
+  - terminais da página inicial;
+  - cartões das páginas;
+  - listas de Notícias e Projectos;
+  - Publicações.
+- **Responsivo:** 3 por linha em ecrãs médios, 2 em tablet e 1 no telemóvel. **[S]**
+
+### 2.5.0 · 24 Out 2026
+- **Notícias em destaque:** até 5 notícias na página inicial (antes eram 3). **[S, C]**
+- **Conteúdo já publicado:** passa sozinho para 5 na primeira entrada no CMS. **[C]**
+
+### 2.4.1 · 24 Out 2026
+- **CMS:** a barra de topo fica fixa ao fazer scroll. **[C]**
+- **CMS:** no telemóvel, o logótipo e os botões da barra de topo já não se sobrepõem. **[C]**
+
+### 2.4.0 · 24 Out 2026
+- **Novo:** os cartões das páginas passam a ter imagem, breve introdução e "Saiba mais". **[S, C]**
+  - Cada cartão pode levar a uma página do site ou a um endereço (URL), com a opção de abrir num novo separador.
+  - Aparecem em linhas de 4, em toda a largura, por baixo do texto.
+
+### 2.3.0 · 24 Out 2026
+- **Distâncias:** a tabela "Ver todas as distâncias" passa a uma matriz em toda a largura. **[S]**
+  - Tem barras, um ✓ no porto mais perto e a coluna "Vantagem Beira".
+  - No telemóvel aparece em cartões.
+  - Clicar numa linha escolhe esse destino no mapa.
+- **Novo:** fundo da secção de distâncias com cor e opacidade reguláveis. Com fundo claro, os textos passam a escuros automaticamente. **[S, C]**
+- **Novo:** menus com vários níveis (menu → submenu → submenu do submenu, até 4 níveis). **[S, C]**
+  - No computador, os níveis seguintes abrem ao lado; no telemóvel, em lista.
+- **Tipografia:** títulos, números, botões, menus e etiquetas passam a peso médio (500), com menos negrito. **[S]**
+  - O conteúdo já publicado é acertado na primeira entrada no CMS. **[C]**
+
+### 2.2.0 · 24 Out 2026
+- **Vídeos por página:**
+  - cada página tem um código próprio (hero, tc, tcg, asso, csr…);
+  - o botão **Detectar vídeos** procura na pasta `videos/` os ficheiros com esse código. **[C]**
+- **CMS:** a página de entrada passa a usar Dax regular. **[C]**
+- **Menus:** botão **"+ Link com URL"** em todos os menus, com a opção "Abrir num novo separador". **[S, C]**
+- **Vídeo no telemóvel:** o vídeo aparece completo, em 16:9, com o texto por baixo. Há também a opção "Ecrã inteiro" com ponto de foco. **[S, C]**
+- **Corrigido:** no telemóvel, o menu não abria depois de descer na página. **[S]**
+- **Espaçamento das letras:** passou a haver um padrão único para web e telemóvel, regulável em Tipografia. **[S, C]**
+- **Distâncias e localização:** refeito como um só bloco. **[S]**
+  - Mapa real da África Austral, com rotas pelas estradas principais.
+  - Comparação com os outros portos e mensagem de vantagem.
+  - A localização passa a uma linha compacta.
+- **Novo:** bloco de notícias em destaque antes do rodapé, com a opção "Destaque na página inicial" em cada notícia. **[S, C]**
+- **Links úteis:** o Plano de Atracação foi acrescentado. **[S, C]**
+
+### 2.1.0 · 23 Out 2026
+- **Tarifas e Procedimentos:** passa a ter secções de documentos. **[S, C]**
+  - Secções de origem: ROC, Tariff Book e Circulars.
+  - Cada secção é bilingue, editável, e é possível acrescentar mais.
+  - Os documentos aparecem numa grelha de 4 por linha, ordenados pela data de publicação.
+
+### 2.0.4 · 23 Out 2026
+- **Vídeo do topo:**
+  - toca mesmo com "Reduzir movimento" ligado;
+  - um vídeo em falta é saltado. **[S]**
+- **Cache:** a cache de vídeos e imagens passa de 30 dias para 1 dia. **[V]**
+- **Ficheiros de vídeo:** preparados para começar a tocar enquanto descarregam (faststart) e sem som. **[M]**
+
+### 2.0.3 · 23 Out 2026
+- **Novo:** diagnóstico de vídeo, abrindo o site com `?diag=1`. **[S]**
+- **Novo:** botão ▶ visível quando o telemóvel bloqueia o arranque automático. **[S]**
+
+### 2.0.2 · 23 Out 2026
+- **`config.js`:** preenchido com o projecto Supabase. **[config]**
+- **Endereço do Supabase:** passa a aceitar o URL com `/rest/v1/` no fim. **[S, C]**
+
+### 2.0.1 · 23 Out 2026
+- **Vídeo no telemóvel:** ligado por defeito. **[S, C]**
+- **Arranque bloqueado:** quando o telemóvel bloqueia o arranque automático, aparece a imagem de capa e o vídeo começa ao primeiro toque. **[S]**
+
+### 2.0.0 · 22 Out 2026
+- **Nova arquitectura:** Supabase (base de dados, ficheiros e login) e Vercel (alojamento). **[S, C, B, V]**
+  - O conteúdo publicado é partilhado com todos os visitantes.
+  - Imagens, vídeos, PDFs e fontes ficam no Supabase Storage.
+  - O formulário de contacto e as denúncias ficam guardados, e só os editores os lêem.
+  - Cada editor entra com o seu email e palavra-passe, com recuperação por email.
+  - A lista de editores gere-se no CMS.
+  - O histórico guarda as últimas 50 publicações, com possibilidade de reposição.
+- **Importação da versão 1:** o JSON da versão 1 pode ser importado, e as imagens e vídeos embutidos são enviados automaticamente para o Storage. **[C]**
+- **Modo local:** sem `config.js` preenchido, o site funciona como a versão 1. **[S, C]**
+- **Ficheiros novos:** `config.js`, `vercel.json`, `supabase/01-estrutura.sql`, `supabase/02-primeiro-editor.sql` e `LEIA-ME.md`.
+
+---
+
+## Versão 1: ficheiros HTML com conteúdo no navegador / artefacto Claude
+
+> As datas da versão 1 são aproximadas (21–22 Out 2026).
+
+### 1.14.0
+- **Editor de texto:** carregamento de imagens dentro dos artigos, com legenda e alinhamento.
+
+### 1.13.0
+- **Título do topo da página inicial:** totalmente editável, com cor por palavra, quebras de linha e tamanho.
+- **Corrigido:** a cor dos ícones (laranja) em todas as páginas.
+
+### 1.12.1
+- **Topo das páginas:** os textos do topo de cada página passam a ser editáveis.
+
+### 1.12.0
+- **Editor de texto profissional:** para textos longos.
+- **Textos:** todos os textos das páginas passam a ser editáveis.
+- **CMS bilingue:** em PT e EN.
+- **Ícones e números:** com o mesmo desenho.
+- **Títulos:** menu de cores (azul e laranja Cornelder, cinzento claro, branco e preto) e imagem no título, com definições de desempenho.
+- **Topo:** lista de até 5 vídeos em loop, fácil de configurar.
+- **Redes sociais:** ícones de cada rede.
+
+### 1.11.1
+- **Posição do Porto:** acesso directo na barra lateral do CMS.
+
+### 1.11.0
+- **PDFs:** carregamento e leitura de PDFs dentro da página.
+  - Plano de Atracação: 2 documentos (Terminal de Contentores e Terminal de Carga Geral).
+  - Posição do Porto: 1 documento.
+
+### 1.10.1
+- **Corrigido:** o erro "Sem espaço no navegador". O armazenamento passou para IndexedDB e foi acrescentado um medidor de espaço.
+
+### 1.10.0
+- **Menu:** faixa azul por trás do menu, com degradê regulável.
+
+### 1.9.0
+- **Tipografia:** escolha do tipo e do tamanho de letra para todos os títulos e textos.
+
+### 1.8.0
+- **Vídeo:** degradê regulável sobre o vídeo do topo.
+
+### 1.7.0
+- **Largura:** conteúdo alargado, com 8 cm de margem nas laterais.
+
+### 1.6.0
+- **Texto do topo:** numa caixa mais estreita e mais clara, com texto justificado e peso de letra ajustável.
+
+### 1.5.0
+- **Vídeo no topo:** suporte para vários vídeos no topo e vídeo por página.
+
+### 1.4.0
+- **Logótipos:** oficiais, nas versões azul e branca.
+
+### 1.3.0
+- **Entrega:** em ficheiros `.html` independentes.
+
+### 1.2.0
+- **Menus:** todos os menus e submenus do site original.
+- **Contactos.**
+- **Site bilingue:** EN/PT.
+
+### 1.1.0
+- **CMS:** separado do site (`admin.html`).
+- **Corrigido:** o valor "400,00 TEU's" foi reposto exactamente como no original.
+
+### 1.0.0
+- **Primeira versão:** a partir do conteúdo de cornelder.co.mz.
+  - Design moderno com cena 3D, compatível com telemóvel, logótipo Cornelder e letra Dax.
+  - CMS para actualizar o conteúdo.

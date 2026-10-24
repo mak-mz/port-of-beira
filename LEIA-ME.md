@@ -25,6 +25,9 @@ Sem `config.js` preenchido, tudo funciona em **modo local**, como na versão 1 (
 | `videos/` | Opcional: vídeos do hero servidos pela Vercel |
 | `supabase/01-estrutura.sql` | Cria tabelas, regras de segurança e o bucket de ficheiros |
 | `supabase/02-primeiro-editor.sql` | Adiciona o primeiro editor |
+| `supabase/03-seguranca.sql` | Anti-spam e validações do formulário de contacto (v2.11.0) |
+| `assets/` | Código do site e do CMS (carregado pelos .html) |
+| `vendor/` | Bibliotecas three.js e PDF.js alojadas no próprio site |
 
 ---
 
