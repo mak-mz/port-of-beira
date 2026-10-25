@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.16.0** (25 Out 2026).
+**Versão actual: 2.17.0** (25 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.16.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.17.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,23 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.17.0 · 25 Out 2026
+- **Banner (pop-up) com calendário anual:** em vez de um só banner, pode programar vários ao longo do ano. **[S, C]**
+  - **Datas por banner:** "Todos os anos" (repete as mesmas datas e pode atravessar o fim do ano) ou "Só uma vez".
+  - **Conteúdo e comportamento por banner:** formato, frequência, atraso, imagens, texto e link próprios.
+  - **Calendário visual:** os 12 meses com uma barra colorida por banner e a linha de hoje. Clicar numa barra abre esse banner.
+  - **Estado de cada banner:** "A mostrar hoje", "Agendado", "Terminou", "Desligado" ou "Falta imagem ou texto".
+  - **Datas coincidentes:** aparece o banner de período mais curto (por exemplo, um feriado dentro de uma campanha do mês). Em caso de empate, vale a ordem da lista.
+  - **"+ Datas comemorativas de Moçambique":** acrescenta 9 datas nacionais (1 Jan, 3 Fev, 7 Abr, 1 Mai, 25 Jun, 7 Set, 25 Set, 4 Out, 25 Dez). Ficam desligadas até lhes juntar imagem ou texto.
+  - **"Duplicar este banner":** cria uma cópia desligada do banner.
+  - O banner da versão 2.16 passa automaticamente para a lista.
+- **CMS · Visão geral:** títulos, números e textos em peso médio (500). **[C]**
+- **CMS · animação de boas-vindas:** depois de entrar com sucesso, aparece uma animação do porto com o logótipo e "Bem-vindo". **[C]**
+  - Um pórtico coloca um contentor no navio, que depois zarpa.
+  - Dura cerca de 3 segundos e fecha com um clique ou com Esc.
+  - É mais curta e sem movimento para quem reduziu as animações no sistema.
+  - Não aparece ao recarregar a página com a sessão já iniciada.
 
 ### 2.16.0 · 25 Out 2026
 - **Mapa de distâncias:** novo botão **Todas as rotas** (o sexto) que mostra em simultâneo as estradas da Beira para todos os destinos, com as dos outros portos a tracejado. **[S]**
