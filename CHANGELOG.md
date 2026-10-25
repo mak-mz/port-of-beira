@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.15.0** (25 Out 2026).
+**Versão actual: 2.16.0** (25 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.15.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.16.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,24 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.16.0 · 25 Out 2026
+- **Mapa de distâncias:** novo botão **Todas as rotas** (o sexto) que mostra em simultâneo as estradas da Beira para todos os destinos, com as dos outros portos a tracejado. **[S]**
+  - O painel lista cada destino com a distância e a vantagem da Beira. Clicar num destino abre-o.
+- **Assistente virtual:** a ordem definida no CMS passa a ser respeitada no site logo após publicar, mesmo com o assistente já aberto. **[S, C]**
+  - No CMS, as setas ↑ ↓ ficam visíveis em cada pergunta sem a abrir. Cada pergunta mostra o número de ordem e a etiqueta "Sugestão" nas que aparecem ao abrir o assistente.
+- **CMS:**
+  - **Temperatura da Beira** na barra de topo, actualizada a cada 30 minutos. **[C]**
+  - **Sino de mensagens** na barra de topo, com o número de mensagens por ler. **[C]**
+    - Verifica mensagens novas a cada 15 minutos e sempre que se volta ao separador do CMS.
+    - Quando chega uma mensagem, o sino abana, aparece um aviso e o título do separador mostra o número, por exemplo "(1) Port of Beira CMS". Clicar no sino abre as Mensagens.
+- **Banner (pop-up) para ocasiões especiais:** nova secção no CMS. Aparece só na página inicial. **[S, C]**
+  - **Formatos:** cartão no canto, que não bloqueia a página (no telemóvel fica em baixo, com a largura do ecrã), ou janela ao centro.
+  - **Conteúdo:** imagem (com versão opcional para telemóvel), título, texto e botão com link, em EN e PT.
+  - **Datas:** de início e de fim.
+  - **Frequência:** uma vez por visita, uma vez por dia, só uma vez ou sempre.
+  - **Atraso:** de 0 a 15 segundos.
+  - **Fechar:** no ×, fora do banner, com a tecla Esc ou deslizando para baixo no telemóvel.
 
 ### 2.15.0 · 25 Out 2026
 - **Topo das páginas:** o padrão quadriculado sobre o vídeo, as imagens e o fundo azul foi removido. **[S]**

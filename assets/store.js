@@ -123,10 +123,12 @@ const Store=(function(){
     if(mode==="cloud"){await db.collection("inbox").add(m);return}
     const list=(await readL(IKEY))||[];m.id="m"+Date.now().toString(36);list.unshift(m);await writeL(IKEY,list);
   }
-  function inbox(cb){
-    if(mode==="supabase"){inboxCb=cb;const load=()=>sbInbox().then(cb).catch(e=>{console.warn("inbox",e);cb([])});load();return every(30000,load)}
+  let inboxLoad=null;
+  function inboxRefresh(){if(inboxLoad)return inboxLoad()}
+  function inbox(cb,opt){
+    if(mode==="supabase"){inboxCb=cb;const load=inboxLoad=()=>sbInbox().then(cb).catch(e=>{console.warn("inbox",e)});load();return every((opt&&opt.poll)||15*60e3,load)}
     if(mode==="cloud")return db.collection("inbox").orderBy("createdAt","desc").limit(500).onSnapshot(s=>cb(s.docs.map(d=>Object.assign({id:d.id},d.data()))),e=>{console.warn("inbox",e);cb([])});
-    const load=()=>readL(IKEY).then(v=>cb(v||[]));load();return watch(IKEY,load);
+    const load=inboxLoad=()=>readL(IKEY).then(v=>cb(v||[]));load();const st=every((opt&&opt.poll)||15*60e3,load);const w=watch(IKEY,load);return()=>{try{st&&st()}catch(e){}try{w&&w()}catch(e){}}
   }
   async function inboxUpdate(id,patch,cbLocal){
     if(mode==="supabase"){const q="/rest/v1/inbox?id=eq."+encodeURIComponent(id);
@@ -137,7 +139,7 @@ const Store=(function(){
     await writeL(IKEY,list);cbLocal&&cbLocal(list);
   }
   async function usage(){let used=0,quota=0;try{const e=await navigator.storage.estimate();used=e.usage||0;quota=e.quota||0}catch(e){}return{used,quota,engine:Store.engine}}
-  return{init,subscribe,save,upload,submit,inbox,inboxUpdate,usage,auth,
+  return{init,subscribe,save,upload,submit,inbox,inboxRefresh,inboxUpdate,usage,auth,
     get mode(){return mode},get remote(){return mode!=="local"},get engine(){return mode==="supabase"?"supabase":mode==="cloud"?"cloud":idb?"idb":"ls"},
     get user(){return user},get downloads(){return downloads},get config(){return CFG?{url:CFG.url,bucket:CFG.bucket}:null}};
 })();
