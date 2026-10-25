@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.14.0** (25 Out 2026).
+**Versão actual: 2.15.0** (25 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.14.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.15.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,25 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.15.0 · 25 Out 2026
+- **Topo das páginas:** o padrão quadriculado sobre o vídeo, as imagens e o fundo azul foi removido. **[S]**
+- **Cena 3D removida:** enquanto o vídeo carrega, aparece a **imagem de capa** em vez da animação 3D. **[S, C]**
+  - O vídeo aparece por cima da imagem só quando começa a tocar.
+  - Na página inicial, quem tinha "Cena 3D animada" passa automaticamente para Vídeo (se houver vídeos) ou Imagem.
+  - A biblioteca three.js deixa de ser carregada: menos 600 KB por visita. O ficheiro `vendor/three-r128.min.js` pode ser apagado do GitHub.
+- **Botão pausar/reproduzir no vídeo do topo:** no canto inferior direito, ou no canto superior esquerdo do vídeo em telemóvel. **[S]**
+  - A escolha mantém-se enquanto o visitante navega no site.
+  - Cumpre a regra de acessibilidade WCAG 2.2.2 (pausar conteúdo em movimento).
+- **Página de contactos personalizável:** novo cartão "Aspecto da página de contactos", em Contactos e rodapé. **[S, C]**
+  - Cinco estilos prontos: Limpo, Azul CdM, Fotografia, Minimalista e Destaque.
+  - Ajustes: disposição, cantos, caixa dos contactos, caixa do formulário, campos, cor do botão, caixas com a mesma altura, círculo decorativo e texto de introdução.
+  - O novo aspecto por defeito tem caixas com a mesma altura, campos brancos, botão laranja e nenhum círculo decorativo.
+- **Assistente virtual:** um botão laranja no canto do site abre um painel de perguntas frequentes, bilingue, sem custos nem inteligência artificial externa. **[S, C]**
+  - Responde por correspondência de palavras com as perguntas e palavras-chave definidas no CMS.
+  - Quando não encontra resposta, sugere perguntas próximas ou o formulário de contacto e o telefone.
+  - Vem com 9 perguntas iniciais: contactos, plano de atracação, tarifas, posição do porto, distâncias, terminal de contentores, terminal de cereais, denúncias e accionistas.
+  - No CMS (secção **Assistente virtual**) pode editar, ordenar, desligar e acrescentar perguntas, e testar o que o assistente responde.
 
 ### 2.14.0 · 25 Out 2026
 - **Textos uniformes:** todo o texto corrido (páginas, notícias, projectos e localização) segue agora um único padrão de tamanho, entrelinha e espaçamento. **[S]**
