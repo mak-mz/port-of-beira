@@ -123,6 +123,20 @@ const Store=(function(){
     if(mode==="cloud"){await db.collection("inbox").add(m);return}
     const list=(await readL(IKEY))||[];m.id="m"+Date.now().toString(36);list.unshift(m);await writeL(IKEY,list);
   }
+  /* tarefas do CMS: tabela privada cms_tasks no Supabase (04-tarefas.sql); noutros modos, neste navegador */
+  const TKEY="cdm-cms-tasks-v1";
+  const tLocal=()=>{try{return JSON.parse(localStorage.getItem(TKEY)||"[]")}catch(e){return[]}},tSave=l=>{try{localStorage.setItem(TKEY,JSON.stringify(l))}catch(e){}};
+  const tasks={
+    remote:()=>mode==="supabase",
+    async list(){if(mode==="supabase")return await sb("/rest/v1/cms_tasks?select=*&order=done.asc,pos.asc,created_at.asc")||[];return tLocal()},
+    async add(t){const row={text:String(t.text||"").trim().slice(0,300),due:t.due||null,pos:+t.pos||0,done:false};
+      if(mode==="supabase"){const r=await sb("/rest/v1/cms_tasks",{method:"POST",json:row,headers:{Prefer:"return=representation"}});return r&&r[0]}
+      const l=tLocal(),x=Object.assign({id:"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),created_at:new Date().toISOString()},row);l.push(x);tSave(l);return x},
+    async update(id,patch){const p=Object.assign({},patch);if("done"in p)p.done_at=p.done?new Date().toISOString():null;
+      if(mode==="supabase"){await sb("/rest/v1/cms_tasks?id=eq."+encodeURIComponent(id),{method:"PATCH",json:p,headers:{Prefer:"return=minimal"}});return}
+      tSave(tLocal().map(x=>x.id===id?Object.assign({},x,p):x))},
+    async remove(id){if(mode==="supabase"){await sb("/rest/v1/cms_tasks?id=eq."+encodeURIComponent(id),{method:"DELETE"});return}tSave(tLocal().filter(x=>x.id!==id))}
+  };
   let inboxLoad=null;
   function inboxRefresh(){if(inboxLoad)return inboxLoad()}
   function inbox(cb,opt){
@@ -139,7 +153,7 @@ const Store=(function(){
     await writeL(IKEY,list);cbLocal&&cbLocal(list);
   }
   async function usage(){let used=0,quota=0;try{const e=await navigator.storage.estimate();used=e.usage||0;quota=e.quota||0}catch(e){}return{used,quota,engine:Store.engine}}
-  return{init,subscribe,save,upload,submit,inbox,inboxRefresh,inboxUpdate,usage,auth,
+  return{init,subscribe,save,upload,submit,inbox,inboxRefresh,tasks,inboxUpdate,usage,auth,
     get mode(){return mode},get remote(){return mode!=="local"},get engine(){return mode==="supabase"?"supabase":mode==="cloud"?"cloud":idb?"idb":"ls"},
     get user(){return user},get downloads(){return downloads},get config(){return CFG?{url:CFG.url,bucket:CFG.bucket}:null}};
 })();

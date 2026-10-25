@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.18.0** (25 Out 2026).
+**Versão actual: 2.19.0** (25 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.18.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.19.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,16 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.19.0 · 25 Out 2026
+- **CMS · tarefas em "Por completar" (Visão geral):** pode acrescentar as suas próprias tarefas, além das verificações automáticas. **[C, SQL]**
+  - Cada tarefa tem texto editável, prazo opcional e uma caixa para marcar como concluída. As setas ↑ ↓ mudam a ordem e o × apaga (pede confirmação).
+  - Os prazos ultrapassados aparecem a vermelho com "Atrasada" e os próximos 3 dias a laranja.
+  - As concluídas ficam numa secção recolhida, com o botão "Apagar as concluídas".
+  - O número de tarefas por fazer aparece ao lado de "Visão geral" no menu lateral.
+  - **Com Supabase:** a lista é partilhada por todos os editores e é privada (a tabela `cms_tasks` só é visível para editores). Não precisa de Publicar: cada alteração fica guardada logo.
+  - **Novo ficheiro `supabase/04-tarefas.sql`:** corra-o uma vez no SQL Editor. Até lá, o CMS mostra um aviso no lugar da lista.
+  - **Modo local:** as tarefas ficam guardadas no navegador.
 
 ### 2.18.0 · 25 Out 2026
 - **Galeria por colecções (álbuns):** **[S, C]**

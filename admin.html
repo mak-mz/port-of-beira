@@ -53,6 +53,23 @@
 .alb-ph.cov .alb-star{background:var(--orange);color:#1F140F}
 .alb-ph .f{margin:0}.alb-ph .bi{grid-template-columns:1fr}
 details.busy{opacity:.6;pointer-events:none}
+.tk-sub{display:block;margin:18px 0 8px;font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tk-add{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 12px}.tk-add #tkText{flex:1 1 260px;min-width:0}.tk-add input{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.tks{list-style:none;margin:0 0 6px;padding:0;display:flex;flex-direction:column}
+.tk{display:flex;align-items:flex-start;gap:10px;padding:8px 4px;border-top:1px solid var(--line)}.tk:first-child{border-top:0}
+.tk-c{position:relative;flex:0 0 auto;margin-top:6px;cursor:pointer}.tk-c input{position:absolute;opacity:0;width:20px;height:20px;margin:0;cursor:pointer}
+.tk-c span{display:block;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);transition:background .15s,border-color .15s}
+.tk-c input:checked+span{background:var(--ok);border-color:var(--ok);box-shadow:inset 0 0 0 3px var(--surface)}.tk-c input:focus-visible+span{outline:2px solid var(--orange);outline-offset:2px}
+.tk-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.tk-t{font:inherit;font-size:.95rem;border:1px solid transparent;border-radius:8px;padding:4px 8px;margin-left:-8px;background:none;color:var(--ink);width:100%}
+.tk-t:hover{border-color:var(--line)}.tk-t:focus{border-color:var(--orange);outline:none;background:var(--surface)}
+.tk.done .tk-t{text-decoration:line-through;color:var(--muted)}
+.tk-m{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:.78rem;color:var(--muted)}
+.tk-d{font:inherit;font-size:.78rem;border:1px solid var(--line);border-radius:6px;padding:2px 6px;background:none;color:var(--muted)}
+.tk-d.late{border-color:var(--err,#c0392b);color:var(--err,#c0392b)}.tk-d.soon{border-color:var(--orange);color:#a15c00}
+.tk-late{color:var(--err,#c0392b);font-weight:700}
+.tk .tools{margin-left:auto;display:flex;gap:4px}.btn.ic.sure{width:auto;padding:0 10px;background:var(--err,#c0392b);color:#fff}
+.tk-done{margin-top:6px}.tk-done summary{cursor:pointer;font-size:.86rem;color:var(--muted);padding:6px 0}.tk-done .btn{margin-top:6px}
 .ctpre{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
 .vrand{margin-left:auto;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;font-size:.86rem;padding:6px 12px 6px 6px;border-radius:999px;background:var(--surface-2);user-select:none}.vrand input{position:absolute;opacity:0;width:1px;height:1px}.vr-sw{width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;transition:background .2s}.vr-sw::after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}.vrand input:checked+.vr-sw{background:var(--orange)}.vrand input:checked+.vr-sw::after{transform:translateX(14px)}.vrand input:focus-visible+.vr-sw{outline:2px solid var(--navy);outline-offset:2px}
 #sideFoot .ver{margin-top:8px;font-size:.72rem;opacity:.6}
@@ -412,7 +429,7 @@ body.rt-lock{overflow:hidden}
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.18.0"></script>
-<script src="assets/admin.js?v=2.18.0"></script>
+<script src="assets/store.js?v=2.19.0"></script>
+<script src="assets/admin.js?v=2.19.0"></script>
 </body>
 </html>
