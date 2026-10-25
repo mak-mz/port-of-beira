@@ -43,6 +43,16 @@
 .wlc-wave{animation:wlcWave 3s linear infinite}.wlc-wave.w2{animation-duration:2.2s}@keyframes wlcWave{to{transform:translateX(-100px)}}
 .wlc-sun{animation:wlcSun 2.8s ease both}@keyframes wlcSun{from{transform:translateY(30px);opacity:0}}
 .wlc.rm *{animation:none!important}.wlc.rm .wlc-t{opacity:1;transform:none}.wlc.rm .wlc-box{display:none}.wlc.rm .wlc-drop{opacity:1}
+.alb-th{flex:0 0 auto;width:56px;height:42px;border-radius:8px;background:var(--surface-2,#ececf3) center/cover}
+.alb-up{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 12px}
+.alb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.alb-ph{border:1px solid var(--line);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px;background:var(--surface)}
+.alb-ph.cov{border-color:var(--orange);box-shadow:0 0 0 2px rgba(255,144,18,.25)}
+.alb-img{position:relative;aspect-ratio:4/3;border-radius:8px;background:#ddd center/cover}
+.alb-star{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(14,14,32,.6);color:#fff;cursor:pointer;font-size:15px}
+.alb-ph.cov .alb-star{background:var(--orange);color:#1F140F}
+.alb-ph .f{margin:0}.alb-ph .bi{grid-template-columns:1fr}
+details.busy{opacity:.6;pointer-events:none}
 .ctpre{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
 .vrand{margin-left:auto;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;font-size:.86rem;padding:6px 12px 6px 6px;border-radius:999px;background:var(--surface-2);user-select:none}.vrand input{position:absolute;opacity:0;width:1px;height:1px}.vr-sw{width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;transition:background .2s}.vr-sw::after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}.vrand input:checked+.vr-sw{background:var(--orange)}.vrand input:checked+.vr-sw::after{transform:translateX(14px)}.vrand input:focus-visible+.vr-sw{outline:2px solid var(--navy);outline-offset:2px}
 #sideFoot .ver{margin-top:8px;font-size:.72rem;opacity:.6}
@@ -402,7 +412,7 @@ body.rt-lock{overflow:hidden}
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.17.0"></script>
-<script src="assets/admin.js?v=2.17.0"></script>
+<script src="assets/store.js?v=2.18.0"></script>
+<script src="assets/admin.js?v=2.18.0"></script>
 </body>
 </html>

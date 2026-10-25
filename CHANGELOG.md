@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.17.0** (25 Out 2026).
+**Versão actual: 2.18.0** (25 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.17.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.18.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,22 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.18.0 · 25 Out 2026
+- **Galeria por colecções (álbuns):** **[S, C]**
+  - **Grelha de colecções:** 4 por linha no computador, 3 em ecrãs médios e 2 no telemóvel.
+  - **Cartões:** fotografia de capa, número de fotografias, categoria, data e título.
+  - **Página da colecção:** clicar num cartão abre `#gallery~<colecção>`, com o título no topo, a capa como fundo, uma descrição e a grelha de fotografias.
+  - **Visualizador ampliado:**
+    - Mostra o nome da colecção, a legenda e a posição (ex.: 2 / 3).
+    - Navega com setas, com as teclas ← → e deslizando para os lados no telemóvel. Desliza para baixo ou Esc para fechar.
+    - Carrega antecipadamente a fotografia anterior e a seguinte.
+  - **Filtros por categoria:** aparecem quando há colecções em pelo menos duas categorias. Categorias iniciais: Operações, Eventos, Responsabilidade social e Infra-estruturas, editáveis no CMS.
+  - **No CMS:**
+    - Categorias bilingues, e colecções com título, categoria, data, descrição e visibilidade.
+    - Carregamento de várias fotografias de uma vez, legenda EN/PT por fotografia, ordenação e ★ para escolher a capa.
+  - As fotografias da galeria antiga passam automaticamente para a colecção "Geral".
+  - O código da galeria está num bloco próprio, com o modelo de dados documentado (`albums`, `galleryCats`).
 
 ### 2.17.0 · 25 Out 2026
 - **Banner (pop-up) com calendário anual:** em vez de um só banner, pode programar vários ao longo do ano. **[S, C]**
