@@ -166,8 +166,15 @@ async function linkedin(): Promise<Item[]> {
   return out;
 }
 
+const VERSION = "2.23.0";
 Deno.serve(async (req) => {
+  try { return await handle(req); }
+  catch (e) { return json({ error: "Erro na função: " + String((e as any)?.message || e) }, 500); }
+});
+async function handle(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+  // abrir o endereço no navegador confirma que a função está publicada e acessível
+  if (req.method === "GET") return json({ ok: true, function: "cdm-feeds", version: VERSION, message: "A função está publicada. O CMS usa-a com a sessão de um editor." });
   if (req.method !== "POST") return json({ error: "method" }, 405);
   if (!(await isEditor(req.headers.get("Authorization"), req.headers.get("apikey")))) return json({ error: "Sem acesso: apenas editores." }, 403);
   let body: any = {};
@@ -198,4 +205,4 @@ Deno.serve(async (req) => {
     return json({ items: items.slice(0, 300), status, at: new Date().toISOString() });
   }
   return json({ error: "kind" }, 400);
-});
+}

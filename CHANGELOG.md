@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.22.0** (27 Out 2026).
+**Versão actual: 2.23.0** (27 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.22.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.23.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,16 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.23.0 · 27 Out 2026
+- **Vídeos que não tocavam:** quando um vídeo falha, o site tenta de novo uma vez, sem usar a cópia guardada pelo navegador, antes de o tirar da sequência. **[S]**
+  - Resolve o caso de o navegador ter guardado um "ficheiro não encontrado" de antes de o vídeo ser carregado.
+- **vercel.json:** os ficheiros da pasta `videos/` passam a ser revalidados a cada 10 minutos, em vez de 24 horas. **[repo]**
+- **CMS · função cdm-feeds:** quando o CMS não a consegue contactar, mostra o endereço da função e uma tabela com o que cada resposta significa e o que fazer. **[C]**
+- **Função `cdm-feeds` 2.23.0:**
+  - Abrir o endereço no navegador mostra `"ok": true` e a versão, para confirmar que está publicada.
+  - Os erros internos passam a ser devolvidos com uma mensagem, em vez de falharem sem resposta.
+  - **Tem de ser publicada de novo no Supabase.**
 
 ### 2.22.0 · 27 Out 2026
 - **Cartão de cada página:** todas as páginas têm agora a secção "Cartão desta página", com imagem, texto e selo próprios. **[S, C]**
