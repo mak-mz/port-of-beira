@@ -1,7 +1,8 @@
 // ============================================================
 // Port of Beira · Edge Function "cdm-feeds"
 // Usada pelo CMS (só editores):
-//   POST { kind: "news", topics: [{label, query, lang}] }  → alertas de notícias (Google Notícias RSS)
+//   POST { kind: "news", topics: [{label, query, lang}], sources: [{label, url}], google: true }
+//        → alertas: Google Notícias (RSS) + sites indicados (WordPress: pesquisa; senão RSS /feed/; senão links da página inicial)
 //   POST { kind: "social" }                                 → comentários no Facebook, Instagram e LinkedIn
 // Segredos (Supabase → Edge Functions → Secrets), todos opcionais:
 //   FB_PAGE_ID, FB_PAGE_TOKEN          página de Facebook + token de página (pages_read_engagement, pages_read_user_content)
@@ -23,11 +24,11 @@ const iso = (s: string) => { const d = new Date(s || ""); return isNaN(+d) ? "" 
 type Item = { network: string; id: string; text: string; author: string; created: string; url: string; postText?: string; postUrl?: string; topic?: string; source?: string };
 
 // ---------- só editores (usa a função is_editor() criada em 01-estrutura.sql) ----------
-async function isEditor(auth: string | null): Promise<boolean> {
+async function isEditor(auth: string | null, apikey: string | null): Promise<boolean> {
   if (!auth || !/^Bearer\s+\S+/.test(auth)) return false;
   const r = await fetch(`${env("SUPABASE_URL")}/rest/v1/rpc/is_editor`, {
     method: "POST",
-    headers: { apikey: env("SUPABASE_ANON_KEY"), Authorization: auth, "Content-Type": "application/json" },
+    headers: { apikey: apikey || env("SUPABASE_ANON_KEY"), Authorization: auth, "Content-Type": "application/json" },
     body: "{}",
   });
   if (!r.ok) return false;
@@ -46,7 +47,7 @@ async function cached<T>(key: string, ms: number, fn: () => Promise<T>): Promise
 
 // ---------- alertas: Google Notícias (RSS) ----------
 const GN = env("GN_BASE", "https://news.google.com");
-const decode = (s: string) => s.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/<[^>]+>/g, "").trim();
+const decode = (s: string) => s.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n)).replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16))).replace(/&amp;/g, "&").replace(/<[^>]+>/g, "").trim();
 const tag = (x: string, t: string) => { const m = x.match(new RegExp(`<${t}[^>]*>([\\s\\S]*?)</${t}>`)); return m ? decode(m[1]) : ""; };
 
 async function newsFor(topic: { label: string; query: string; lang?: string }): Promise<Item[]> {
@@ -54,7 +55,7 @@ async function newsFor(topic: { label: string; query: string; lang?: string }): 
   const out: Item[] = [];
   for (const [hl, gl, ceid] of langs) {
     const url = `${GN}/rss/search?q=${encodeURIComponent(topic.query + " when:30d")}&hl=${hl}&gl=${gl}&ceid=${encodeURIComponent(ceid)}`;
-    const xml = await cached("gn:" + url, 10 * 60e3, async () => { const r = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (CdM CMS alerts)" } }); return r.ok ? await r.text() : ""; });
+    const xml = await cached("gn:" + url, 10 * 60e3, async () => { const r = await fetch(url, { headers: UA }); if (!r.ok) throw new Error(`Google HTTP ${r.status}`); return await r.text(); });
     for (const m of (xml as string).matchAll(/<item>([\s\S]*?)<\/item>/g)) {
       const x = m[1], title = tag(x, "title"), link = tag(x, "link"), source = tag(x, "source");
       const d = new Date(tag(x, "pubDate"));
@@ -63,6 +64,60 @@ async function newsFor(topic: { label: string; query: string; lang?: string }): 
     }
   }
   return out;
+}
+
+// ---------- alertas: sites indicados pelo CMS ----------
+// termos de pesquisa a partir das consultas: "Porto da Beira" OR "Port of Beira" → ["porto da beira","port of beira"]
+function terms(q: string): string[] {
+  const out: string[] = [];
+  for (const part of q.split(/\s+OR\s+/i)) { const t = part.replace(/["()]/g, " ").replace(/\s+/g, " ").trim(); if (t.length > 2) out.push(t.toLowerCase()); }
+  return out;
+}
+const fold = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+function matchTopics(text: string, topics: { label: string; query: string }[]): string[] {
+  const t = fold(text);
+  return topics.filter((tp) => terms(tp.query).some((term) => fold(term).split(" ").every((w) => w.length < 3 || t.includes(w)))).map((tp) => tp.label);
+}
+const UA = { "User-Agent": "Mozilla/5.0 (compatible; CdM-CMS-alerts/1.0)", Accept: "text/html,application/xhtml+xml,application/xml,application/json;q=0.9,*/*;q=0.8" };
+async function siteNews(src: { label: string; url: string }, topics: { label: string; query: string }[]): Promise<{ items: Item[]; via: string }> {
+  let base = src.url.trim(); if (!/^https?:\/\//i.test(base)) base = "https://" + base; base = base.replace(/\/+$/, "");
+  const host = new URL(base).host, name = src.label || host, items: Item[] = [];
+  const push = (title: string, link: string, date: string, extra = "") => {
+    const tps = matchTopics(title + " " + extra, topics); if (!tps.length || !title || !link) return;
+    items.push({ network: "news", id: link, text: title, author: name, source: name, created: date, url: link, topic: tps.join(" · ") });
+  };
+  // 1) WordPress: pesquisa por cada termo (rápido e preciso)
+  try {
+    const qs = [...new Set(topics.flatMap((t) => terms(t.query)))].slice(0, 20); let ok = false;
+    for (const q of qs) {
+      const r = await fetch(`${base}/wp-json/wp/v2/posts?search=${encodeURIComponent(q)}&per_page=10&_fields=title,link,date_gmt,excerpt`, { headers: UA });
+      if (!r.ok || !(r.headers.get("content-type") || "").includes("json")) break;
+      ok = true;
+      for (const p of await r.json()) push(decode(p.title?.rendered || ""), p.link, p.date_gmt ? new Date(p.date_gmt + "Z").toISOString() : "", decode(p.excerpt?.rendered || ""));
+    }
+    if (ok) return { items: [...new Map(items.map((i) => [i.url, i])).values()], via: "wordpress" };
+  } catch { /* segue */ }
+  // 2) RSS (/feed/ ou o próprio endereço)
+  for (const u of [base, base + "/feed/", base + "/rss"]) {
+    try {
+      const r = await fetch(u, { headers: UA }); if (!r.ok) continue; const x = await r.text();
+      if (!/<rss|<feed/i.test(x.slice(0, 2000))) continue;
+      for (const m of x.matchAll(/<(item|entry)>([\s\S]*?)<\/\1>/g)) {
+        const it = m[2], link = tag(it, "link") || ((it.match(/<link[^>]*href="([^"]+)"/) || [])[1] || ""), d = new Date(tag(it, "pubDate") || tag(it, "updated") || tag(it, "published"));
+        push(tag(it, "title"), link, isNaN(+d) ? "" : d.toISOString(), tag(it, "description") || tag(it, "summary"));
+      }
+      return { items, via: "rss" };
+    } catch { /* segue */ }
+  }
+  // 3) página inicial: links com títulos
+  const r = await fetch(base, { headers: UA }); if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const html = await r.text();
+  for (const m of html.matchAll(/<a\s[^>]*href="([^"#]+)"[^>]*>([\s\S]{20,300}?)<\/a>/g)) {
+    let link = m[1]; const title = decode(m[2]); if (title.length < 20) continue;
+    try { link = new URL(link, base + "/").href; } catch { continue; } if (new URL(link).host !== host) continue;
+    push(title, link, "");
+  }
+  return { items: [...new Map(items.map((i) => [i.url, i])).values()], via: "pagina" };
 }
 
 // ---------- comentários: Facebook, Instagram, LinkedIn ----------
@@ -114,18 +169,24 @@ async function linkedin(): Promise<Item[]> {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "method" }, 405);
-  if (!(await isEditor(req.headers.get("Authorization")))) return json({ error: "Sem acesso: apenas editores." }, 403);
+  if (!(await isEditor(req.headers.get("Authorization"), req.headers.get("apikey")))) return json({ error: "Sem acesso: apenas editores." }, 403);
   let body: any = {};
   try { body = await req.json(); } catch { /* vazio */ }
 
   if (body.kind === "news") {
     const topics = (Array.isArray(body.topics) ? body.topics : []).filter((t: any) => t && typeof t.query === "string" && t.query.trim())
       .slice(0, 15).map((t: any) => ({ label: String(t.label || t.query).slice(0, 60), query: String(t.query).slice(0, 200), lang: ["pt", "en"].includes(t.lang) ? t.lang : "both" }));
-    const res = await Promise.allSettled(topics.map(newsFor));
+    const sources = (Array.isArray(body.sources) ? body.sources : []).filter((x: any) => x && typeof x.url === "string" && x.url.trim()).slice(0, 10).map((x: any) => ({ label: String(x.label || "").slice(0, 60), url: String(x.url).slice(0, 300) }));
+    const useGoogle = body.google !== false;
+    const res: PromiseSettledResult<Item[]>[] = useGoogle ? await Promise.allSettled(topics.map(newsFor)) : [];
+    const sres = await Promise.allSettled(sources.map((s: any) => cached("site:" + s.url + JSON.stringify(topics), 10 * 60e3, () => siteNews(s, topics))));
+    const status: { name: string; ok: boolean; count?: number; via?: string; error?: string }[] = [];
+    if (useGoogle) { const n = res.reduce((k, r) => k + (r.status === "fulfilled" ? r.value.length : 0), 0); const bad = res.filter((r) => r.status === "rejected").length; status.push({ name: "Google Notícias", ok: n > 0 || !bad, count: n, error: bad ? `${bad} temas com erro` : (n ? undefined : "0 resultados (o Google pode estar a limitar os pedidos do servidor)") }); }
+    sres.forEach((r, i) => { if (r.status === "fulfilled") { res.push({ status: "fulfilled", value: r.value.items }); status.push({ name: sources[i].label || sources[i].url, ok: true, count: r.value.items.length, via: r.value.via }); } else status.push({ name: sources[i].label || sources[i].url, ok: false, error: String((r.reason as any)?.message || r.reason) }); });
     const seen = new Map<string, Item>();
-    res.forEach((r) => { if (r.status === "fulfilled") for (const it of r.value) { const k = it.text.toLowerCase().replace(/\W+/g, " ").trim(); const prev = seen.get(k); if (!prev) seen.set(k, it); else if (prev.topic && it.topic && !prev.topic.split(" · ").includes(it.topic)) prev.topic += " · " + it.topic; } });
+    res.forEach((r) => { if (r.status === "fulfilled") for (const it of r.value) { const k = it.text.toLowerCase().replace(/\W+/g, " ").trim(); const prev = seen.get(k); if (!prev) seen.set(k, { ...it }); else prev.topic = [...new Set([...(prev.topic || "").split(" · "), ...(it.topic || "").split(" · ")].filter(Boolean))].join(" · "); } });
     const items = [...seen.values()].sort((a, b) => (b.created || "").localeCompare(a.created || "")).slice(0, 200);
-    return json({ items, errors: res.map((r, i) => r.status === "rejected" ? { topic: topics[i].label, error: String(r.reason?.message || r.reason) } : null).filter(Boolean), at: new Date().toISOString() });
+    return json({ items, status, at: new Date().toISOString() });
   }
 
   if (body.kind === "social") {

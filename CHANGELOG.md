@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.21.0** (26 Out 2026).
+**Versão actual: 2.22.0** (27 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.21.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.22.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,20 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.22.0 · 27 Out 2026
+- **Cartão de cada página:** todas as páginas têm agora a secção "Cartão desta página", com imagem, texto e selo próprios. **[S, C]**
+  - Estes campos são usados quando a página aparece em Instalações portuárias.
+  - Sem imagem própria, o cartão usa a imagem do topo da página ou a capa do vídeo.
+- **Alertas de notícias · fontes:** além do Google Notícias, há uma lista de sites a acompanhar, começando por Fim de Semana (fimdesemana.co.mz). **[C, função]**
+  - Em sites WordPress, a função usa a pesquisa do próprio site; nos outros, o RSS ou os títulos da página inicial.
+  - O Google Notícias pode ser desligado.
+- **Diagnóstico:** os alertas mostram o estado de cada fonte, com o número de notícias e os erros. Os comentários mostram o erro de cada rede. **[C]**
+  - Quando o CMS não consegue contactar a função, explica como resolver: desligar a verificação de JWT dessa função no Supabase.
+- **Função `cdm-feeds`:**
+  - Usa a chave enviada pelo CMS para confirmar que é um editor, o que funciona com as novas chaves `sb_publishable_`.
+  - Junta sem repetir os temas de uma mesma notícia.
+  - **Tem de ser publicada de novo no Supabase.**
 
 ### 2.21.0 · 26 Out 2026
 **Site**
