@@ -147,6 +147,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .hv-play{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 108px);z-index:5;width:52px;height:52px;border-radius:50%;border:0;background:rgba(255,144,18,.95);color:#1F140F;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.35);cursor:pointer}.hv-play[hidden]{display:none}
 .hv-pause{position:absolute;right:var(--gut-r,24px);bottom:22px;z-index:5;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(28,28,74,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;display:grid;place-items:center;cursor:pointer;transition:background .2s,border-color .2s}
 .hv-pause:hover,.hv-pause:focus-visible{background:var(--orange);border-color:var(--orange);color:#1F140F}.hv-pause[hidden]{display:none}
+.hv-pause.hv-next{right:calc(var(--gut-r,24px) + 54px)}
 .hv-pause svg{width:18px;height:18px}.hv-pause .i-play{display:none}.hv-pause[aria-pressed="true"] .i-play{display:block}.hv-pause[aria-pressed="true"] .i-pause{display:none}
 .hv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-3;pointer-events:none;opacity:0;transition:opacity var(--hvT,1s) ease}.hv.on{opacity:1}
 .hero-shade{position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,var(--navy-deep) 0%,rgba(28,28,74,.85) 30%,rgba(28,28,74,0) 62%),linear-gradient(0deg,var(--navy-deep) 0%,rgba(28,28,74,0) 30%)}
@@ -158,7 +159,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .hero-inner{display:flex;flex-direction:column;justify-content:center;pointer-events:none}
 .hero-inner > *{pointer-events:auto}
 .hero.tall .hero-inner{min-height:clamp(540px,74vh,740px);padding-block:48px 40px}
-.hero.short .hero-inner{padding-block:44px 52px}
+.hero.short .hero-inner{padding-block:56px 64px;min-height:clamp(250px,22vw,380px)}
+@media (max-width:820px){.hero.short .hero-inner{min-height:300px;padding-block:44px 48px}}
 .hero h1{font-weight:500;font-size:clamp(2.3rem,5.4vw,4.5rem);max-width:13ch;margin-top:18px}
 .hero.short h1{font-family:var(--pageTitle-f,var(--f-display));font-weight:var(--pageTitle-w,900);font-size:calc(clamp(2rem,4.6vw,3.6rem) * var(--pageTitle-k,1));max-width:20ch;margin-top:14px}
 .hero h1 em{font-style:normal;color:var(--orange)}
@@ -202,6 +204,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   .hero.vid.mwide .hv-play{top:calc(var(--vt) + 12px)}
   .hv-pause{right:auto;left:16px;bottom:auto;top:calc(var(--util-h) + var(--bar-h) + env(safe-area-inset-top,0px) + 12px)}
   .hero.vid.mwide .hv-pause{top:calc(var(--vt) + 12px)}
+  .hv-pause.hv-next{right:auto;left:70px}
 }
 /* ---------- Distâncias + localização (mapa real) ---------- */
 .geo{background:var(--navy-deep);color:#fff;position:relative;overflow:hidden}
@@ -902,6 +905,7 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
     <video id="heroVideo" class="hv" muted playsinline autoplay preload="auto" aria-hidden="true" tabindex="-1" hidden></video>
     <video id="heroVideo2" class="hv" muted playsinline preload="none" aria-hidden="true" tabindex="-1" hidden></video>
     <div class="hero-shade"></div>
+    <button type="button" class="hv-pause hv-next" id="hvNext" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5.5v13l9-6.5zM16.5 5.5h2.5v13h-2.5z"/></svg></button>
     <button type="button" class="hv-pause" id="hvPause" hidden aria-pressed="false"><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
     <div class="wrap hero-inner" id="heroInner"></div>
     <div class="hero-hint" id="heroHint"></div>
@@ -913,8 +917,8 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.20.0"></script>
-<script src="assets/site.js?v=2.20.0"></script>
+<script src="assets/store.js?v=2.21.0"></script>
+<script src="assets/site.js?v=2.21.0"></script>
 
 </body>
 </html>

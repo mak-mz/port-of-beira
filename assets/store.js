@@ -137,6 +137,12 @@ const Store=(function(){
       tSave(tLocal().map(x=>x.id===id?Object.assign({},x,p):x))},
     async remove(id){if(mode==="supabase"){await sb("/rest/v1/cms_tasks?id=eq."+encodeURIComponent(id),{method:"DELETE"});return}tSave(tLocal().filter(x=>x.id!==id))}
   };
+  /* Edge Functions (só editores): ex. cdm-feeds para alertas e comentários */
+  async function fn(name,body){if(mode!=="supabase")throw SBErr("Disponível só com o Supabase ligado.",0,"local");await fresh();
+    const r=await fetch(CFG.url+"/functions/v1/"+name,{method:"POST",headers:{apikey:CFG.key,Authorization:"Bearer "+(sess?sess.access_token:CFG.key),"Content-Type":"application/json"},body:JSON.stringify(body||{})});
+    const txt=await r.text();let j=null;try{j=txt?JSON.parse(txt):null}catch(e){}
+    if(r.status===404)throw SBErr("A função "+name+" ainda não foi publicada no Supabase.",404,"nofn");
+    if(!r.ok)throw SBErr((j&&(j.error||j.message))||("HTTP "+r.status),r.status,"fnerr");return j}
   let inboxLoad=null;
   function inboxRefresh(){if(inboxLoad)return inboxLoad()}
   function inbox(cb,opt){
@@ -153,7 +159,7 @@ const Store=(function(){
     await writeL(IKEY,list);cbLocal&&cbLocal(list);
   }
   async function usage(){let used=0,quota=0;try{const e=await navigator.storage.estimate();used=e.usage||0;quota=e.quota||0}catch(e){}return{used,quota,engine:Store.engine}}
-  return{init,subscribe,save,upload,submit,inbox,inboxRefresh,tasks,inboxUpdate,usage,auth,
+  return{init,subscribe,save,upload,submit,inbox,inboxRefresh,tasks,fn,inboxUpdate,usage,auth,
     get mode(){return mode},get remote(){return mode!=="local"},get engine(){return mode==="supabase"?"supabase":mode==="cloud"?"cloud":idb?"idb":"ls"},
     get user(){return user},get downloads(){return downloads},get config(){return CFG?{url:CFG.url,bucket:CFG.bucket}:null}};
 })();

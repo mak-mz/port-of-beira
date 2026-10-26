@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.20.0** (25 Out 2026).
+**Versão actual: 2.21.0** (26 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.20.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.21.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,36 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.21.0 · 26 Out 2026
+**Site**
+- **Notícias na página inicial:** o bloco mostra só as notícias marcadas como "Destaque na página inicial". Já não completa com as restantes; sem destaques, o bloco não aparece. **[S]**
+- **Topo das páginas mais alto:** cerca de 490 px no computador e 370 px no telemóvel. **[S, C]**
+  - Novos campos "Imagem para telemóvel" e "Parte da imagem sempre visível" (centro, esquerda ou direita) para imagens de fundo.
+  - Corrigido: ao passar da página inicial para outra página, o título da página inicial podia substituir o título da página.
+- **Vídeos em ordem aleatória:** cada visita começa num vídeo que ainda não abriu essa página, até passarem todos. Antes, com poucos vídeos, o primeiro repetia-se muitas vezes. **[S]**
+- **Botão "Vídeo seguinte"** ao lado de pausar/reproduzir. **[S]**
+- **Instalações portuárias:** qualquer página pode ser um cartão, e há cartões de "Outras áreas" com título, texto, imagem, selo e link (página ou URL). **[S, C]**
+
+**CMS**
+- **Menu lateral:**
+  - **Grupos:** Acompanhar, Conteúdo, Operações portuárias, Interacção com visitantes, Aparência e Sistema, com separadores e ícones.
+  - **Abrir e fechar:** cada grupo abre e fecha.
+  - **Recolher/fixar:** o botão no topo do menu recolhe-o numa barra de ícones, que se abre ao passar o rato, ou fixa-o aberto. A escolha fica guardada.
+- **Utilizador na barra de topo:**
+  - Mostra as iniciais e o nome, que pode ser alterado.
+  - O menu tem o email, "Dados e acesso" e "Terminar sessão" (no modo local, "Bloquear o gestor").
+- **Rádio na barra de topo:**
+  - Toca as 50 rádios da lista do myTuner para Moçambique, com reproduzir/parar, anterior/seguinte, o nome da rádio a deslizar (marquee), uma lista com pesquisa e o volume.
+  - As emissões vêm de radio-browser.info. Algumas rádios não têm emissão online ou só emitem sem ligação segura, e o navegador bloqueia-as.
+  - Pode juntar rádios com o endereço da emissão.
+- **Comentários nas redes (novo):** comentários do Facebook, Instagram e LinkedIn, do mais recente para o mais antigo. **[C, Supabase]**
+  - Inclui filtro por rede, pesquisa, link para a publicação, marca "Novo" e número no menu. Actualiza a cada 15 minutos.
+- **Alertas de notícias (novo):** notícias do Google Notícias dos últimos 30 dias, em PT e EN, sobre 8 temas editáveis. **[C, Supabase]**
+  - Temas: Cornelder, Cornelder de Moçambique, Porto da Beira, Corredor da Beira, Rodovia (EN6), Marítimo, Linha férrea e Fronteiras.
+  - Inclui filtro por tema, pesquisa, marca "Novo" e número no menu. Actualiza a cada 30 minutos.
+- **Barra de topo no telemóvel:** mais compacta (só ícones), sem cortar o botão Publicar.
+- **Nova Edge Function `supabase/functions/cdm-feeds`** para os comentários e os alertas. Só editores a podem usar, e os tokens das redes ficam nos Secrets do Supabase.
 
 ### 2.20.0 · 25 Out 2026
 - **Conteúdo actualizado nos ficheiros:** a exportação do CMS de 25 Out 2026 passa a ser o conteúdo de origem do site e do CMS. **[S, C]**

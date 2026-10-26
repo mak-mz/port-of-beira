@@ -70,6 +70,73 @@ details.busy{opacity:.6;pointer-events:none}
 .tk-late{color:var(--err,#c0392b);font-weight:700}
 .tk .tools{margin-left:auto;display:flex;gap:4px}.btn.ic.sure{width:auto;padding:0 10px;background:var(--err,#c0392b);color:#fff}
 .tk-done{margin-top:6px}.tk-done summary{cursor:pointer;font-size:.86rem;color:var(--muted);padding:6px 0}.tk-done .btn{margin-top:6px}
+.fac-pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px 16px}
+/* menu lateral: grupos, recolher/fixar */
+.side-h{display:flex;align-items:center;justify-content:space-between;gap:6px}.side-h h4{margin:6px 10px 8px}
+.side-tg{flex:0 0 auto;width:32px;height:32px;border-radius:8px;border:0;background:none;color:var(--muted);display:grid;place-items:center;cursor:pointer}.side-tg:hover{background:var(--surface-2);color:var(--ink)}
+.ngrp+.ngrp{margin-top:6px;padding-top:6px;border-top:1px solid var(--line)}
+.ngrp-h{width:100%;display:flex!important;align-items:center;justify-content:space-between;padding:6px 12px!important;font-family:var(--f-data);font-size:.68rem!important;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)!important;font-weight:700!important;background:none!important}
+.ngrp-h svg{transition:transform .2s}.ngrp.closed .ngrp-h svg{transform:rotate(-90deg)}.ngrp.closed .ngrp-b{display:none}
+.ngrp-b{display:flex;flex-direction:column;gap:2px}
+.side .nic{flex:0 0 auto;width:18px;height:18px;opacity:.85}.side button[data-go]{justify-content:flex-start}.side button[data-go] .nl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (min-width:861px){
+ body.side-rail .shell{grid-template-columns:68px minmax(0,1fr)}
+ body.side-rail .side{width:68px;padding-inline:10px;overflow-x:hidden;transition:width .18s ease,box-shadow .18s;z-index:30}
+ body.side-rail .side:hover,body.side-rail .side:focus-within{width:250px;box-shadow:8px 0 30px rgba(0,0,0,.12)}
+ body.side-rail .side:not(:hover):not(:focus-within) .nl,body.side-rail .side:not(:hover):not(:focus-within) small,body.side-rail .side:not(:hover):not(:focus-within) h4,body.side-rail .side:not(:hover):not(:focus-within) .ngrp-h span,body.side-rail .side:not(:hover):not(:focus-within) .foot,body.side-rail .side:not(:hover):not(:focus-within) .ngrp-h svg{display:none}
+ body.side-rail .side:not(:hover):not(:focus-within) .ngrp.closed .ngrp-b{display:flex}
+ body.side-rail .side:not(:hover):not(:focus-within) .badge-n{position:absolute;margin:-18px 0 0 14px;transform:scale(.8)}
+ body.side-rail .side button[data-go]{position:relative}
+}
+@media (max-width:860px){.side-h,.ngrp-h{display:none!important}.side nav{flex-direction:row}.ngrp{display:contents}.ngrp-b{display:contents}.ngrp.closed .ngrp-b{display:contents}.side .nic{display:none}}
+/* utilizador */
+.userw{position:relative;flex:0 0 auto}.userw+.lang-cms{margin-left:0}.cwx+.bell+.userw,.bell+.userw{margin-left:0}
+.userb{display:inline-flex;align-items:center;gap:8px;border:0;background:rgba(255,255,255,.08);color:#fff;padding:4px 10px 4px 4px;border-radius:999px;cursor:pointer;font:inherit;font-size:.84rem;font-weight:600;max-width:220px}
+.userb:hover{background:rgba(255,255,255,.16)}.unm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uini{width:30px;height:30px;border-radius:50%;background:var(--orange);color:#1F140F;display:grid;place-items:center;font-size:.76rem;font-weight:800;flex:0 0 auto}
+.umenu{position:absolute;right:0;top:calc(100% + 8px);min-width:240px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,.25);padding:6px;z-index:60;display:flex;flex-direction:column}
+.umenu[hidden]{display:none}.umh{padding:10px 12px;border-bottom:1px solid var(--line);margin-bottom:4px}.umh b{display:block}.umh small{color:var(--muted);font-size:.78rem;word-break:break-all}
+.umenu button{border:0;background:none;text-align:left;padding:10px 12px;border-radius:8px;font:inherit;font-size:.9rem;color:var(--ink);cursor:pointer}.umenu button:hover{background:var(--surface-2)}.umenu .uout{color:var(--err,#c0392b);font-weight:600}
+@media (max-width:760px){.unm,.userb>svg{display:none}.userb{padding:4px}}
+/* rádio no topo */
+.radio{position:relative;display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.08);border-radius:999px;padding:3px;margin-left:14px;min-width:0;flex:0 1 330px}
+.r-b{flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:0;background:none;color:#fff;display:grid;place-items:center;cursor:pointer}.r-b:hover{background:rgba(255,255,255,.14)}.r-b svg{width:15px;height:15px}
+.r-play{background:var(--orange);color:#1F140F;position:relative}.r-play:hover{background:#ffa53d}.r-play .is,.r-play .eq{display:none}
+.radio[data-state="playing"] .r-play .ip,.radio[data-state="loading"] .r-play .ip{display:none}.radio[data-state="playing"] .r-play .is,.radio[data-state="loading"] .r-play .is{display:block}
+.radio[data-state="loading"] .r-play{animation:rpulse 1s ease-in-out infinite}@keyframes rpulse{50%{box-shadow:0 0 0 5px rgba(255,144,18,.25)}}
+.radio[data-state="error"] .r-play{background:#c0392b;color:#fff}
+.r-name{flex:1 1 auto;min-width:60px;overflow:hidden;white-space:nowrap;font-size:.8rem;font-weight:600;color:#fff;padding:0 4px;mask-image:linear-gradient(90deg,transparent 0,#000 8px,#000 calc(100% - 8px),transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8px,#000 calc(100% - 8px),transparent 100%)}
+.r-name span{display:inline-block;padding-left:4px}.r-name.mq span{animation:rmq var(--mqd,12s) linear infinite}.r-name i{font-style:normal;opacity:.5;white-space:pre}
+@keyframes rmq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.radio[data-state="idle"] .r-name.mq span,.radio[data-state="error"] .r-name.mq span{animation:none}
+@media (prefers-reduced-motion:reduce){.r-name.mq span{animation:none}}
+.rlist{position:absolute;left:0;top:calc(100% + 8px);width:min(380px,92vw);max-height:min(70vh,560px);display:flex;flex-direction:column;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 44px rgba(0,0,0,.28);z-index:60;overflow:hidden}
+.rlist[hidden]{display:none}.rl-top{display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid var(--line)}
+.rl-top input[type=search]{flex:1;min-width:0;font:inherit;font-size:.9rem;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink)}
+.rl-vol{display:flex;align-items:center;gap:4px;color:var(--muted)}.rl-vol input{width:80px;accent-color:var(--orange)}
+.rl-items{overflow-y:auto;padding:6px;flex:1}.rl-g{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:10px 8px 4px}
+.rl-i{position:relative;display:flex;flex-direction:column;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--ink);font:inherit}
+.rl-i:hover:not(:disabled){background:var(--surface-2)}.rl-i.on{background:color-mix(in srgb,var(--orange) 14%,var(--surface))}.rl-i b{font-weight:600;font-size:.88rem}.rl-i small{color:var(--muted);font-size:.74rem}.rl-i:disabled{opacity:.45;cursor:default}
+.rl-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:var(--muted)}.rl-x:hover{background:var(--line)}
+.rl-add{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border-top:1px solid var(--line)}.rl-add input{flex:1 1 120px;min-width:0;font:inherit;font-size:.82rem;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.rl-note{margin:0;padding:0 12px 10px;font-size:.7rem;color:var(--muted)}
+@media (max-width:1100px){.radio{flex-basis:220px}.r-sm#radioPrev{display:none}}
+@media (max-width:760px){.radio{flex:0 0 auto;margin-left:6px}.r-name,.r-sm{display:none}.radio .r-sm#radioMore{display:grid}.rlist{position:fixed;left:8px;right:8px;width:auto;top:calc(var(--topH,63px) + 6px)}}
+/* comentários e alertas */
+.fd-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.fd-bar .gfil{display:flex;flex-wrap:wrap;gap:6px;margin:0;flex:1 1 auto}
+.fd-bar .gfil button{font:inherit;font-size:.84rem;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.fd-bar .gfil button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}.fd-bar .gfil .tag{font-size:.62rem}
+.fd-bar input[type=search]{flex:0 1 240px;min-width:0;font:inherit;font-size:.9rem;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.fd{display:flex;flex-direction:column;margin-top:8px}.fd-day{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:16px 0 6px;border-bottom:1px solid var(--line)}
+.fd-i{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.fd-i.new{background:linear-gradient(90deg,color-mix(in srgb,var(--orange) 9%,transparent),transparent 60%)}
+.fd-net{flex:0 0 auto;align-self:flex-start;font-size:.7rem;font-weight:800;color:#fff;background:var(--c);padding:3px 8px;border-radius:6px;min-width:74px;text-align:center}
+.fd-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}.fd-m{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.84rem}.fd-m time{color:var(--muted);font-size:.78rem}
+.fd-b p{margin:0;white-space:pre-line;word-break:break-word}.fd-post,.fd-src{color:var(--muted);font-size:.78rem}.fd-go{font-size:.8rem;font-weight:600;color:var(--accent,#2E2E6F);text-decoration:none}.fd-go:hover{text-decoration:underline}
+.fd-t{font-weight:600;color:var(--ink);text-decoration:none;line-height:1.35}.fd-t:hover{color:var(--orange);text-decoration:underline}
+.tag.ok{background:rgba(23,128,74,.14);color:#17804a}
+.steps{margin:6px 0 10px;padding-left:20px;display:flex;flex-direction:column;gap:6px}.mini-t{width:100%;border-collapse:collapse;font-size:.84rem;margin:6px 0 10px}.mini-t th,.mini-t td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+.al-row{display:grid;grid-template-columns:auto 1fr 2fr 140px;gap:10px;align-items:end}.al-row .f{margin:0}@media (max-width:900px){.al-row{grid-template-columns:1fr}}
+@media (max-width:520px){.top #viewSite,.top .status{display:none}.top .tbtn.pub{font-size:0;padding:9px 12px;gap:0}.top .tbtn.pub svg{width:18px;height:18px}.top .bell,.top .userb{flex:0 0 auto}.radio{margin-left:0}.top .mark{display:none!important}}
 .ctpre{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 6px}
 .vrand{margin-left:auto;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;font-size:.86rem;padding:6px 12px 6px 6px;border-radius:999px;background:var(--surface-2);user-select:none}.vrand input{position:absolute;opacity:0;width:1px;height:1px}.vr-sw{width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;transition:background .2s}.vr-sw::after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}.vrand input:checked+.vr-sw{background:var(--orange)}.vrand input:checked+.vr-sw::after{transform:translateX(14px)}.vrand input:focus-visible+.vr-sw{outline:2px solid var(--navy);outline-offset:2px}
 #sideFoot .ver{margin-top:8px;font-size:.72rem;opacity:.6}
@@ -413,7 +480,20 @@ body.rt-lock{overflow:hidden}
 
 <header class="top">
   <div class="mark"><span class="logo" id="topLogo"></span><span class="sep"></span><span class="app">Gestor de conteúdos</span></div>
+  <div class="radio" id="radio" data-state="idle" role="group" aria-label="Rádio">
+   <button type="button" class="r-b r-play" id="radioPlay" aria-label="Ouvir rádio"><svg class="ip" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="is" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></button>
+   <button type="button" class="r-b r-sm" id="radioPrev" aria-label="Rádio anterior" title="Rádio anterior"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 18.5v-13l-9 6.5zM5 5.5h2.5v13H5z"/></svg></button>
+   <div class="r-name" id="radioName" aria-live="polite"><span>Rádio</span></div>
+   <button type="button" class="r-b r-sm" id="radioNext" aria-label="Rádio seguinte" title="Rádio seguinte"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5.5v13l9-6.5zM16.5 5.5h2.5v13h-2.5z"/></svg></button>
+   <button type="button" class="r-b r-sm" id="radioMore" aria-label="Lista de rádios" title="Lista de rádios" aria-expanded="false" aria-controls="radioList"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
+   <div class="rlist" id="radioList" hidden><div class="rl-top"><input type="search" id="radioQ" placeholder="Procurar rádio…" aria-label="Procurar rádio" autocomplete="off"><label class="rl-vol" title="Volume"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6"/></svg><input type="range" id="radioVol" min="0" max="100" value="80" aria-label="Volume"></label></div>
+    <div class="rl-items" id="radioItems"></div>
+    <form class="rl-add" id="radioAdd" autocomplete="off"><input id="radioAddN" placeholder="Nome da rádio" aria-label="Nome da rádio" maxlength="60"><input id="radioAddU" placeholder="https://… (endereço da emissão)" aria-label="Endereço da emissão"><button class="btn" type="submit">+ Juntar</button></form>
+    <p class="rl-note">Lista do myTuner (Moçambique). Emissões de radio-browser.info; algumas rádios não emitem online ou só sem ligação segura.</p></div>
+  </div>
   <span class="cwx" id="cmsWx" hidden></span><button type="button" class="bell" id="inboxBell" data-go="inbox" aria-label="Mensagens" title="Mensagens"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><b id="bellN" hidden>0</b></button>
+  <div class="userw" id="userWrap"><button type="button" class="userb" id="userBtn" aria-haspopup="true" aria-expanded="false"><span class="uini" id="userIni">?</span><span class="unm" id="userName"></span><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></button>
+   <div class="umenu" id="userMenu" hidden><div class="umh"><b id="userName2"></b><small id="userMail"></small></div><button type="button" data-rename>Alterar o nome mostrado</button><button type="button" data-go="data">Dados e acesso</button><button type="button" class="uout" data-logout><span id="userOut">Terminar sessão</span></button></div></div>
   <div class="lang-cms" role="group" aria-label="Idioma do gestor"><button data-cmslang="pt">PT</button><button data-cmslang="en">EN</button></div><div class="status" id="status"><i></i><span id="statusTxt">A carregar…</span></div>
   <div class="acts">
     <a class="tbtn ghost" href="./" id="viewSite" title="Abrir o site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><span class="lbl-l">Ver site</span></a>
@@ -423,13 +503,13 @@ body.rt-lock{overflow:hidden}
 </header>
 
 <div class="shell">
-  <aside class="side"><h4>Secções do site</h4><nav id="sideNav" aria-label="Secções"></nav><div class="foot" id="sideFoot"></div></aside>
+  <aside class="side"><div class="side-h"><h4>Secções do site</h4><button type="button" class="side-tg" id="sideToggle" aria-pressed="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 10l-2 2 2 2"/></svg></button></div><nav id="sideNav" aria-label="Secções"></nav><div class="foot" id="sideFoot"></div></aside>
   <main><div class="col" id="main"></div></main>
 </div>
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.20.0"></script>
-<script src="assets/admin.js?v=2.20.0"></script>
+<script src="assets/store.js?v=2.21.0"></script>
+<script src="assets/admin.js?v=2.21.0"></script>
 </body>
 </html>
