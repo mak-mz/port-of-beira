@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.23.0** (27 Out 2026).
+**Versão actual: 2.25.0** (27 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.23.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.25.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,33 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.25.0 · 27 Out 2026
+- **Verificação em dois passos (app autenticadora):** além da palavra-passe, o CMS pede um código de 6 algarismos do Microsoft Authenticator, Google Authenticator ou outra app. **[C, B, função]**
+  - Obrigatória para administradores. "Exigir a todos os utilizadores" (Dados e acesso → Segurança) torna-a obrigatória também para editores e consulta.
+  - Aplicada pela base de dados: enquanto o código não é confirmado, as regras de todas as tabelas, ficheiros, cópias e funções recusam o acesso.
+  - Activação com código QR na primeira entrada. Os administradores podem "Repor 2 passos" a quem perder o telemóvel. A etiqueta "2 passos" mostra quem já a tem activa.
+- **Entrada:** retirado o link "Criar conta". As contas são criadas pelos administradores, no CMS. **[C]**
+- **SQL `06-verificacao-dois-passos.sql`:** novas funções `mfa_state`, `mfa_ok`, `my_access`; `is_member`, `is_editor` e `is_admin` passam a exigir a verificação. **Tem de ser corrido no SQL Editor.** **[B]**
+- **Função `cdm-admin` 2.25.0:** só aceita administradores com a verificação feita; nova acção "mfareset". **Tem de ser publicada de novo.**
+- **Manual do CMS** actualizado (2.3 Verificação em dois passos; 17.2 Definições de autenticação recomendadas).
+
+### 2.24.0 · 27 Out 2026
+- **Utilizadores e níveis de acesso no CMS:** em Dados e acesso, os administradores criam, alteram, suspendem e removem utilizadores. **[C, B, função]**
+  - Três níveis: **Administrador** (tudo, incluindo utilizadores e cópias), **Editor** (edita e publica) e **Consulta** (só vê mensagens, comentários, alertas e tarefas).
+  - A conta é criada no Supabase (Authentication → Users) e o nível fica na tabela `editors`.
+  - Palavra-passe temporária gerada (14 caracteres) ou escrita (mínimo 10, sem começar por "cornelder", "porto", "beira"…). Na primeira entrada a pessoa tem de escolher a sua.
+  - Não é possível baixar o próprio nível nem ficar sem administrador activo.
+  - Nova Edge Function `cdm-admin` (usa a chave de serviço do próprio Supabase; nunca vai para o navegador).
+- **Cópias de segurança:** cópia completa (conteúdo, mensagens, tarefas e utilizadores) na tabela `site_backups`. **[C, B]**
+  - Automática todos os dias às 02:30 (Maputo) com pg_cron; manual com "Criar cópia agora". Ficam as últimas 30 de cada tipo.
+  - Descarregar em JSON ou "Abrir no rascunho" para rever e repor.
+- **Fim de sessão automático:** depois de 30 minutos sem actividade (configurável em Dados e acesso → Segurança: 10 min a 2 h, ou nunca). **[C]**
+  - Aviso um minuto antes; a actividade em qualquer separador conta.
+  - Alterações por publicar ficam guardadas no navegador e podem ser recuperadas ao entrar.
+- **SQL `05-utilizadores-e-copias.sql`:** níveis, regras de acesso por nível, cópias e agendamento. **Tem de ser corrido no SQL Editor.** **[B]**
+- **Função `cdm-feeds` 2.24.0:** aceita utilizadores de Consulta. **Tem de ser publicada de novo.**
+- **Manual do CMS** actualizado para a versão 2.24.0.
 
 ### 2.23.0 · 27 Out 2026
 - **Vídeos que não tocavam:** quando um vídeo falha, o site tenta de novo uma vez, sem usar a cópia guardada pelo navegador, antes de o tirar da sequência. **[S]**

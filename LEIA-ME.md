@@ -27,7 +27,11 @@ Sem `config.js` preenchido, tudo funciona em **modo local**, como na versão 1 (
 | `supabase/02-primeiro-editor.sql` | Adiciona o primeiro editor |
 | `supabase/03-seguranca.sql` | Anti-spam e validações do formulário de contacto (v2.11.0) |
 | `supabase/04-tarefas.sql` | Lista de tarefas privada dos editores, em Visão geral (v2.19.0) |
+| `supabase/05-utilizadores-e-copias.sql` | Níveis de acesso (Administrador, Editor, Consulta) e cópias de segurança diárias (v2.24.0) |
+| `supabase/06-verificacao-dois-passos.sql` | Verificação em dois passos, obrigatória para administradores (v2.25.0) |
 | `supabase/functions/cdm-feeds/index.ts` | Edge Function dos comentários nas redes e dos alertas de notícias (v2.21.0) |
+| `supabase/functions/cdm-admin/index.ts` | Edge Function da gestão de utilizadores no CMS (v2.25.0). Publicar com **Verify JWT** desligado |
+| `Manual-CMS-Port-of-Beira.docx` | Manual de utilização do CMS (v2.25.0) |
 | `assets/` | Código do site e do CMS (carregado pelos .html) |
 | `vendor/` | Biblioteca PDF.js alojada no próprio site |
 

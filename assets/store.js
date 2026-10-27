@@ -43,6 +43,21 @@ const Store=(function(){
     async setPassword(password){const u=await sb("/auth/v1/user",{method:"PUT",json:{password}});if(sess)sess.user=u;lsSet(SKEY,sess);return u},
     async signOut(){try{await sb("/auth/v1/logout",{method:"POST"})}catch(e){}keep(null)},
     async isEditor(){if(!sess)return false;try{return(await sb("/rest/v1/rpc/is_editor",{method:"POST",json:{}}))===true}catch(e){return false}},
+    /* nível de acesso (05-utilizadores-e-copias.sql): admin | editor | viewer; sem esse ficheiro, editor = admin */
+    async role(){if(!sess)return null;try{const r=await sb("/rest/v1/rpc/my_role",{method:"POST",json:{}});return typeof r==="string"?r:null}
+      catch(e){if(e.status===404||/my_role|PGRST202/i.test(e.message||""))return(await this.isEditor())?"admin":null;return null}},
+    /* verificação em dois passos (06-verificacao-dois-passos.sql) */
+    get aal(){try{const p=sess.access_token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");return JSON.parse(atob(p+"===".slice((p.length+3)%4))).aal||"aal1"}catch(e){return"aal1"}},
+    async mfaState(){if(!sess)return null;try{return await sb("/rest/v1/rpc/mfa_state",{method:"POST",json:{}})}catch(e){if(e.status===404||/mfa_state|PGRST202/i.test(e.message||""))return null;throw e}},
+    async mfaFactors(){const u=await sb("/auth/v1/user");if(sess){sess.user=u;lsSet(SKEY,sess)}return(u&&u.factors||[]).filter(f=>f.factor_type==="totp")},
+    async mfaEnroll(){const fs=await this.mfaFactors();for(const f of fs)if(f.status!=="verified")try{await sb("/auth/v1/factors/"+f.id,{method:"DELETE"})}catch(e){}
+      const r=await sb("/auth/v1/factors",{method:"POST",json:{factor_type:"totp",friendly_name:"CMS "+new Date().toISOString().slice(0,16).replace("T"," "),issuer:"Port of Beira CMS"}});
+      return{id:r.id,qr:r.totp&&r.totp.qr_code,secret:r.totp&&r.totp.secret,uri:r.totp&&r.totp.uri}},
+    async mfaVerify(factorId,code){const c=await sb("/auth/v1/factors/"+factorId+"/challenge",{method:"POST",json:{}});
+      const s=await sb("/auth/v1/factors/"+factorId+"/verify",{method:"POST",json:{challenge_id:c.id,code:String(code).replace(/\D/g,"")}});keep(s);return s},
+    async mfaRemove(factorId){await sb("/auth/v1/factors/"+factorId,{method:"DELETE"})},
+    get mustChange(){return!!(sess&&sess.user&&sess.user.user_metadata&&sess.user.user_metadata.must_change)},
+    async finishFirst(password){const u=await sb("/auth/v1/user",{method:"PUT",json:{password,data:{must_change:false}}});if(sess)sess.user=u;lsSet(SKEY,sess);return u},
     /* link de email (recuperação/convite/confirmação) devolve #access_token=… no URL */
     async fromLink(){const h=location.hash.replace(/^#/,"");if(!/access_token=/.test(h))return null;const p=new URLSearchParams(h);
       keep({access_token:p.get("access_token"),refresh_token:p.get("refresh_token"),expires_in:p.get("expires_in")});
@@ -52,6 +67,10 @@ const Store=(function(){
     async editors(){return await sb("/rest/v1/editors?select=email,created_at&order=created_at.asc")||[]},
     async addEditor(email){await sb("/rest/v1/editors",{method:"POST",json:{email:String(email).trim().toLowerCase()},headers:{Prefer:"return=minimal"}})},
     async removeEditor(email){await sb("/rest/v1/editors?email=eq."+encodeURIComponent(email),{method:"DELETE"})},
+    async backups(){return await sb("/rest/v1/site_backups?select=id,created_at,kind,created_by,size_bytes&order=created_at.desc&limit=60")||[]},
+    async backup(id){const r=await sb("/rest/v1/site_backups?select=data,created_at&id=eq."+encodeURIComponent(id));return r&&r[0]?r[0]:null},
+    async backupNow(){return await sb("/rest/v1/rpc/cdm_backup_now",{method:"POST",json:{}})},
+    async backupDel(id){await sb("/rest/v1/site_backups?id=eq."+encodeURIComponent(id),{method:"DELETE"})},
     async history(){return await sb("/rest/v1/site_content_history?select=id,saved_at,saved_by&order=saved_at.desc&limit=30")||[]},
     async version(id){const r=await sb("/rest/v1/site_content_history?select=body&id=eq."+encodeURIComponent(id));return r&&r[0]?r[0].body:null}
   };
