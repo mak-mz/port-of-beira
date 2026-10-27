@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.25.0** (27 Out 2026).
+**Versão actual: 2.25.1** (27 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.25.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.25.1").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,10 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.25.1 · 28 Out 2026
+- **Verificação em dois passos · código QR:** o código QR não aparecia, porque o Supabase o envia sem codificar e os caracteres "#" das cores cortavam a imagem. O CMS passa a codificá-lo antes de o mostrar. **[C]**
+- **SQL 06:** se for corrido antes do 05, mostra uma mensagem clara a pedir o 05 primeiro. **[B]**
 
 ### 2.25.0 · 27 Out 2026
 - **Verificação em dois passos (app autenticadora):** além da palavra-passe, o CMS pede um código de 6 algarismos do Microsoft Authenticator, Google Authenticator ou outra app. **[C, B, função]**

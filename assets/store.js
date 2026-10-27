@@ -52,7 +52,10 @@ const Store=(function(){
     async mfaFactors(){const u=await sb("/auth/v1/user");if(sess){sess.user=u;lsSet(SKEY,sess)}return(u&&u.factors||[]).filter(f=>f.factor_type==="totp")},
     async mfaEnroll(){const fs=await this.mfaFactors();for(const f of fs)if(f.status!=="verified")try{await sb("/auth/v1/factors/"+f.id,{method:"DELETE"})}catch(e){}
       const r=await sb("/auth/v1/factors",{method:"POST",json:{factor_type:"totp",friendly_name:"CMS "+new Date().toISOString().slice(0,16).replace("T"," "),issuer:"Port of Beira CMS"}});
-      return{id:r.id,qr:r.totp&&r.totp.qr_code,secret:r.totp&&r.totp.secret,uri:r.totp&&r.totp.uri}},
+      /* o Supabase devolve o SVG do QR sem codificar ("#" das cores corta o endereço data:) → recodificar */
+      let qr=r.totp&&r.totp.qr_code||"";const m=qr.match(/^data:image\/svg\+xml[^,]*,([\s\S]*)$/);
+      if(m){let svg=m[1];if(!/^\s*</.test(svg))try{svg=decodeURIComponent(svg)}catch(e){}qr="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg)}
+      return{id:r.id,qr,secret:r.totp&&r.totp.secret,uri:r.totp&&r.totp.uri}},
     async mfaVerify(factorId,code){const c=await sb("/auth/v1/factors/"+factorId+"/challenge",{method:"POST",json:{}});
       const s=await sb("/auth/v1/factors/"+factorId+"/verify",{method:"POST",json:{challenge_id:c.id,code:String(code).replace(/\D/g,"")}});keep(s);return s},
     async mfaRemove(factorId){await sb("/auth/v1/factors/"+factorId,{method:"DELETE"})},
