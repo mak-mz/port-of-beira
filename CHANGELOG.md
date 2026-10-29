@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.29.0** (29 Out 2026).
+**Versão actual: 2.29.1** (29 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.29.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.29.1").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,23 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.29.1 · 29 Out 2026 · Segurança (auditoria 2.29.0: S-06 e secção 6)
+- **Contas ligadas aos utilizadores do CMS (secção 6 / V-02 da auditoria).** Até agora o nível de cada pessoa era encontrado pelo email da sessão. Uma conta criada por fora, com o email de alguém da lista que ainda não tivesse conta, herdava esse nível. **[B, C, função]**
+  - Cada utilizador fica ligado ao **id da sua conta** do Supabase (`editors.user_id`). Os níveis passam a ser procurados por esse id: uma conta criada por fora não tem acesso a nada, mesmo com o email certo.
+  - **Criar utilizador** e **Nova palavra-passe** ligam a conta. Se já existia uma conta com esse email, recebe a nova palavra-passe temporária e passa a ser da pessoa indicada.
+  - **Dados e acesso → Utilizadores:** nova etiqueta **Conta por ligar** para quem ainda não está ligado; resolve-se com **Nova palavra-passe**.
+  - Testado numa base de dados local: contas criadas por fora com o email de uma administradora ou de uma pessoa sem conta ficam sem nível e não conseguem ligar-se a si próprias.
+- **SQL `08-contas-ligadas.sql`:** coluna `user_id`, ligação de quem já tem conta e novas `my_role()` e `berth_terminals()`. Correr depois do 07. Se voltar a correr o 05, o 06 ou o 07, corra também o 08. **[B]**
+- **Função `cdm-admin` 2.29.1:** liga a conta ao criar e ao dar nova palavra-passe. **Tem de ser publicada de novo.**
+- **Função `cdm-feeds` 2.29.1 (S-06):** as Fontes de notícias só são lidas por **https** e em servidores públicos. **[função]**
+  - Recusa `localhost`, redes privadas (10.x, 172.16–31.x, 192.168.x, 169.254.x…), IPv6 internos, nomes `.local`/`.internal` e nomes que apontem para redes internas.
+  - Cada redireccionamento é verificado da mesma forma (máximo 3); tempo máximo 10 s e 3 MB por página.
+  - Os erros mostrados no CMS passam a ser genéricos ("Não foi possível ler esta fonte."); o detalhe fica nos registos (Logs) da função.
+  - Opcional: segredo `NEWS_ALLOWED_HOSTS` com a lista de domínios permitidos.
+  - Volta a aceitar utilizadores de **Consulta** (alteração da 2.24.0 que não tinha ficado no repositório). O Planeamento continua sem acesso.
+  - **Tem de ser publicada de novo.**
+- **Supabase (painel):** confirmar Authentication → Sign In / Providers → **Allow new users to sign up: desligado**.
 
 ### 2.29.0 · 29 Out 2026
 - **Novo nível de acesso: Planeamento.** Para as pessoas que actualizam os planos de atracação diários. **[C, B, função]**

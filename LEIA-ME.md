@@ -30,9 +30,10 @@ Sem `config.js` preenchido, tudo funciona em **modo local**, como na versão 1 (
 | `supabase/05-utilizadores-e-copias.sql` | Níveis de acesso (Administrador, Editor, Consulta) e cópias de segurança diárias (v2.24.0) |
 | `supabase/06-verificacao-dois-passos.sql` | Verificação em dois passos, obrigatória para administradores (v2.25.0) |
 | `supabase/07-planeamento-atracacao.sql` | Nível **Planeamento**: só planos de atracação por terminal, máximo 2 pessoas por terminal (v2.29.0). Correr depois do 06; voltar a correr se correr o 05 ou o 06 outra vez |
-| `supabase/functions/cdm-feeds/index.ts` | Edge Function dos comentários nas redes e dos alertas de notícias (v2.21.0) |
-| `supabase/functions/cdm-admin/index.ts` | Edge Function da gestão de utilizadores no CMS (v2.25.0). Publicar com **Verify JWT** desligado |
-| `Manual-CMS-Port-of-Beira.docx` | Manual de utilização do CMS (v2.25.0) |
+| `supabase/08-contas-ligadas.sql` | Liga cada utilizador do CMS ao id da sua conta; os níveis deixam de depender só do email (v2.29.1). Correr depois do 07; voltar a correr se correr o 05, o 06 ou o 07 outra vez |
+| `supabase/functions/cdm-feeds/index.ts` | Edge Function dos comentários nas redes e dos alertas de notícias (v2.29.1: só https e servidores públicos) |
+| `supabase/functions/cdm-admin/index.ts` | Edge Function da gestão de utilizadores no CMS (v2.29.1). Publicar com **Verify JWT** desligado |
+| `Manual-CMS-Port-of-Beira.docx` | Manual de utilização do CMS (v2.29.1) |
 | `assets/` | Código do site e do CMS (carregado pelos .html) |
 | `vendor/` | Biblioteca PDF.js alojada no próprio site |
 
@@ -65,6 +66,8 @@ Sem `config.js` preenchido, tudo funciona em **modo local**, como na versão 1 (
 1. Abra **Authentication → Users → Add user → Create new user**.
 2. Indique o **mesmo email** do passo 3 e uma palavra-passe com pelo menos 8 caracteres.
 3. Marque **Auto Confirm User** e clique em **Create user**.
+4. Corra a seguir, por ordem, `03`, `04`, `05`, `06`, `07` e `08` no SQL Editor. O `08` liga a sua conta ao seu email na lista de utilizadores: sem ele, o CMS não lhe dá acesso.
+5. Em **Authentication → Sign In / Providers**, desligue **Allow new users to sign up**. As outras contas são criadas no CMS (Dados e acesso → Utilizadores).
 
 ### 5. Copiar as chaves para o `config.js`
 

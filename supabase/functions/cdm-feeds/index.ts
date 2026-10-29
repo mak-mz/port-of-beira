@@ -10,6 +10,10 @@
 //   LI_ORG_URN, LI_TOKEN, LI_VERSION    LinkedIn: urn:li:organization:123, token com r_organization_social (Community Management API), versão AAAAMM
 //   GRAPH_VERSION                       por defeito v23.0
 // SUPABASE_URL e SUPABASE_ANON_KEY são fornecidos automaticamente pelo Supabase.
+// Segurança (2.29.1): os sites de "Fontes de notícias" só são lidos por https, em servidores públicos
+// (recusa localhost, redes privadas e endereços internos, também depois de redireccionamentos),
+// com tempo e tamanho máximos; os erros devolvidos ao CMS são genéricos. Opcional:
+//   NEWS_ALLOWED_HOSTS  lista de domínios permitidos, separados por vírgulas (ex.: fimdesemana.co.mz,clubofmozambique.com)
 // ============================================================
 
 const CORS = {
@@ -23,17 +27,69 @@ const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: 
 const iso = (s: string) => { const d = new Date(s || ""); return isNaN(+d) ? "" : d.toISOString(); };
 type Item = { network: string; id: string; text: string; author: string; created: string; url: string; postText?: string; postUrl?: string; topic?: string; source?: string };
 
-// ---------- só editores (usa a função is_editor() criada em 01-estrutura.sql) ----------
-async function isEditor(auth: string | null, apikey: string | null): Promise<boolean> {
+// ---------- só utilizadores do CMS: Administrador, Editor e Consulta (is_member, 05/06; sem o 05 usa is_editor) ----------
+// O Planeamento não tem acesso (my_role não o devolve, ver 07).
+async function isMember(auth: string | null, apikey: string | null): Promise<boolean> {
   if (!auth || !/^Bearer\s+\S+/.test(auth)) return false;
-  const r = await fetch(`${env("SUPABASE_URL")}/rest/v1/rpc/is_editor`, {
-    method: "POST",
-    headers: { apikey: apikey || env("SUPABASE_ANON_KEY"), Authorization: auth, "Content-Type": "application/json" },
-    body: "{}",
-  });
+  const h = { apikey: apikey || env("SUPABASE_ANON_KEY"), Authorization: auth, "Content-Type": "application/json" };
+  let r = await fetch(`${env("SUPABASE_URL")}/rest/v1/rpc/is_member`, { method: "POST", headers: h, body: "{}" });
+  if (r.status === 404) r = await fetch(`${env("SUPABASE_URL")}/rest/v1/rpc/is_editor`, { method: "POST", headers: h, body: "{}" });
   if (!r.ok) return false;
   return (await r.json()) === true;
 }
+
+// ---------- pedidos a sites externos: só https e só servidores públicos (S-06) ----------
+class Blocked extends Error {}
+const ALLOWED = env("NEWS_ALLOWED_HOSTS").split(",").map((h) => h.trim().toLowerCase().replace(/^www\./, "")).filter(Boolean);
+function v4Private(ip: string): boolean {
+  const p = ip.split(".").map(Number); if (p.length !== 4 || p.some((n) => !(n >= 0 && n <= 255))) return true;
+  const [a, b] = p;
+  return a === 0 || a === 10 || a === 127 || a >= 224 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) ||
+    (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 192 && b === 0 && p[2] === 0) || (a === 198 && (b === 18 || b === 19));
+}
+function v6Private(ip: string): boolean {
+  const x = ip.toLowerCase().replace(/^\[|\]$/g, "");
+  const m = x.match(/^(?:::ffff:|::)(\d+\.\d+\.\d+\.\d+)$/); if (m) return v4Private(m[1]);
+  const mh = x.match(/^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/);
+  if (mh) { const a = parseInt(mh[1], 16), b = parseInt(mh[2], 16); return v4Private(`${a >> 8}.${a & 255}.${b >> 8}.${b & 255}`); }
+  return x === "::" || x === "::1" || /^f[cd]/.test(x) || /^fe[89ab]/.test(x) || /^ff/.test(x) || x.startsWith("64:ff9b:") || x.startsWith("2001:db8:");
+}
+const isV4 = (h: string) => /^\d+\.\d+\.\d+\.\d+$/.test(h);
+async function checkHost(hostname: string): Promise<void> {
+  const h = hostname.toLowerCase().replace(/\.$/, "");
+  if (h.startsWith("[")) { if (v6Private(h)) throw new Blocked("Endereço não permitido."); return; }
+  if (isV4(h)) { if (v4Private(h)) throw new Blocked("Endereço não permitido."); return; }
+  if (!h.includes(".") || /(^|\.)(localhost|local|internal|intranet|lan|home|corp|arpa)$/.test(h)) throw new Blocked("Endereço não permitido.");
+  if (ALLOWED.length && !ALLOWED.some((a) => h === a || h.endsWith("." + a))) throw new Blocked("Este site não está na lista de fontes permitidas.");
+  // nomes que apontam para redes internas
+  for (const t of ["A", "AAAA"] as const) {
+    let ips: string[] = [];
+    try { ips = await (Deno as any).resolveDns(h, t); } catch { continue; }
+    if (ips.some((ip) => (t === "A" ? v4Private(ip) : v6Private(ip)))) throw new Blocked("Endereço não permitido.");
+  }
+}
+// https apenas, porta 443, redireccionamentos verificados um a um (máx. 3), 10 s
+async function safeFetch(url: string, init: RequestInit = {}): Promise<Response> {
+  let u = new URL(url);
+  for (let hop = 0; hop <= 3; hop++) {
+    if (u.protocol !== "https:" || (u.port && u.port !== "443") || u.username || u.password) throw new Blocked("Só são aceites endereços https.");
+    await checkHost(u.hostname);
+    const r = await fetch(u.href, { ...init, redirect: "manual", signal: AbortSignal.timeout(10000) });
+    const loc = r.headers.get("location");
+    if (r.status >= 300 && r.status < 400 && loc) { try { await r.body?.cancel(); } catch { /* */ } u = new URL(loc, u); continue; }
+    return r;
+  }
+  throw new Blocked("Demasiados redireccionamentos.");
+}
+// lê no máximo 3 MB
+async function readText(r: Response, max = 3_000_000): Promise<string> {
+  const rd = r.body?.getReader(); if (!rd) return "";
+  const chunks: Uint8Array[] = []; let n = 0;
+  for (;;) { const { done, value } = await rd.read(); if (done) break; n += value.length; if (n > max) { try { await rd.cancel(); } catch { /* */ } break; } chunks.push(value); }
+  const all = new Uint8Array(chunks.reduce((k, c) => k + c.length, 0)); let o = 0; for (const c of chunks) { all.set(c, o); o += c.length; }
+  return new TextDecoder().decode(all);
+}
+const publicError = (e: unknown) => e instanceof Blocked ? e.message : "Não foi possível ler esta fonte.";
 
 // ---------- cache simples em memória (a função pode reiniciar a qualquer momento) ----------
 const cache = new Map<string, { t: number; v: unknown }>();
@@ -80,7 +136,8 @@ function matchTopics(text: string, topics: { label: string; query: string }[]): 
 }
 const UA = { "User-Agent": "Mozilla/5.0 (compatible; CdM-CMS-alerts/1.0)", Accept: "text/html,application/xhtml+xml,application/xml,application/json;q=0.9,*/*;q=0.8" };
 async function siteNews(src: { label: string; url: string }, topics: { label: string; query: string }[]): Promise<{ items: Item[]; via: string }> {
-  let base = src.url.trim(); if (!/^https?:\/\//i.test(base)) base = "https://" + base; base = base.replace(/\/+$/, "");
+  let base = src.url.trim().replace(/^http:\/\//i, "https://"); if (!/^https:\/\//i.test(base)) base = "https://" + base.replace(/^[a-z]+:\/\//i, ""); base = base.replace(/\/+$/, "");
+  await checkHost(new URL(base).hostname);
   const host = new URL(base).host, name = src.label || host, items: Item[] = [];
   const push = (title: string, link: string, date: string, extra = "") => {
     const tps = matchTopics(title + " " + extra, topics); if (!tps.length || !title || !link) return;
@@ -90,17 +147,17 @@ async function siteNews(src: { label: string; url: string }, topics: { label: st
   try {
     const qs = [...new Set(topics.flatMap((t) => terms(t.query)))].slice(0, 20); let ok = false;
     for (const q of qs) {
-      const r = await fetch(`${base}/wp-json/wp/v2/posts?search=${encodeURIComponent(q)}&per_page=10&_fields=title,link,date_gmt,excerpt`, { headers: UA });
+      const r = await safeFetch(`${base}/wp-json/wp/v2/posts?search=${encodeURIComponent(q)}&per_page=10&_fields=title,link,date_gmt,excerpt`, { headers: UA });
       if (!r.ok || !(r.headers.get("content-type") || "").includes("json")) break;
       ok = true;
-      for (const p of await r.json()) push(decode(p.title?.rendered || ""), p.link, p.date_gmt ? new Date(p.date_gmt + "Z").toISOString() : "", decode(p.excerpt?.rendered || ""));
+      for (const p of JSON.parse(await readText(r))) push(decode(p.title?.rendered || ""), p.link, p.date_gmt ? new Date(p.date_gmt + "Z").toISOString() : "", decode(p.excerpt?.rendered || ""));
     }
     if (ok) return { items: [...new Map(items.map((i) => [i.url, i])).values()], via: "wordpress" };
   } catch { /* segue */ }
   // 2) RSS (/feed/ ou o próprio endereço)
   for (const u of [base, base + "/feed/", base + "/rss"]) {
     try {
-      const r = await fetch(u, { headers: UA }); if (!r.ok) continue; const x = await r.text();
+      const r = await safeFetch(u, { headers: UA }); if (!r.ok) continue; const x = await readText(r);
       if (!/<rss|<feed/i.test(x.slice(0, 2000))) continue;
       for (const m of x.matchAll(/<(item|entry)>([\s\S]*?)<\/\1>/g)) {
         const it = m[2], link = tag(it, "link") || ((it.match(/<link[^>]*href="([^"]+)"/) || [])[1] || ""), d = new Date(tag(it, "pubDate") || tag(it, "updated") || tag(it, "published"));
@@ -110,8 +167,8 @@ async function siteNews(src: { label: string; url: string }, topics: { label: st
     } catch { /* segue */ }
   }
   // 3) página inicial: links com títulos
-  const r = await fetch(base, { headers: UA }); if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const html = await r.text();
+  const r = await safeFetch(base, { headers: UA }); if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const html = await readText(r);
   for (const m of html.matchAll(/<a\s[^>]*href="([^"#]+)"[^>]*>([\s\S]{20,300}?)<\/a>/g)) {
     let link = m[1]; const title = decode(m[2]); if (title.length < 20) continue;
     try { link = new URL(link, base + "/").href; } catch { continue; } if (new URL(link).host !== host) continue;
@@ -166,17 +223,17 @@ async function linkedin(): Promise<Item[]> {
   return out;
 }
 
-const VERSION = "2.23.0";
+const VERSION = "2.29.1";
 Deno.serve(async (req) => {
   try { return await handle(req); }
-  catch (e) { return json({ error: "Erro na função: " + String((e as any)?.message || e) }, 500); }
+  catch (e) { console.error("cdm-feeds", e); return json({ error: "Erro na função. Veja os registos (Logs) da função no Supabase." }, 500); }
 });
 async function handle(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   // abrir o endereço no navegador confirma que a função está publicada e acessível
   if (req.method === "GET") return json({ ok: true, function: "cdm-feeds", version: VERSION, message: "A função está publicada. O CMS usa-a com a sessão de um editor." });
   if (req.method !== "POST") return json({ error: "method" }, 405);
-  if (!(await isEditor(req.headers.get("Authorization"), req.headers.get("apikey")))) return json({ error: "Sem acesso: apenas editores." }, 403);
+  if (!(await isMember(req.headers.get("Authorization"), req.headers.get("apikey")))) return json({ error: "Sem acesso: apenas utilizadores do CMS." }, 403);
   let body: any = {};
   try { body = await req.json(); } catch { /* vazio */ }
 
@@ -189,7 +246,7 @@ async function handle(req: Request): Promise<Response> {
     const sres = await Promise.allSettled(sources.map((s: any) => cached("site:" + s.url + JSON.stringify(topics), 10 * 60e3, () => siteNews(s, topics))));
     const status: { name: string; ok: boolean; count?: number; via?: string; error?: string }[] = [];
     if (useGoogle) { const n = res.reduce((k, r) => k + (r.status === "fulfilled" ? r.value.length : 0), 0); const bad = res.filter((r) => r.status === "rejected").length; status.push({ name: "Google Notícias", ok: n > 0 || !bad, count: n, error: bad ? `${bad} temas com erro` : (n ? undefined : "0 resultados (o Google pode estar a limitar os pedidos do servidor)") }); }
-    sres.forEach((r, i) => { if (r.status === "fulfilled") { res.push({ status: "fulfilled", value: r.value.items }); status.push({ name: sources[i].label || sources[i].url, ok: true, count: r.value.items.length, via: r.value.via }); } else status.push({ name: sources[i].label || sources[i].url, ok: false, error: String((r.reason as any)?.message || r.reason) }); });
+    sres.forEach((r, i) => { if (r.status === "fulfilled") { res.push({ status: "fulfilled", value: r.value.items }); status.push({ name: sources[i].label || sources[i].url, ok: true, count: r.value.items.length, via: r.value.via }); } else { console.error("cdm-feeds fonte", sources[i].url, r.reason); status.push({ name: sources[i].label || sources[i].url, ok: false, error: publicError(r.reason) }); } });
     const seen = new Map<string, Item>();
     res.forEach((r) => { if (r.status === "fulfilled") for (const it of r.value) { const k = it.text.toLowerCase().replace(/\W+/g, " ").trim(); const prev = seen.get(k); if (!prev) seen.set(k, { ...it }); else prev.topic = [...new Set([...(prev.topic || "").split(" · "), ...(it.topic || "").split(" · ")].filter(Boolean))].join(" · "); } });
     const items = [...seen.values()].sort((a, b) => (b.created || "").localeCompare(a.created || "")).slice(0, 200);
@@ -200,7 +257,7 @@ async function handle(req: Request): Promise<Response> {
     const nets: [string, () => Promise<Item[]>][] = [["facebook", facebook], ["instagram", instagram], ["linkedin", linkedin]];
     const res = await Promise.allSettled(nets.map(([n, f]) => cached("social:" + n, 5 * 60e3, f)));
     const items: Item[] = [], status: Record<string, string> = {};
-    res.forEach((r, i) => { const n = nets[i][0]; if (r.status === "fulfilled") { items.push(...r.value); status[n] = "ok"; } else status[n] = String(r.reason?.message || r.reason); });
+    res.forEach((r, i) => { const n = nets[i][0]; if (r.status === "fulfilled") { items.push(...r.value); status[n] = "ok"; } else { console.error("cdm-feeds", n, r.reason); const m = String(r.reason?.message || r.reason); status[n] = /configurad/i.test(m) ? m : "Erro ao ler esta rede. Veja os registos da função."; } });
     items.sort((a, b) => (b.created || "").localeCompare(a.created || ""));
     return json({ items: items.slice(0, 300), status, at: new Date().toISOString() });
   }
