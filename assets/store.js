@@ -44,8 +44,12 @@ const Store=(function(){
     async signOut(){try{await sb("/auth/v1/logout",{method:"POST"})}catch(e){}keep(null)},
     async isEditor(){if(!sess)return false;try{return(await sb("/rest/v1/rpc/is_editor",{method:"POST",json:{}}))===true}catch(e){return false}},
     /* nível de acesso (05-utilizadores-e-copias.sql): admin | editor | viewer; sem esse ficheiro, editor = admin */
-    async role(){if(!sess)return null;try{const r=await sb("/rest/v1/rpc/my_role",{method:"POST",json:{}});return typeof r==="string"?r:null}
+    /* 07-planeamento-atracacao.sql: cms_role inclui "berth" (Planeamento); sem esse ficheiro, usa my_role */
+    async role(){if(!sess)return null;try{const r=await sb("/rest/v1/rpc/cms_role",{method:"POST",json:{}});return typeof r==="string"?r:null}catch(e){if(!(e.status===404||/cms_role|PGRST202/i.test(e.message||"")))return null}
+      try{const r=await sb("/rest/v1/rpc/my_role",{method:"POST",json:{}});return typeof r==="string"?r:null}
       catch(e){if(e.status===404||/my_role|PGRST202/i.test(e.message||""))return(await this.isEditor())?"admin":null;return null}},
+    /* terminais do Planeamento ("tcg", "ct") */
+    async terminals(){if(!sess)return[];try{const r=await sb("/rest/v1/rpc/berth_terminals",{method:"POST",json:{}});return Array.isArray(r)?r:[]}catch(e){return[]}},
     /* verificação em dois passos (06-verificacao-dois-passos.sql) */
     get aal(){try{const p=sess.access_token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");return JSON.parse(atob(p+"===".slice((p.length+3)%4))).aal||"aal1"}catch(e){return"aal1"}},
     async mfaState(){if(!sess)return null;try{return await sb("/rest/v1/rpc/mfa_state",{method:"POST",json:{}})}catch(e){if(e.status===404||/mfa_state|PGRST202/i.test(e.message||""))return null;throw e}},
@@ -182,7 +186,8 @@ const Store=(function(){
   }
   async function usage(){let used=0,quota=0;try{const e=await navigator.storage.estimate();used=e.usage||0;quota=e.quota||0}catch(e){}return{used,quota,engine:Store.engine}}
   const fnUrl=name=>CFG&&CFG.url?CFG.url+"/functions/v1/"+name:"";
-  return{init,subscribe,save,upload,submit,inbox,inboxRefresh,tasks,fn,fnUrl,inboxUpdate,usage,auth,
+  async function latest(){if(mode==="supabase"){const{body}=await sbContent();return body}if(mode==="cloud"){const d=await db.doc("site/content").get();return d.exists?JSON.parse(JSON.stringify(d.data())):null}return await readL(KEY)}
+  return{init,subscribe,latest,save,upload,submit,inbox,inboxRefresh,tasks,fn,fnUrl,inboxUpdate,usage,auth,
     get mode(){return mode},get remote(){return mode!=="local"},get engine(){return mode==="supabase"?"supabase":mode==="cloud"?"cloud":idb?"idb":"ls"},
     get user(){return user},get downloads(){return downloads},get config(){return CFG?{url:CFG.url,bucket:CFG.bucket}:null}};
 })();

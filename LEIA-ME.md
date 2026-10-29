@@ -29,6 +29,7 @@ Sem `config.js` preenchido, tudo funciona em **modo local**, como na versão 1 (
 | `supabase/04-tarefas.sql` | Lista de tarefas privada dos editores, em Visão geral (v2.19.0) |
 | `supabase/05-utilizadores-e-copias.sql` | Níveis de acesso (Administrador, Editor, Consulta) e cópias de segurança diárias (v2.24.0) |
 | `supabase/06-verificacao-dois-passos.sql` | Verificação em dois passos, obrigatória para administradores (v2.25.0) |
+| `supabase/07-planeamento-atracacao.sql` | Nível **Planeamento**: só planos de atracação por terminal, máximo 2 pessoas por terminal (v2.29.0). Correr depois do 06; voltar a correr se correr o 05 ou o 06 outra vez |
 | `supabase/functions/cdm-feeds/index.ts` | Edge Function dos comentários nas redes e dos alertas de notícias (v2.21.0) |
 | `supabase/functions/cdm-admin/index.ts` | Edge Function da gestão de utilizadores no CMS (v2.25.0). Publicar com **Verify JWT** desligado |
 | `Manual-CMS-Port-of-Beira.docx` | Manual de utilização do CMS (v2.25.0) |

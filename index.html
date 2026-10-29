@@ -15,7 +15,7 @@
 @font-face{font-family:"Dax";src:local("Dax-Medium"),local("Dax Medium");font-weight:500}
 @font-face{font-family:"Dax";src:local("Dax-Bold"),local("Dax Bold");font-weight:500}
 @font-face{font-family:"Dax";src:local("Dax-Black"),local("Dax Black");font-weight:500}
-/* ---------- Plano de atracação interactivo (v2.28.1) ---------- */
+/* ---------- Plano de atracação interactivo (v2.29.0) ---------- */
 :root{--bp-bulk:#2F6DB5;--bp-bagged:#7B4FA8;--bp-project:#FF9012;--bp-an:#C23B3B;--bp-grain:#2E8B57;--bp-other:#6B6B85;--bp-hatch:rgba(46,46,111,.07)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bp-bulk:#3B7BC8;--bp-bagged:#8C5FBA;--bp-project:#FF9A2A;--bp-an:#D04848;--bp-grain:#34A065;--bp-other:#7C7C98;--bp-hatch:rgba(169,169,240,.08)}}
 :root[data-theme="dark"]{--bp-bulk:#3B7BC8;--bp-bagged:#8C5FBA;--bp-project:#FF9A2A;--bp-an:#D04848;--bp-grain:#34A065;--bp-other:#7C7C98;--bp-hatch:rgba(169,169,240,.08)}
@@ -614,7 +614,7 @@ th.sel,td.sel{outline:2px solid var(--orange);outline-offset:-2px}
 .spec b{font-family:var(--numbers-f,var(--f-display));font-size:calc(1.7rem * var(--numbers-k,1));font-weight:var(--numbers-w,500);line-height:1.05;font-variant-numeric:tabular-nums}
 .spec b small{font-size:.5em;color:var(--accent-ink);margin-left:4px;font-weight:500}
 .spec span{font-size:.86em;color:var(--muted)}
-.specs.lift{margin-top:-40px;position:relative;z-index:2}
+.specs.lift{margin-top:clamp(24px,4vw,40px);position:relative;z-index:1}
 .specs.lift .spec{box-shadow:var(--shadow)}
 
 /* page body */
@@ -1055,8 +1055,8 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.28.1"></script>
-<script src="assets/site.js?v=2.28.1"></script>
+<script src="assets/store.js?v=2.29.0"></script>
+<script src="assets/site.js?v=2.29.0"></script>
 
 </body>
 </html>

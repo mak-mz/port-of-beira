@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.28.1** (29 Out 2026).
+**Versão actual: 2.29.0** (29 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.28.1").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.29.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,19 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.29.0 · 29 Out 2026
+- **Novo nível de acesso: Planeamento.** Para as pessoas que actualizam os planos de atracação diários. **[C, B, função]**
+  - Vê no CMS só **Operações portuárias → Plano de atracação** e **A minha conta** (sessão, palavra-passe, verificação em dois passos). Não vê mensagens, denúncias, comentários, alertas, tarefas, histórico, utilizadores nem outras secções.
+  - Cada pessoa tem um ou dois terminais (**TCG** e/ou **CT**). Só importa, revê e publica o plano desses terminais. Um PDF de outro terminal é recusado.
+  - **Máximo 2 pessoas activas por terminal.** Suspender uma pessoa liberta o lugar.
+  - Ao publicar, o CMS envia só o plano desses terminais, sobre a versão publicada mais recente; o resto do site fica como está, mesmo que outra pessoa esteja a editar ao mesmo tempo.
+  - **Regras na base de dados, não só no ecrã:** mesmo fora do CMS, uma conta de Planeamento não consegue alterar outra parte do site, o plano de outro terminal, nem carregar ficheiros que não sejam PDF. Também não lê mensagens nem a lista de utilizadores.
+  - **Dados e acesso → Utilizadores:** novo nível *Planeamento (planos de atracação)* com a escolha dos terminais e a ocupação de cada um (ex.: TCG 1/2).
+  - A verificação em dois passos segue a regra *Exigir a todos*, como para Editores e Consulta.
+- **SQL `07-planeamento-atracacao.sql`:** tem de ser corrido no SQL Editor, depois do 06. Se voltar a correr o 05 ou o 06, corra também o 07. **[B]**
+- **Função `cdm-admin` 2.29.0:** aceita o nível Planeamento e os terminais. **Tem de ser publicada de novo.**
+- **Instalações portuárias:** as caixas de números (comprimento do cais, profundidade, gruas…) deixam de ficar por cima do topo da página. Passam a ficar logo abaixo, no computador e no telemóvel. **[S]**
 
 ### 2.28.1 · 29 Out 2026
 - **Plano de atracação · identificação dos PDF:** todos os PDF descarregados nesta secção levam o nome do porto, o terminal e a data do plano, no nome do ficheiro e no próprio documento, em EN ou PT conforme a língua do site. **[S]**

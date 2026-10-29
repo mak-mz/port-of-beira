@@ -1,17 +1,18 @@
 // ============================================================
-// Port of Beira · Edge Function "cdm-admin" (v2.24.0)
+// Port of Beira · Edge Function "cdm-admin" (v2.29.0)
 // Gestão de utilizadores do CMS, só para administradores:
 //   POST { action: "list" }                                  → utilizadores, nível, último acesso
-//   POST { action: "create", email, name, role, password? }  → cria a conta com palavra-passe temporária
+//   POST { action: "create", email, name, role, terminals?, password? } → cria a conta com palavra-passe temporária
 //   POST { action: "reset", email, password? }               → nova palavra-passe temporária
-//   POST { action: "update", email, role?, name?, active? }  → nível, nome, activo/suspenso
+//   POST { action: "update", email, role?, terminals?, name?, active? } → nível, terminais, nome, activo/suspenso
+// Nível "berth" (Planeamento, 07): só planos de atracação dos terminais indicados ("tcg", "ct"), máx. 2 por terminal.
 //   POST { action: "remove", email, deleteAccount? }         → retira o acesso (e apaga a conta, se pedido)
 //   POST { action: "mfareset", email }                       → repõe a verificação em dois passos (telemóvel perdido)
 // A chave de serviço é fornecida automaticamente pelo Supabase (SUPABASE_SERVICE_ROLE_KEY);
 // em alternativa, defina o segredo CDM_SERVICE_KEY. Nunca é enviada ao navegador.
 // Publicar com "Verify JWT" desligado: a função confirma que quem pede é administrador.
 // ============================================================
-const VERSION = "2.25.0";
+const VERSION = "2.29.0";
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
@@ -26,7 +27,9 @@ const svc = (extra: Record<string, string> = {}) => {
   if (k.startsWith("eyJ")) h.Authorization = `Bearer ${k}`; // chave antiga (JWT); as novas sb_secret_ vão só em apikey
   return h;
 };
-const ROLES = ["admin", "editor", "viewer"];
+const ROLES = ["admin", "editor", "viewer", "berth"];
+const TERMS = ["tcg", "ct"];
+const terms = (x: unknown) => Array.isArray(x) ? [...new Set(x.map(String).filter((t) => TERMS.includes(t)))].sort() : [];
 const okEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e.length <= 200;
 
 class Fail extends Error { constructor(msg: string, public status = 400) { super(msg); } }
@@ -97,20 +100,22 @@ async function handle(req: Request): Promise<Response> {
 
   switch (body.action) {
     case "list": {
-      const [eds, us] = await Promise.all([rest("editors?select=email,name,role,active,created_at&order=created_at.asc"), authUsers()]);
+      const eds0 = rest("editors?select=email,name,role,active,terminals,created_at&order=created_at.asc").catch(() => rest("editors?select=email,name,role,active,created_at&order=created_at.asc"));
+      const [eds, us] = await Promise.all([eds0, authUsers()]);
       const by = new Map(us.map((u: any) => [(u.email || "").toLowerCase(), u]));
       return json({ me: me.email, users: eds.map((e: any) => { const u: any = by.get(e.email); return { ...e, account: !!u, confirmed: !!(u && (u.email_confirmed_at || u.confirmed_at)), last_sign_in: u?.last_sign_in_at || null, must_change: !!u?.user_metadata?.must_change, mfa: !!(u?.factors || []).some((f: any) => f.status === "verified") }; }) });
     }
     case "create": {
       if (!okEmail(email)) throw new Fail("Email inválido.");
-      const role = ROLES.includes(body.role) ? body.role : "editor", name = String(body.name || "").trim().slice(0, 80);
+      const role = ROLES.includes(body.role) ? body.role : "editor", name = String(body.name || "").trim().slice(0, 80), tm = terms(body.terminals);
+      if (role === "berth" && !tm.length) throw new Fail("Escolha o terminal (TCG e/ou CT) para o nível Planeamento.");
       const pw = body.password ? String(body.password) : tempPassword(); checkPassword(pw);
       let existed = false;
       try { await admin("users", { method: "POST", body: JSON.stringify({ email, password: pw, email_confirm: true, user_metadata: { name, must_change: true } }) }); }
       catch (e) { if ((e as Fail).status === 422 || /already/i.test((e as Error).message)) existed = true; else throw e; }
       if (existed) { const u = await findUser(email); if (u) await admin(`users/${u.id}`, { method: "PUT", body: JSON.stringify({ password: pw, user_metadata: { ...(u.user_metadata || {}), name: name || u.user_metadata?.name, must_change: true } }) }); }
-      await rest("editors?on_conflict=email", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify({ email, name: name || null, role, active: true }) });
-      return json({ ok: true, email, role, password: pw, existed });
+      await rest("editors?on_conflict=email", { method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(role === "berth" ? { email, name: name || null, role, active: true, terminals: tm } : { email, name: name || null, role, active: true }) });
+      return json({ ok: true, email, role, terminals: tm, password: pw, existed });
     }
     case "reset": {
       const u = await findUser(email); if (!u) throw new Fail("Não existe conta com este email.", 404);
@@ -121,6 +126,8 @@ async function handle(req: Request): Promise<Response> {
     case "update": {
       const patch: Record<string, unknown> = {};
       if (body.role !== undefined) { if (!ROLES.includes(body.role)) throw new Fail("Nível inválido."); patch.role = body.role; }
+      if (body.terminals !== undefined) patch.terminals = terms(body.terminals);
+      if (patch.role === "berth" && patch.terminals === undefined) { const cur = await rest(`editors?select=terminals&email=eq.${encodeURIComponent(email)}`).catch(() => []); const t0 = terms(cur && cur[0] && cur[0].terminals); patch.terminals = t0.length ? t0 : ["tcg"]; }
       if (body.name !== undefined) patch.name = String(body.name).trim().slice(0, 80) || null;
       if (body.active !== undefined) patch.active = !!body.active;
       if (email === me.email && (patch.role && patch.role !== "admin" || patch.active === false)) throw new Fail("Não pode baixar o seu próprio nível nem suspender a sua conta.");
