@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.29.1** (29 Out 2026).
+**Versão actual: 2.30.0** (29 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.29.1").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.30.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,22 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.30.0 · 29 Out 2026 · Desempenho das consultas
+- **Inventário e auditoria de todas as consultas** do site, do CMS, das funções e da base de dados (ver *Relatório de consultas 2.30.0*). **[S, C, B]**
+- **Menos dados pedidos:** **[S, C]**
+  - **Site:** pede só `public_body`, uma cópia do conteúdo sem os dados que só o CMS usa (alertas de notícias, definições de segurança, avisos da revisão do plano de atracação). Ao voltar ao separador, compara só a data da última publicação antes de descarregar de novo.
+  - **CMS:** a verificação de 20 em 20 segundos pede só `updated_at`; o conteúdo completo só é descarregado quando alguém publicou. Antes descarregava tudo a cada 20 segundos.
+  - **Publicar:** a resposta traz só `updated_at` (antes devolvia o conteúdo inteiro).
+  - **Mensagens:** só `id, created_at, kind, data, read` (antes `*`, incluindo o hash do IP). **Tarefas:** só as colunas usadas.
+- **Base de dados (`09-desempenho.sql`):** **[B]**
+  - Índices em falta: histórico por `saved_at`, cópias por `kind, created_at` e `created_at`, Planeamento por terminal.
+  - Visitantes (anon) só podem ler `id, public_body, updated_at` de `site_content`.
+  - A regra dos 2 passos lê uma coluna própria (`mfa_all`) em vez de abrir o conteúdo todo do site.
+  - **Registo de consultas lentas:** `log_min_duration_statement = 250 ms` para os papéis do site, CMS, funções e tarefas. Cada execução acima do limite fica nos registos do Postgres (Supabase → Logs).
+  - **Métricas:** `pg_stat_statements` guardado de hora a hora (pg_cron, 35 dias) no esquema privado `perf`.
+- **CMS · Sistema → Desempenho (só administradores):** limite ajustável, período (1 h a 30 dias), consultas acima do limite, quem as corre (site, CMS, funções, tarefas), execuções e execuções por hora, média, máximo, tempo total e % do tempo da base de dados, linhas, memória, leituras de disco, ficheiros temporários e WAL; gráfico hora a hora, por consulta; tabelas e índices sem uso. **[C]**
+- **Ordem de instalação:** primeiro os ficheiros no GitHub, depois o SQL 09 (o site novo funciona antes e depois do 09; o antigo deixa de ler o conteúdo depois do 09).
 
 ### 2.29.1 · 29 Out 2026 · Segurança (auditoria 2.29.0: S-06 e secção 6)
 - **Contas ligadas aos utilizadores do CMS (secção 6 / V-02 da auditoria).** Até agora o nível de cada pessoa era encontrado pelo email da sessão. Uma conta criada por fora, com o email de alguém da lista que ainda não tivesse conta, herdava esse nível. **[B, C, função]**

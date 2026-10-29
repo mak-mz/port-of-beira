@@ -79,11 +79,21 @@ const Store=(function(){
     async backupNow(){return await sb("/rest/v1/rpc/cdm_backup_now",{method:"POST",json:{}})},
     async backupDel(id){await sb("/rest/v1/site_backups?id=eq."+encodeURIComponent(id),{method:"DELETE"})},
     async history(){return await sb("/rest/v1/site_content_history?select=id,saved_at,saved_by&order=saved_at.desc&limit=30")||[]},
+    /* funções da base de dados (ex.: painel Desempenho, 09-desempenho.sql) */
+    async rpc(name,args){return await sb("/rest/v1/rpc/"+name,{method:"POST",json:args||{}})},
     async version(id){const r=await sb("/rest/v1/site_content_history?select=body&id=eq."+encodeURIComponent(id));return r&&r[0]?r[0].body:null}
   };
-  async function sbContent(){const r=await sb("/rest/v1/site_content?id=eq.main&select=body,updated_at",{},!!sess);const row=r&&r[0];
+  /* 2.30.0 · consultas: o site pede só public_body (09-desempenho.sql: sem dados só do CMS); o CMS pede body.
+     Antes de descarregar de novo, compara só a data da última publicação (updated_at). */
+  let pubCol=true;
+  async function sbStamp(pub){const r=await sb("/rest/v1/site_content?id=eq.main&select=updated_at",{},!pub&&!!sess);return r&&r[0]?r[0].updated_at:null}
+  async function sbContent(pub){
+    if(pub&&pubCol){try{const r=await sb("/rest/v1/site_content?id=eq.main&select=public_body,updated_at",{},false);const row=r&&r[0];
+        if(!row)return{body:null,stamp:null};const body=row.public_body||{};if(!body.updatedAt)body.updatedAt=row.updated_at;return{body,stamp:row.updated_at}}
+      catch(e){if(!(e.status===400||/public_body|42703|PGRST204/i.test(e.message||"")))throw e;pubCol=false}}
+    const r=await sb("/rest/v1/site_content?id=eq.main&select=body,updated_at",{},!pub&&!!sess);const row=r&&r[0];
     if(!row)return{body:null,stamp:null};const body=row.body||{};if(!body.updatedAt)body.updatedAt=row.updated_at;return{body,stamp:row.updated_at}}
-  async function sbInbox(){const r=await sb("/rest/v1/inbox?select=*&order=created_at.desc&limit=500")||[];
+  async function sbInbox(){const r=await sb("/rest/v1/inbox?select=id,created_at,kind,data,read&order=created_at.desc&limit=500")||[];
     return r.map(x=>Object.assign({},x.data||{},{id:x.id,createdAt:x.created_at,read:!!x.read,type:(x.data&&x.data.type)||x.kind}))}
   function every(ms,fn){const t=setInterval(()=>{if(document.visibilityState!=="hidden")fn()},ms);timers.push(t);return()=>clearInterval(t)}
   function safeName(n){return String(n||"ficheiro").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9.]+/g,"-").replace(/^-+|-+$/g,"").slice(-60)||"ficheiro"}
@@ -111,9 +121,10 @@ const Store=(function(){
   function watch(k,fn){const onBC=e=>{if(e.data===k)fn()},onLS=e=>{if(e.key===k)fn()};if(bc)bc.addEventListener("message",onBC);window.addEventListener("storage",onLS);return()=>{if(bc)bc.removeEventListener("message",onBC);window.removeEventListener("storage",onLS)}}
   /* opts.poll: verificar alterações periodicamente (CMS); opts.cache: mostrar a última versão guardada no navegador enquanto carrega (site) */
   function subscribe(cb,opts={}){
-    if(mode==="supabase"){contentCb=cb;let alive=true;
+    if(mode==="supabase"){contentCb=cb;let alive=true;const pub=!!opts.cache;
       if(opts.cache){const c=lsGet(CKEY);if(c&&c.body)cb(c.body,{cached:true})}
-      const load=async(first)=>{try{const{body,stamp}=await sbContent();if(!alive)return;if(!first&&stamp===lastStamp)return;lastStamp=stamp;
+      const load=async(first)=>{try{if(!first&&lastStamp&&(await sbStamp(pub))===lastStamp)return;
+          const{body,stamp}=await sbContent(pub);if(!alive)return;if(!first&&stamp===lastStamp)return;lastStamp=stamp;
           if(opts.cache)lsSet(CKEY,body?{body,stamp}:null);cb(body,{})}
         catch(e){console.warn("supabase",e);if(first&&!(opts.cache&&lsGet(CKEY)))cb(null,{error:e})}};
       load(true);const stop=opts.poll?every(opts.poll,()=>load(false)):()=>{};
@@ -124,7 +135,7 @@ const Store=(function(){
   }
   async function save(obj){
     const body=JSON.parse(JSON.stringify(obj));body.updatedAt=new Date().toISOString();
-    if(mode==="supabase"){const r=await sb("/rest/v1/site_content?on_conflict=id",{method:"POST",json:[{id:"main",body}],headers:{Prefer:"resolution=merge-duplicates,return=representation"}});
+    if(mode==="supabase"){const r=await sb("/rest/v1/site_content?on_conflict=id&select=updated_at",{method:"POST",json:[{id:"main",body}],headers:{Prefer:"resolution=merge-duplicates,return=representation"}});
       const row=r&&r[0];if(!row)throw SBErr("Sem permissão para publicar",403);lastStamp=row.updated_at;body.updatedAt=row.updated_at;return body}
     if(mode==="cloud"){await db.doc("site/content").set(body);return body}
     await writeL(KEY,body);return body;
@@ -150,13 +161,13 @@ const Store=(function(){
     const list=(await readL(IKEY))||[];m.id="m"+Date.now().toString(36);list.unshift(m);await writeL(IKEY,list);
   }
   /* tarefas do CMS: tabela privada cms_tasks no Supabase (04-tarefas.sql); noutros modos, neste navegador */
-  const TKEY="cdm-cms-tasks-v1";
+  const TKEY="cdm-cms-tasks-v1",TCOLS="id,text,done,due,pos,created_by,done_at";
   const tLocal=()=>{try{return JSON.parse(localStorage.getItem(TKEY)||"[]")}catch(e){return[]}},tSave=l=>{try{localStorage.setItem(TKEY,JSON.stringify(l))}catch(e){}};
   const tasks={
     remote:()=>mode==="supabase",
-    async list(){if(mode==="supabase")return await sb("/rest/v1/cms_tasks?select=*&order=done.asc,pos.asc,created_at.asc")||[];return tLocal()},
+    async list(){if(mode==="supabase")return await sb("/rest/v1/cms_tasks?select="+TCOLS+"&order=done.asc,pos.asc,created_at.asc")||[];return tLocal()},
     async add(t){const row={text:String(t.text||"").trim().slice(0,300),due:t.due||null,pos:+t.pos||0,done:false};
-      if(mode==="supabase"){const r=await sb("/rest/v1/cms_tasks",{method:"POST",json:row,headers:{Prefer:"return=representation"}});return r&&r[0]}
+      if(mode==="supabase"){const r=await sb("/rest/v1/cms_tasks?select="+TCOLS,{method:"POST",json:row,headers:{Prefer:"return=representation"}});return r&&r[0]}
       const l=tLocal(),x=Object.assign({id:"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),created_at:new Date().toISOString()},row);l.push(x);tSave(l);return x},
     async update(id,patch){const p=Object.assign({},patch);if("done"in p)p.done_at=p.done?new Date().toISOString():null;
       if(mode==="supabase"){await sb("/rest/v1/cms_tasks?id=eq."+encodeURIComponent(id),{method:"PATCH",json:p,headers:{Prefer:"return=minimal"}});return}

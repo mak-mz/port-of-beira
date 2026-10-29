@@ -501,6 +501,18 @@ body.rt-lock{overflow:hidden}
 .mfa-inline{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
 .mfa-inline .mfa-qr{margin:0;border:1px solid var(--line)}
 .mfa-if{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}.mfa-if .f{flex:1;min-width:180px}
+
+/* 2.30.0 · Desempenho */
+.pf-ctl{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}.pf-ctl input[type=number]{width:100%;font:inherit;font-size:.95rem;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}.pf-ctl .f{min-width:180px;margin:0}.pf-btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.pf-btns .banner{margin:0}
+.pf-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 16px}
+.pf-ch{width:100%;height:auto;display:block}.pf-ch .pf-b{fill:var(--accent);opacity:.35}.pf-ch .pf-bs{fill:var(--orange)}.pf-ch .pf-l{fill:none;stroke:var(--accent);stroke-width:2}.pf-ax{fill:var(--muted);font:11px var(--f-data)}
+.pf-leg{display:flex;gap:16px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}.pf-leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-2px}.pf-leg i.pf-b{background:var(--accent);opacity:.35}.pf-leg i.pf-bs{background:var(--orange)}.pf-leg i.pf-lk{height:2px;background:var(--accent);vertical-align:3px}
+.pf-tw{overflow-x:auto;-webkit-overflow-scrolling:touch}.pf-t{min-width:1100px;font-family:var(--f-data);font-variant-numeric:tabular-nums}.pf-t td,.pf-t th{white-space:nowrap}.pf-t .r,.mini-t .r{text-align:right}
+.pf-t td.pf-q{white-space:normal;min-width:320px;max-width:520px}.pf-qb{all:unset;cursor:pointer;font:12px/1.4 ui-monospace,Consolas,monospace;word-break:break-word;color:var(--ink)}.pf-qb:hover{color:var(--accent-ink)}.pf-qb:focus-visible{outline:2px solid var(--accent)}
+.pf-tlb{padding:2px 8px;font-size:.75rem;margin-top:4px}.pf-who{color:var(--muted);font-size:.8rem}.pf-t tr.pf-slow td{background:color-mix(in srgb,var(--orange) 8%,transparent)}.pf-t tr.pf-sel td{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.pf-sort{all:unset;cursor:pointer;font-weight:600}.pf-sort.on{color:var(--accent-ink)}.pf-chk{display:flex;gap:8px;align-items:center;font-size:.85rem;margin:4px 0 8px}
+@media(max-width:700px){.pf-kpi{grid-template-columns:repeat(2,1fr)}}
+.pf-pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12px;overflow:auto;white-space:pre}
 </style>
 </head>
 <body>
@@ -537,7 +549,7 @@ body.rt-lock{overflow:hidden}
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.29.1"></script>
-<script src="assets/admin.js?v=2.29.1"></script>
+<script src="assets/store.js?v=2.30.0"></script>
+<script src="assets/admin.js?v=2.30.0"></script>
 </body>
 </html>
