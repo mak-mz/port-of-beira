@@ -1,4 +1,5 @@
 {
   "vendor/pdfjs-3.11.174/pdf.min.js": "sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e",
-  "vendor/pdfjs-3.11.174/pdf.worker.min.js": "sha384-SnzOobpRMLXZ52iJvZm/C0fYw0OQemTXzTjIsdsfMcrCtCEe9qgzxTd3RSklO5x2"
+  "vendor/pdfjs-3.11.174/pdf.worker.min.js": "sha384-SnzOobpRMLXZ52iJvZm/C0fYw0OQemTXzTjIsdsfMcrCtCEe9qgzxTd3RSklO5x2",
+  "vendor/jspdf-2.5.2/jspdf.umd.min.js": "sha384-LX6hJrvt5/mhjcZPcUKj36MKwMtAYPY42NrXSCQm03i6wknGlHUpldR5DK+HqKv0"
 }

@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.25.1** (27 Out 2026).
+**Versão actual: 2.28.1** (29 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.25.1").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.28.1").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,49 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.28.1 · 29 Out 2026
+- **Plano de atracação · identificação dos PDF:** todos os PDF descarregados nesta secção levam o nome do porto, o terminal e a data do plano, no nome do ficheiro e no próprio documento, em EN ou PT conforme a língua do site. **[S]**
+  - **Nome do ficheiro:** `Porto_Plano_Terminal[_Navio]_AAAA-MM-DD.pdf`. Ex.: `Port-of-Beira_Berth-Plan_Container-Terminal_2026-10-28.pdf`, `Porto-da-Beira_Plano-de-Atracacao_Terminal-de-Carga-Geral_MV-FLOURISH_2026-10-28.pdf`.
+  - **Plano original:** o botão *Plano original (PDF)* passa a descarregar o ficheiro com o mesmo padrão e o sufixo `_original` (antes abria com o nome dado pela planificação). Se o descarregamento falhar, abre o PDF como antes.
+  - **No documento:** cabeçalho de todas as páginas com *Porto da Beira · Plano de Atracação*, o terminal e *Plano de DD Mmm AAAA*. Rodapé com data e hora em que o PDF foi gerado e número da página. Título e palavras-chave do PDF (propriedades do ficheiro) com porto, terminal, navio e data.
+
+### 2.28.0 · 29 Out 2026
+- **Plano de atracação · Descarregar PDF:** cada terminal tem o botão **Download PDF / Descarregar PDF**, ao lado do plano original. **[S]**
+  - O PDF sai na língua em que o site está (EN ou PT): títulos, datas, estados, tipos de carga e notas. O nome do ficheiro também, ex.: `Berth-Plan-CT-2026-10-28-EN.pdf` ou `Plano-de-Atracacao-CT-2026-10-28-PT.pdf`.
+  - **PDF do terminal (A4 horizontal):** cabeçalho CdM, números do plano, linha do tempo (por cais no TCG, por cabeços no CT) com preia-mar diária e marca de *Agora*, legenda e lista completa de navios nas páginas seguintes.
+  - **PDF do navio (A4 vertical):** no detalhe de cada navio, o botão **PDF** gera a ficha: dimensões, datas, operações (porões no TCG, contentores e TEU no CT), parqueamento e documentos.
+  - Gerado no navegador, em vector (texto seleccionável). A biblioteca jsPDF 2.5.2 fica em `vendor/` e só carrega quando se pede o PDF; respeita a CSP (só scripts do próprio site, com SRI).
+  - O PDF mostra o plano completo, sem os filtros da página.
+- **Telemóvel:** os separadores dos terminais ocupam a largura toda e o nome já não fica cortado. **[S]**
+
+### 2.27.0 · 29 Out 2026
+- **Plano de atracação · Terminal de Contentores:** a página *Plano de Atracação* passa a ter dois separadores, **Carga Geral** e **Contentores**. O site lembra o último separador escolhido. **[S]**
+  - **Hoje no terminal (CT):** navios atracados agora e próximas chegadas.
+  - **Linha do tempo (CT):** um só cais, com o eixo dos cabeços (bolards). Cada bloco mostra navio, serviço e a cor do próprio plano.
+  - **Detalhe do navio (CT):** serviço, cabeços, LOA, calados, ETA/ATA/ETB/ATB/ETC/ETD, descarga e embarque em unidades (20'/40', cheios e vazios) e TEU, booking, desembaraço, janelas de trânsito directo e indirecto, porto anterior e notas do plano.
+  - **Marés:** mostradas como estão no plano do CT. Os valores do plano do CT ficam cerca de 8 m acima dos do TCG; confirmar a referência com a planificação.
+- **CMS · Importar plano (PDF):** o mesmo botão aceita agora o *TCG Berth Plan* e o *Berth Plan – CT*. O CMS reconhece o terminal e substitui só o plano desse terminal. **[C]**
+  - Um cartão por terminal com ficheiro, período, número de janelas, avisos, **No site** e **Remover**.
+  - **Rever navios** abre a lista desse terminal. Os navios do CT têm campos próprios: serviço, cabeços, cor do bloco, datas, contentores, booking e trânsitos.
+  - **Avisos do CT:** cabeços em falta ou estimados, parcelas de contentores que não somam o total, navio sem carga, viagens repetidas e navios nos mesmos cabeços à mesma hora.
+  - Os planos importados na 2.26.0 passam automaticamente para o separador *Carga Geral*.
+- **Nota:** os cabeços do CT ainda não correspondem a números de cais. Basta a lista de cabeços de cada cais para os mostrar.
+
+### 2.26.0 · 29 Out 2026
+- **Plano de atracação interactivo:** a página *Plano de Atracação* passa a mostrar o plano do Terminal de Carga Geral de forma interactiva, em EN e PT. **[S]**
+  - **Hoje no terminal:** para cada cais, o navio atracado (com o progresso da janela de atracação) e o seguinte. Setas para avançar ou recuar dias.
+  - **Marés:** curva do dia com preia-mar e baixa-mar, tiradas do próprio plano.
+  - **Linha do tempo por cais:** todas as janelas de atracação, com a preia-mar diária, cores por tipo de carga e navios improdutivos tracejados. Filtros por carga, descarga/embarque, agente e pesquisa.
+  - **Detalhe do navio:** LOA face ao comprimento do cais, calados face à profundidade, ATA/ETA/ATB, carga por porão, estiva, recebedor ou carregador.
+  - **Lista de navios** ordenável, e ligação para o PDF original.
+  - Sem plano importado, a página continua a mostrar os PDF e a tabela simples, como antes.
+- **CMS · Importar plano (PDF):** em *Plano de atracação*, o botão **Importar plano (PDF)** lê o PDF do *TCG Berth Plan* no próprio navegador (PDF.js já incluído no site): cais, datas, marés e cada bloco de navio. **[C]**
+  - Guarda o PDF original no armazenamento e preenche o plano no rascunho. Nada vai para o site antes de **Publicar**.
+  - **Revisão:** cada navio fica editável (nome, agente, cais, janela, dimensões, datas, operações e porões). Os avisos mostram o que rever: porões que não somam o total, nome ou carga em falta, viagens repetidas, sobreposições no mesmo cais, valores pouco prováveis. Os avisos só aparecem no CMS.
+  - **Mostrar no site** liga ou desliga o plano interactivo sem o apagar. **Remover plano** volta à tabela simples.
+  - A tabela simples e os PDF da página passam para a secção recolhida *Documentos PDF e tabela simples*.
+- **Nota:** a leitura depende do formato actual do PDF (colunas Quay 6 a 10, uma linha por dia, blocos coloridos). Se o modelo do Excel mudar, a importação pode precisar de ajuste.
 
 ### 2.25.1 · 28 Out 2026
 - **Verificação em dois passos · código QR:** o código QR não aparecia, porque o Supabase o envia sem codificar e os caracteres "#" das cores cortavam a imagem. O CMS passa a codificá-lo antes de o mostrar. **[C]**
