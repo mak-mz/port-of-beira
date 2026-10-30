@@ -830,8 +830,8 @@ const BP_TXT={bulk:"#fff",bagged:"#fff",project:"#1F140F",an:"#fff",grain:"#fff"
 const BP={term:null,cats:null,op:"all",agent:"",q:"",zoom:30,sort:{k:"start",dir:1},cur:null};
 const bpTextOn=hex=>{const h=String(hex||"").replace("#","");if(h.length<6)return"#fff";const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);return(0.299*r+0.587*g+0.114*b)>150?"#1F140F":"#fff"};
 /* 2.31.0 · fotografia de cada terminal, com o início e o fim de cada cais marcados no CMS.
-   Fotografias sempre na horizontal. berth.quayImg.tcg = {img, marks:{q6:{s,e,t,b},…}}; berth.quayImg.ct = {img, marks:{quay:{s,e,t,b}}}
-   Cada cais é um rectângulo: s, e = início e fim (% da largura); t, b = topo e base (% da altura). */
+   Fotografias sempre na horizontal. berth.quayImg.tcg = {img, marks:{q6:{s,e},…}}; berth.quayImg.ct = {img, marks:{q2:{s,e},…}}, ctQuays:{q2:{from,to},…}
+   Cada cais: s, e = início e fim (% da largura); ocupa a altura toda da fotografia. */
 const BPQ={};
 function bpQI(kind){return((data.berth||{}).quayImg||{})[kind]||{}}
 function bpQUrl(kind){const u=bpQI(kind).img;return u?safeUrl(u,{img:true,empty:""}):""}
@@ -843,10 +843,9 @@ function bpCtQuays(a0,a1){const Q=(data.berth||{}).ctQuays||{},n=v=>v===""||v==n
   const ok=BP_CTQ.every(q=>{const r=Q["q"+q]||{};return isFinite(n(r.from))&&isFinite(n(r.to))});
   return BP_CTQ.map((q,i)=>{const r=Q["q"+q]||{};let f=ok?n(r.from):a0+(a1-a0)*i/4,t=ok?n(r.to):a0+(a1-a0)*(i+1)/4;return{q,f:Math.min(f,t),t:Math.max(f,t),est:!ok}})}
 function bpQSeg(kind,key){const I=bpQI(kind),m=(I.marks||{})[key]||{},ks=bpQKeys(kind),n=Math.max(1,ks.length),k=Math.max(0,ks.indexOf(key));
-  const num=v=>v===""||v==null||!isFinite(+v)?NaN:Math.max(0,Math.min(100,+v));let S=num(m.s),E=num(m.e),T=num(m.t),B=num(m.b);
+  const num=v=>v===""||v==null||!isFinite(+v)?NaN:Math.max(0,Math.min(100,+v));let S=num(m.s),E=num(m.e);
   if(!(isFinite(S)&&isFinite(E)&&S!==E)){S=k*100/n;E=(k+1)*100/n}
-  if(!(isFinite(T)&&isFinite(B)&&T!==B)){T=0;B=100}
-  return{L:Math.min(S,E),R:Math.max(S,E),T:Math.min(T,B),B:Math.max(T,B)}}
+  return{L:Math.min(S,E),R:Math.max(S,E),T:0,B:100}}
 function bpQDim(u){if(BPQ[u])return BPQ[u].w?BPQ[u]:null;BPQ[u]={};const im=new Image();im.onload=()=>{BPQ[u]={w:im.naturalWidth,h:im.naturalHeight};try{bpGantt()}catch(e){}};im.src=u;return null}
 /* fundo de uma caixa W×H com o rectângulo g (% da fotografia) a cobri-la, centrado */
 function bpQFit(d,g,W,H){const rx=g.L/100*d.w,ry=g.T/100*d.h,rw=Math.max(1,(g.R-g.L)/100*d.w),rh=Math.max(1,(g.B-g.T)/100*d.h),sc=Math.max(W/rw,H/rh);
