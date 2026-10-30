@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.33.0** (30 Out 2026).
+**Versão actual: 2.33.2** (30 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.33.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.33.2").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,16 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.33.2 · 31 Out 2026 · Posição do Porto com o visual da folha CdM
+
+- **S** Página Posição do Porto com o aspecto da Posição do Porto formatada da CdM: faixa azul com o logótipo, "POSIÇÃO DO PORTO DA BEIRA", data numa caixa laranja e a fotografia do topo da página à direita; marés em quadros por dia; cada secção com título em faixa cinzenta e linha laranja, cabeçalho azul e linhas brancas; número do cais em destaque; nome do navio a negrito com a data e o dia/acumulado/balanço por baixo; "Terminal de Contentores"/"Terminal de Carga Geral" em faixa laranja clara; "T C C 8" em faixa azul escura; rodapé escuro com as notas do documento. O texto de cada célula continua exactamente como no PDF.
+- **C** Importar: lê também a Posição do Porto já formatada (Excel da CdM em PDF, com várias páginas), além da original.
+
+### 2.33.1 · 31 Out 2026 · Fotografia do topo na Posição do Porto
+
+- **C** Posição do porto: o cartão **Fundo do cabeçalho** (fotografia ou vídeo do topo, imagem para telemóvel e sobreposição) passa a estar à vista nesta janela. Antes só se chegava a ele por "Fundo e mais opções", dentro de uma secção fechada.
+- **C** Plano de atracação: o mesmo cartão **Fundo do cabeçalho** passa a estar também à vista.
 
 ### 2.33.0 · 31 Out 2026 · Posição do Porto interactiva e nível "Posição do Porto"
 
