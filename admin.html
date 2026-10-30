@@ -513,6 +513,22 @@ body.rt-lock{overflow:hidden}
 .pf-sort{all:unset;cursor:pointer;font-weight:600}.pf-sort.on{color:var(--accent-ink)}.pf-chk{display:flex;gap:8px;align-items:center;font-size:.85rem;margin:4px 0 8px}
 @media(max-width:700px){.pf-kpi{grid-template-columns:repeat(2,1fr)}}
 .pf-pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12px;overflow:auto;white-space:pre}
+
+/* 2.31.0 · marcas dos cais na fotografia do terminal */
+.qm{position:relative;line-height:0;border-radius:10px;overflow:hidden;user-select:none;touch-action:none;background:#1C1C4A;max-width:900px}
+.qm img{display:block;width:100%;height:auto;pointer-events:none}
+.qm-b{position:absolute;top:0;bottom:0;background:rgba(46,46,111,.22);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+.qm-b:nth-of-type(even){background:rgba(255,144,18,.18)}
+.qm-b span{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);line-height:1.2;font:600 .75rem var(--f-data);background:#fff;color:#2E2E6F;padding:3px 8px;border-radius:999px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.qm-h{position:absolute;top:0;bottom:0;width:0;border-left:2px solid #FF9012;z-index:2;outline:none;pointer-events:none}
+.qm-h em{pointer-events:auto;touch-action:none;position:absolute;font:700 .7rem/1 var(--f-data);font-style:normal;background:#FF9012;color:#1B1A33;padding:4px 6px;border-radius:6px;white-space:nowrap;cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.qm-h.s em{top:6px;left:0}.qm-h.e em{top:30px;right:0}
+.qm-h.e{border-left-color:#fff}.qm-h.e em{background:#fff}
+.qm-h:focus-visible em,.qm-h.drag em{outline:2px solid #1B1A33;outline-offset:1px;cursor:grabbing}
+.qm.v .qm-b{left:0;right:0;top:auto;bottom:auto}.qm.v .qm-b span{left:8px;bottom:auto;top:50%;transform:translateY(-50%)}
+.qm.v .qm-h{left:0;right:0;width:auto;height:0;border-left:0;border-top:2px solid #FF9012;top:auto;bottom:auto}.qm.v .qm-h.e{border-top-color:#fff}
+.qm.v .qm-h.s em{left:6px;top:0}.qm.v .qm-h.e em{right:6px;left:auto;top:auto;bottom:0}
+.qm-t{max-width:420px}.qm-t input{width:90px;font:inherit;font-size:.9rem;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -549,7 +565,7 @@ body.rt-lock{overflow:hidden}
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.30.0"></script>
-<script src="assets/admin.js?v=2.30.0"></script>
+<script src="assets/store.js?v=2.31.0"></script>
+<script src="assets/admin.js?v=2.31.0"></script>
 </body>
 </html>

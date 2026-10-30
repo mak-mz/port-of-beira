@@ -34,7 +34,7 @@ Sem `config.js` preenchido, tudo funciona em **modo local**, como na versão 1 (
 | `supabase/09-desempenho.sql` | Índices, campos públicos do conteúdo, registo de consultas lentas e métricas para CMS → Desempenho (v2.30.0). Correr depois do 08, e depois de enviar os ficheiros 2.30.0 para o GitHub |
 | `supabase/functions/cdm-feeds/index.ts` | Edge Function dos comentários nas redes e dos alertas de notícias (v2.29.1: só https e servidores públicos) |
 | `supabase/functions/cdm-admin/index.ts` | Edge Function da gestão de utilizadores no CMS (v2.29.1). Publicar com **Verify JWT** desligado |
-| `Manual-CMS-Port-of-Beira.docx` | Manual de utilização do CMS (v2.30.0) |
+| `Manual-CMS-Port-of-Beira.docx` | Manual de utilização do CMS (v2.31.0) |
 | `assets/` | Código do site e do CMS (carregado pelos .html) |
 | `vendor/` | Biblioteca PDF.js alojada no próprio site |
 

@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.30.0** (29 Out 2026).
+**Versão actual: 2.31.0** (30 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.30.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.31.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,14 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.31.0 · 30 Out 2026 · Fotografias dos terminais no plano de atracação
+- **Plano de atracação · fotografia de cada terminal:** na linha do tempo, cada cais mostra o seu troço de uma fotografia real do terminal, atrás do nome do cais. **[S, C]**
+  - **Terminal de Carga Geral:** uma fotografia para os cais 6 a 10; cada linha mostra só a parte da fotografia entre o início e o fim desse cais.
+  - **Terminal de Contentores:** a fotografia segue o eixo dos cabeços, de cima para baixo, alinhada com os números da linha do tempo.
+  - A lupa abre a fotografia inteira com todos os cais marcados e o cais escolhido em destaque. Fecha com ×, Esc ou um clique fora.
+- **CMS · Plano de atracação → Fotografias dos terminais:** carregar uma fotografia por terminal, indicar se o cais corre na horizontal ou na vertical e marcar o início (▸) e o fim (◂) de cada cais, arrastando as marcas ou escrevendo as posições em %. No CT, indicar também o número do cabeço no início e no fim do cais. **Dividir em partes iguais** repõe as marcas. **[C]**
+  - Sem fotografia, a linha do tempo fica como antes. O nível Planeamento não vê nem altera as fotografias.
 
 ### 2.30.0 · 29 Out 2026 · Desempenho das consultas
 - **Inventário e auditoria de todas as consultas** do site, do CMS, das funções e da base de dados (ver *Relatório de consultas 2.30.0*). **[S, C, B]**
