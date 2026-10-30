@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.31.2** (30 Out 2026).
+**Versão actual: 2.31.3** (30 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.31.2").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.31.3").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,14 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.31.3 · 30 Out 2026 · Fotografias dos cais sem filtro fixo
+
+- **S** Plano de atracação (os dois terminais): a fotografia dos cais deixa de ter o filtro escuro fixo. A intensidade do filtro passa a ser escolhida no CMS (0% por omissão = fotografia sem filtro).
+- **S** Os textos sobre a fotografia (nome do cais, medidas, cabeços) ficam num fundo azul Cornelder, com intensidade escolhida no CMS (70% por omissão; 0% = sem fundo).
+- **S** Retirada a lupa da coluna dos cais.
+- **S** Carga Geral: os textos de cada cais cabem na altura da linha (o Cais 8, com "min LOA", deixava a linha mais alta); retirado o fio escuro entre cais.
+- **C** Plano de atracação → Cais e fotografias dos terminais: duas réguas por terminal, "Filtro sobre a fotografia" e "Fundo azul dos textos".
 
 ### 2.31.2 · 30 Out 2026 · Uma só lupa e cais sem linhas separadoras (os dois terminais)
 

@@ -152,11 +152,14 @@ body.bp-lock{overflow:hidden}
 /* 2.31.0 · fotografias dos cais */
 .bp-lab.bp-ph{overflow:hidden;background:var(--navy-deep,#1C1C4A)}
 .bp-qi{position:absolute;inset:0;z-index:-1;background:center/cover no-repeat;pointer-events:none}
-.bp-qi::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(28,28,74,.62),rgba(28,28,74,.4))} /* 2.31.2 · véu igual em todos os cais: sem faixas entre eles */
-.bp-ph b,.bp-ph span{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+.bp-qi::after{content:"";position:absolute;inset:0;background:rgba(28,28,74,var(--bpv,0))} /* 2.31.3 · filtro regulável no CMS (0 = fotografia sem filtro) */
+.bp-ph b,.bp-ph span{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+/* 2.31.3 · textos sobre a fotografia num fundo azul, com intensidade regulável no CMS */
+.bp-lab.bp-ph{gap:2px;padding:6px 10px;overflow:visible}.bp-lab.bp-ph span{line-height:1.2}.bp-lab.bp-ph .bp-qi{top:-1px;bottom:-1px}.bp-lab.bp-ph b,.bp-lab.bp-ph span,.bp-cq.ph b,.bp-cq.ph span{justify-self:start;width:fit-content;max-width:100%;background:rgba(46,46,111,var(--bpt,.7));padding:2px 6px;border-radius:4px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.bp-lab.bp-ph b,.bp-lab.bp-ph span{padding:1px 5px}
+.bp-cqs:has(.ph) .bp-btk{background:rgba(46,46,111,var(--bpt,.7));padding:0 4px;border-radius:3px;text-shadow:0 1px 2px rgba(0,0,0,.35)}
 .bp-ph span{color:rgba(255,255,255,.88)}
 .bp-ph .bp-btk{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7)}
-.bp-blab.bp-ph .bp-qi::after{background:linear-gradient(90deg,rgba(28,28,74,.45),rgba(28,28,74,.62))}
 .bp-qz{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:50%;border:0;display:grid;place-items:center;background:rgba(255,255,255,.88);color:var(--navy,#2E2E6F);cursor:pointer;opacity:.85;transition:opacity .15s,transform .15s}
 .bp-qz:hover,.bp-qz:focus-visible{opacity:1;transform:scale(1.08)}.bp-qz:focus-visible{outline:2px solid var(--orange,#FF9012);outline-offset:2px}
 .bp-blab .bp-qz{top:66px;bottom:auto;left:12px;right:auto}
@@ -181,12 +184,12 @@ body.bp-lock{overflow:hidden}
 .bp-cq b{font-family:var(--f-display);font-weight:400;font-size:1.05rem;color:var(--accent);line-height:1.1;position:relative}
 .bp-cq span{font-family:var(--f-data);font-size:.68rem;color:var(--muted);position:relative}
 .bp-cq.ph{background:#1C1C4A;border-top:0} /* 2.31.2 · sem linhas separadoras sobre a fotografia */
-.bp-cq.ph b,.bp-cq.ph span{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.bp-cq.ph b,.bp-cq.ph span{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}.bp-cq.ph{gap:3px}
 .bp-cq .bp-qi{z-index:0}
 .bp-cq .bp-qz{top:auto;bottom:6px;left:12px;right:auto}
 .bp-cqs .bp-btk{z-index:2}
 .bp-cqs.bp-lab .bp-btk{color:var(--muted)}
-.bp-cqs:has(.ph) .bp-btk{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.bp-cqs:has(.ph) .bp-btk{color:#fff}
 .bp-qline{position:absolute;left:0;right:0;height:0;border-top:2px solid rgba(46,46,111,.35);z-index:1;pointer-events:none}
 @media print{.bp-qi,.bp-qz{display:none}.bp-ph b,.bp-ph span{color:inherit;text-shadow:none}}
 .bp-btk{position:absolute;right:8px;transform:translateY(-50%);font-family:var(--f-data);font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -1098,8 +1101,8 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.31.2"></script>
-<script src="assets/site.js?v=2.31.2"></script>
+<script src="assets/store.js?v=2.31.3"></script>
+<script src="assets/site.js?v=2.31.3"></script>
 
 </body>
 </html>
