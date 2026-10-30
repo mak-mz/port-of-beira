@@ -2008,17 +2008,15 @@ function qmBand(t,k,l,v){const [a,b]=qmSeg(t,k),lo=Math.min(a,b),len=Math.abs(b-
   return`<div class="qm-b" data-qmb="${t}.${k}" style="${A}:${lo}%;${S}:${len}%"><span>${esc(l)}</span></div>
    <i class="qm-h s" tabindex="0" data-qmh="${t}.${k}.s" style="${A}:${a}%" title="Início do ${esc(l.toLowerCase())}"><em>${esc(l.replace("Cais ",""))} ▸</em></i>
    <i class="qm-h e" tabindex="0" data-qmh="${t}.${k}.e" style="${A}:${b}%" title="Fim do ${esc(l.toLowerCase())}"><em>◂ ${esc(l.replace("Cais ",""))}</em></i>`}
-function qmEditor(t){const I=(draft.berth.quayImg||{})[t]||{},v=I.dir==="v",u=I.img,ks=qmKeys(t),PL=bpPlansD(),ax=(PL.ct&&PL.ct.axis)||{min:0,max:40};
+function qmEditor(t){const I=(draft.berth.quayImg||{})[t]||{},v=false,u=I.img,ks=qmKeys(t);
   const T=t==="tcg"?"Terminal de Carga Geral":"Terminal de Contentores";
   return`<div class="card"><div class="card-h"><h3>${T}</h3>${u?`<span class="tag ok">Com fotografia</span>`:""}</div>
-   ${fImg(`berth.quayImg.${t}.img`,"Fotografia do terminal",t==="tcg"?"Fotografia aérea com os cais 6 a 10 à vista. Recomendado: 1920 px de largura, JPG.":"Fotografia aérea ao longo do cais do Terminal de Contentores. Recomendado: 1920 px de largura, JPG.",{cover:true,max:1920})}
-   ${fSel(`berth.quayImg.${t}.dir`,"Na fotografia, o cais segue",[["h","Da esquerda para a direita (fotografia na horizontal)"],["v","De cima para baixo (fotografia na vertical)"]])}
+   ${fImg(`berth.quayImg.${t}.img`,"Fotografia do terminal",t==="tcg"?"Fotografia <b>horizontal</b>, aérea, com os cais 6 a 10 à vista da esquerda para a direita. Recomendado: 1920 × 1080 px, JPG.":"Fotografia <b>horizontal</b>, aérea, com o cais do Terminal de Contentores à vista da esquerda para a direita. Recomendado: 1920 × 1080 px, JPG.",{cover:true,max:1920})}
    ${u?`<div class="f"><span class="lbl">Marque onde começa e acaba ${t==="tcg"?"cada cais":"o cais"}</span>
      <div class="qm${v?" v":""}" data-qm="${t}"><img src="${esc(u)}" alt="Fotografia do ${esc(T)}" draggable="false">${ks.map(([k,l])=>qmBand(t,k,l,v)).join("")}</div>
-     <span class="hint">Arraste as marcas: ▸ é o início e ◂ o fim de cada cais. Pode também escrever as posições (0 a 100% ${v?"da altura":"da largura"} da fotografia).</span></div>
+     <span class="hint">Arraste as marcas: ▸ é o início e ◂ o fim de cada cais. Pode também escrever as posições (0 a 100% da largura da fotografia).</span></div>
     <table class="mini-t qm-t"><thead><tr><th>Cais</th><th>Início (%)</th><th>Fim (%)</th></tr></thead><tbody>${ks.map(([k,l])=>{const [a,b]=qmSeg(t,k);
       return`<tr><td>${esc(l)}</td><td><input type="text" inputmode="decimal" data-p="berth.quayImg.${t}.marks.${k}.s" data-num data-qmi="${t}" value="${a}" aria-label="${esc(l)}: início"></td><td><input type="text" inputmode="decimal" data-p="berth.quayImg.${t}.marks.${k}.e" data-num data-qmi="${t}" value="${b}" aria-label="${esc(l)}: fim"></td></tr>`}).join("")}</tbody></table>
-    ${t==="ct"?`<div class="g2">${bpN("berth.quayImg.ct.b0","Cabeço no início do cais (▸)")}${bpN("berth.quayImg.ct.b1","Cabeço no fim do cais (◂)")}</div><span class="hint">Vazio: ${esc(String(ax.min))} e ${esc(String(ax.max))}, os cabeços do plano importado. Com os números certos, a fotografia fica alinhada com os cabeços da linha do tempo.</span>`:""}
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${t==="tcg"?`<button class="btn" data-qmeven="${t}">Dividir em partes iguais</button>`:`<button class="btn" data-qmeven="${t}">Cais em toda a fotografia</button>`}</div>`
     :`<p class="hint">Carregue a fotografia para marcar ${t==="tcg"?"os cais":"o cais"}.</p>`}</div>`}
 function bpPhotosCard(PL){const Q=draft.berth.quayImg||{},n=["tcg","ct"].filter(t=>Q[t]&&Q[t].img).length;

@@ -830,8 +830,8 @@ const BP_TXT={bulk:"#fff",bagged:"#fff",project:"#1F140F",an:"#fff",grain:"#fff"
 const BP={term:null,cats:null,op:"all",agent:"",q:"",zoom:30,sort:{k:"start",dir:1},cur:null};
 const bpTextOn=hex=>{const h=String(hex||"").replace("#","");if(h.length<6)return"#fff";const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);return(0.299*r+0.587*g+0.114*b)>150?"#1F140F":"#fff"};
 /* 2.31.0 · fotografia de cada terminal, com o início e o fim de cada cais marcados no CMS.
-   berth.quayImg.tcg = {img, dir:"h"|"v", marks:{q6:{s,e},…}}  (s, e em % ao longo da fotografia)
-   berth.quayImg.ct  = {img, dir, marks:{quay:{s,e}}, b0, b1}     (b0, b1 = cabeços no início e no fim do cais) */
+   Fotografias sempre na horizontal. berth.quayImg.tcg = {img, marks:{q6:{s,e},…}}; berth.quayImg.ct = {img, marks:{quay:{s,e}}}
+   (s, e = início e fim do cais, em % da largura da fotografia) */
 const BPQ={};
 function bpQI(kind){return((data.berth||{}).quayImg||{})[kind]||{}}
 function bpQUrl(kind){const u=bpQI(kind).img;return u?safeUrl(u,{img:true,empty:""}):""}
@@ -848,18 +848,14 @@ function bpQFit(d,dir,a,b,L,X,along,m=0){const h=dir!=="v",DA=h?d.w:d.h,DX=h?d.h
   const sc=along?(L-2*m)/len:Math.max(L/len,X/DX),oa=along?m-lo*sc:L/2-(lo+len/2)*sc,ox=(X-DX*sc)/2;
   return{size:`${(d.w*sc).toFixed(1)}px ${(d.h*sc).toFixed(1)}px`,pos:h?`${oa.toFixed(1)}px ${ox.toFixed(1)}px`:`${ox.toFixed(1)}px ${oa.toFixed(1)}px`}}
 function bpQLab(kind,q,inner,extra="",style="",h=0){const u=bpQUrl(kind);if(!u)return`<div class="bp-lab${extra}"${style?` style="${style}"`:""}>${inner}</div>`;
-  const I=bpQI(kind),dir=I.dir==="v"?"v":"h",d=bpQDim(u),W=130;let ist=`background-image:${cssUrl(u)};`;
-  if(kind==="ct"){const B=BP.B,a0=B.axis.min,a1=B.axis.max,[s,e]=bpQSeg("ct","quay"),b0=isFinite(+I.b0)&&I.b0!==""?+I.b0:a0,b1=isFinite(+I.b1)&&I.b1!==""&&+I.b1!==b0?+I.b1:a1;
-    const P=x=>s+(x-b0)/(b1-b0)*(e-s),p0=P(a0),p1=P(a1),H=h||260;
-    if(dir==="h"){/* cais na horizontal na fotografia: roda 90° para seguir os cabeços (de cima para baixo) */
-      const f=d?bpQFit(d,"h",p0,p1,H,W,true,8):null,rot=p0<=p1?90:-90;
-      ist+=`width:${H}px;height:${W}px;left:${(W-H)/2}px;top:${(H-W)/2}px;right:auto;bottom:auto;transform:rotate(${rot}deg);`+(f?`background-size:${f.size};background-position:${f.pos}`:`background-size:cover`)}
-    else{const f=d?bpQFit(d,"v",p0,p1,H,W,true,8):null;ist+=(p0>p1?"transform:scaleY(-1);":"")+(f?`background-size:${f.size};background-position:${f.pos}`:`background-size:cover`)}}
-  else{const [s,e]=bpQSeg("tcg","q"+q),f=d?(dir==="h"?bpQFit(d,"h",s,e,W,82,false):bpQFit(d,"v",s,e,82,W,false)):null;ist+=f?`background-size:${f.size};background-position:${f.pos}`:`background-size:cover`}
+  const d=bpQDim(u),W=130;let ist=`background-image:${cssUrl(u)};`;
+  /* fotografias sempre na horizontal: cada caixa mostra, direita, o troço marcado do cais, a cobrir a caixa */
+  const [s,e]=bpQSeg(kind,kind==="ct"?"quay":"q"+q),H=kind==="ct"?(h||260):82,f=d?bpQFit(d,"h",s,e,W,H,false):null;
+  ist+=f?`background-size:${f.size};background-position:${f.pos}`:`background-size:cover;background-position:center`;
   const cap=kind==="ct"?bpT("ct"):`${bpT("quay")} ${q}`;
   return`<div class="bp-lab bp-ph${extra}"${style?` style="${style}"`:""}><i class="bp-qi" style="${esc(ist)}" aria-hidden="true"></i>${inner}<button type="button" class="bp-qz" data-bpqimg="${esc(kind)}" data-q="${esc(String(q))}" aria-label="${esc(bpT("qPhoto",{q:cap}))}" title="${esc(bpT("qPhoto",{q:cap}))}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8v6M8 11h6"/></svg></button></div>`}
 /* fotografia inteira do terminal, com os cais marcados */
-function bpQOpen(kind,q){const u=bpQUrl(kind);if(!u)return;const I=bpQI(kind),dir=I.dir==="v"?"v":"h",prev=document.activeElement;
+function bpQOpen(kind,q){const u=bpQUrl(kind);if(!u)return;const dir="h",prev=document.activeElement;
   const ks=kind==="ct"?["quay"]:bpQKeys("tcg");
   const bands=ks.map(k=>{const [s,e]=bpQSeg(kind,k),lo=Math.min(s,e),len=Math.abs(e-s),on=kind==="ct"||k==="q"+q,lab=kind==="ct"?bpT("ct"):`${bpT("quay")} ${k.slice(1)}`;
     return`<div class="bp-qb${on?" on":""}" style="${dir==="h"?`left:${lo}%;width:${len}%`:`top:${lo}%;height:${len}%`}"><span>${esc(lab)}</span></div>`}).join("");
