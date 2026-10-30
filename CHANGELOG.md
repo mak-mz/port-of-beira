@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.32.0** (30 Out 2026).
+**Versão actual: 2.33.0** (30 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.32.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.33.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,14 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.33.0 · 31 Out 2026 · Posição do Porto interactiva e nível "Posição do Porto"
+
+- **C** Posição do porto: botão **Importar Posição do Porto (PDF)**. O CMS lê o PDF diário (Beira Port Position) e guarda o documento tal como está: marés, Navios atracados, Navios de contentores na barra, Navios de carga geral na barra, Navios anunciados e esperados (com Terminal de Contentores e Terminal de Carga Geral) e a parte T C C 8. A informação não se edita no CMS; para corrigir, importa-se o PDF corrigido. O PDF original fica guardado.
+- **S** Página Posição do Porto: mostra a informação exactamente como no documento (mesmas secções, colunas, textos e ordem), com o estilo do site: contagens no topo, marés, pesquisa que só esconde linhas, atalhos para cada secção e botão do documento original. Em telemóvel, cada tabela desliza na horizontal. Sem Posição importada, a página continua a mostrar o PDF.
+- **C** Novo nível de utilizador **Posição do Porto**: só vê a janela Posição do porto (e A minha conta), só importa PDFs e, ao publicar, só altera a Posição do Porto.
+- **B** `10-posicao-porto.sql`: nível `portpos`, regras na base de dados (só a chave `portpos` do conteúdo, só PDFs na pasta documentos, verificação em dois passos conforme "Exigir a todos").
+- **B** Função `cdm-admin` 2.33.0: aceita o nível `portpos`.
 
 ### 2.32.0 · 30 Out 2026 · Versão em chinês e plano de atracação sem sobreposições
 

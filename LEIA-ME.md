@@ -33,6 +33,7 @@ Sem `config.js` preenchido, tudo funciona em **modo local**, como na versão 1 (
 | `supabase/07-planeamento-atracacao.sql` | Nível **Planeamento**: só planos de atracação por terminal, máximo 2 pessoas por terminal (v2.29.0). Correr depois do 06; voltar a correr se correr o 05 ou o 06 outra vez |
 | `supabase/08-contas-ligadas.sql` | Liga cada utilizador do CMS ao id da sua conta; os níveis deixam de depender só do email (v2.29.1). Correr depois do 07; voltar a correr se correr o 05, o 06 ou o 07 outra vez |
 | `supabase/09-desempenho.sql` | Índices, campos públicos do conteúdo, registo de consultas lentas e métricas para CMS → Desempenho (v2.30.0). Correr depois do 08, e depois de enviar os ficheiros 2.30.0 para o GitHub |
+| `supabase/10-posicao-porto.sql` | Novo nível de utilizador "Posição do Porto": só importa e publica a Posição do Porto (v2.33.0). Correr depois do 09; voltar a correr se correr o 05, o 06, o 07 ou o 08 outra vez |
 | `supabase/functions/cdm-feeds/index.ts` | Edge Function dos comentários nas redes e dos alertas de notícias (v2.29.1: só https e servidores públicos) |
 | `supabase/functions/cdm-admin/index.ts` | Edge Function da gestão de utilizadores no CMS (v2.29.1). Publicar com **Verify JWT** desligado |
 | `Manual-CMS-Port-of-Beira.docx` | Manual de utilização do CMS (v2.31.0) |

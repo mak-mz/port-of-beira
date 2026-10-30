@@ -7,13 +7,14 @@
 //   POST { action: "reset", email, password? }               → nova palavra-passe temporária
 //   POST { action: "update", email, role?, terminals?, name?, active? } → nível, terminais, nome, activo/suspenso
 // Nível "berth" (Planeamento, 07): só planos de atracação dos terminais indicados ("tcg", "ct"), máx. 2 por terminal.
+// 2.33.0: nível "portpos" (Posição do Porto, 10): só importa e publica a Posição do Porto.
 //   POST { action: "remove", email, deleteAccount? }         → retira o acesso (e apaga a conta, se pedido)
 //   POST { action: "mfareset", email }                       → repõe a verificação em dois passos (telemóvel perdido)
 // A chave de serviço é fornecida automaticamente pelo Supabase (SUPABASE_SERVICE_ROLE_KEY);
 // em alternativa, defina o segredo CDM_SERVICE_KEY. Nunca é enviada ao navegador.
 // Publicar com "Verify JWT" desligado: a função confirma que quem pede é administrador.
 // ============================================================
-const VERSION = "2.29.1";
+const VERSION = "2.33.0";
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
@@ -28,7 +29,7 @@ const svc = (extra: Record<string, string> = {}) => {
   if (k.startsWith("eyJ")) h.Authorization = `Bearer ${k}`; // chave antiga (JWT); as novas sb_secret_ vão só em apikey
   return h;
 };
-const ROLES = ["admin", "editor", "viewer", "berth"];
+const ROLES = ["admin", "editor", "viewer", "berth", "portpos"];
 const TERMS = ["tcg", "ct"];
 const terms = (x: unknown) => Array.isArray(x) ? [...new Set(x.map(String).filter((t) => TERMS.includes(t)))].sort() : [];
 const okEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e.length <= 200;
