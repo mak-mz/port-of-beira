@@ -33,11 +33,11 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 
 ### 2.31.0 · 30 Out 2026 · Fotografias dos terminais no plano de atracação
 - **Plano de atracação · fotografia de cada terminal:** na linha do tempo, cada cais mostra o seu troço de uma fotografia real do terminal, atrás do nome do cais. **[S, C]**
-  - **Terminal de Carga Geral:** uma fotografia para os cais 6 a 10; cada linha mostra só a parte da fotografia entre o início e o fim desse cais.
-  - **Terminal de Contentores:** a fotografia aparece direita (sem rodar) na coluna “Ao longo do cais”, recortada ao troço marcado do cais.
+  - **Terminal de Carga Geral:** uma fotografia para os cais 6 a 10; cada linha mostra só o rectângulo marcado desse cais.
+  - **Terminal de Contentores:** a fotografia aparece direita (sem rodar) na coluna “Ao longo do cais”, recortada ao rectângulo marcado do cais.
   - As fotografias são sempre **horizontais**, nos dois terminais.
   - A lupa abre a fotografia inteira com todos os cais marcados e o cais escolhido em destaque. Fecha com ×, Esc ou um clique fora.
-- **CMS · Plano de atracação → Fotografias dos terminais:** carregar uma fotografia horizontal por terminal e marcar o início (▸) e o fim (◂) de cada cais, arrastando as marcas ou escrevendo as posições em % da largura. **Dividir em partes iguais** repõe as marcas. **[C]**
+- **CMS · Plano de atracação → Fotografias dos terminais:** carregar uma fotografia horizontal por terminal e marcar cada cais como um rectângulo: início (▸) e fim (◂) na horizontal, topo (▾) e base (▴) na vertical, arrastando as marcas ou escrevendo as posições em %. **Mesmo topo e base para todos** copia a altura do primeiro cais para os outros. **Dividir em partes iguais** repõe as marcas. **[C]**
   - Sem fotografia, a linha do tempo fica como antes. O nível Planeamento não vê nem altera as fotografias.
 
 ### 2.30.0 · 29 Out 2026 · Desempenho das consultas

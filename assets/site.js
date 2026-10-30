@@ -830,37 +830,35 @@ const BP_TXT={bulk:"#fff",bagged:"#fff",project:"#1F140F",an:"#fff",grain:"#fff"
 const BP={term:null,cats:null,op:"all",agent:"",q:"",zoom:30,sort:{k:"start",dir:1},cur:null};
 const bpTextOn=hex=>{const h=String(hex||"").replace("#","");if(h.length<6)return"#fff";const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);return(0.299*r+0.587*g+0.114*b)>150?"#1F140F":"#fff"};
 /* 2.31.0 · fotografia de cada terminal, com o início e o fim de cada cais marcados no CMS.
-   Fotografias sempre na horizontal. berth.quayImg.tcg = {img, marks:{q6:{s,e},…}}; berth.quayImg.ct = {img, marks:{quay:{s,e}}}
-   (s, e = início e fim do cais, em % da largura da fotografia) */
+   Fotografias sempre na horizontal. berth.quayImg.tcg = {img, marks:{q6:{s,e,t,b},…}}; berth.quayImg.ct = {img, marks:{quay:{s,e,t,b}}}
+   Cada cais é um rectângulo: s, e = início e fim (% da largura); t, b = topo e base (% da altura). */
 const BPQ={};
 function bpQI(kind){return((data.berth||{}).quayImg||{})[kind]||{}}
 function bpQUrl(kind){const u=bpQI(kind).img;return u?safeUrl(u,{img:true,empty:""}):""}
 function bpQKeys(kind){return kind==="ct"?["quay"]:((BP.B&&BP.B.kind==="tcg"&&BP.B.quays)||[]).map(q=>"q"+q.q)}
-function bpQSeg(kind,key){const I=bpQI(kind),m=(I.marks||{})[key],ks=bpQKeys(kind),n=Math.max(1,ks.length),k=Math.max(0,ks.indexOf(key));
-  const S=m&&m.s!==""&&m.s!=null?+m.s:NaN,E=m&&m.e!==""&&m.e!=null?+m.e:NaN;
-  if(isFinite(S)&&isFinite(E)&&S!==E)return[Math.max(0,Math.min(100,S)),Math.max(0,Math.min(100,E))];
-  return kind==="ct"?[0,100]:[k*100/n,(k+1)*100/n]}
-/* tamanho real da fotografia (para recortar cada cais com exactidão); ao carregar, redesenha a linha do tempo */
+function bpQSeg(kind,key){const I=bpQI(kind),m=(I.marks||{})[key]||{},ks=bpQKeys(kind),n=Math.max(1,ks.length),k=Math.max(0,ks.indexOf(key));
+  const num=v=>v===""||v==null||!isFinite(+v)?NaN:Math.max(0,Math.min(100,+v));let S=num(m.s),E=num(m.e),T=num(m.t),B=num(m.b);
+  if(!(isFinite(S)&&isFinite(E)&&S!==E)){S=kind==="ct"?0:k*100/n;E=kind==="ct"?100:(k+1)*100/n}
+  if(!(isFinite(T)&&isFinite(B)&&T!==B)){T=0;B=100}
+  return{L:Math.min(S,E),R:Math.max(S,E),T:Math.min(T,B),B:Math.max(T,B)}}
 function bpQDim(u){if(BPQ[u])return BPQ[u].w?BPQ[u]:null;BPQ[u]={};const im=new Image();im.onload=()=>{BPQ[u]={w:im.naturalWidth,h:im.naturalHeight};try{bpGantt()}catch(e){}};im.src=u;return null}
-/* fundo de uma caixa a partir do troço [a,b] (%) da fotografia, medido ao longo de dir ("h": largura da fotografia; "v": altura).
-   L = comprimento da caixa nesse eixo, X = a outra medida. "along": o troço ocupa L exactamente (com margem m); senão cobre a caixa. */
-function bpQFit(d,dir,a,b,L,X,along,m=0){const h=dir!=="v",DA=h?d.w:d.h,DX=h?d.h:d.w,lo=Math.min(a,b)/100*DA,len=Math.max(1,Math.abs(b-a)/100*DA);
-  const sc=along?(L-2*m)/len:Math.max(L/len,X/DX),oa=along?m-lo*sc:L/2-(lo+len/2)*sc,ox=(X-DX*sc)/2;
-  return{size:`${(d.w*sc).toFixed(1)}px ${(d.h*sc).toFixed(1)}px`,pos:h?`${oa.toFixed(1)}px ${ox.toFixed(1)}px`:`${ox.toFixed(1)}px ${oa.toFixed(1)}px`}}
+/* fundo de uma caixa W×H com o rectângulo g (% da fotografia) a cobri-la, centrado */
+function bpQFit(d,g,W,H){const rx=g.L/100*d.w,ry=g.T/100*d.h,rw=Math.max(1,(g.R-g.L)/100*d.w),rh=Math.max(1,(g.B-g.T)/100*d.h),sc=Math.max(W/rw,H/rh);
+  return{size:`${(d.w*sc).toFixed(1)}px ${(d.h*sc).toFixed(1)}px`,pos:`${(W/2-(rx+rw/2)*sc).toFixed(1)}px ${(H/2-(ry+rh/2)*sc).toFixed(1)}px`}}
 function bpQLab(kind,q,inner,extra="",style="",h=0){const u=bpQUrl(kind);if(!u)return`<div class="bp-lab${extra}"${style?` style="${style}"`:""}>${inner}</div>`;
   const d=bpQDim(u),W=130;let ist=`background-image:${cssUrl(u)};`;
   /* fotografias sempre na horizontal: cada caixa mostra, direita, o troço marcado do cais, a cobrir a caixa */
-  const [s,e]=bpQSeg(kind,kind==="ct"?"quay":"q"+q),H=kind==="ct"?(h||260):82,f=d?bpQFit(d,"h",s,e,W,H,false):null;
+  const g=bpQSeg(kind,kind==="ct"?"quay":"q"+q),H=kind==="ct"?(h||260):82,f=d?bpQFit(d,g,W,H):null;
   ist+=f?`background-size:${f.size};background-position:${f.pos}`:`background-size:cover;background-position:center`;
   const cap=kind==="ct"?bpT("ct"):`${bpT("quay")} ${q}`;
   return`<div class="bp-lab bp-ph${extra}"${style?` style="${style}"`:""}><i class="bp-qi" style="${esc(ist)}" aria-hidden="true"></i>${inner}<button type="button" class="bp-qz" data-bpqimg="${esc(kind)}" data-q="${esc(String(q))}" aria-label="${esc(bpT("qPhoto",{q:cap}))}" title="${esc(bpT("qPhoto",{q:cap}))}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8v6M8 11h6"/></svg></button></div>`}
 /* fotografia inteira do terminal, com os cais marcados */
-function bpQOpen(kind,q){const u=bpQUrl(kind);if(!u)return;const dir="h",prev=document.activeElement;
+function bpQOpen(kind,q){const u=bpQUrl(kind);if(!u)return;const prev=document.activeElement;
   const ks=kind==="ct"?["quay"]:bpQKeys("tcg");
-  const bands=ks.map(k=>{const [s,e]=bpQSeg(kind,k),lo=Math.min(s,e),len=Math.abs(e-s),on=kind==="ct"||k==="q"+q,lab=kind==="ct"?bpT("ct"):`${bpT("quay")} ${k.slice(1)}`;
-    return`<div class="bp-qb${on?" on":""}" style="${dir==="h"?`left:${lo}%;width:${len}%`:`top:${lo}%;height:${len}%`}"><span>${esc(lab)}</span></div>`}).join("");
+  const bands=ks.map(k=>{const g=bpQSeg(kind,k),on=kind==="ct"||k==="q"+q,lab=kind==="ct"?bpT("ct"):`${bpT("quay")} ${k.slice(1)}`;
+    return`<div class="bp-qb${on?" on":""}" style="left:${g.L}%;width:${g.R-g.L}%;top:${g.T}%;height:${g.B-g.T}%"><span>${esc(lab)}</span></div>`}).join("");
   const ov=document.createElement("div");ov.className="bp-qov";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-label",bpT(kind));
-  ov.innerHTML=`<figure class="bp-qf"><div class="bp-qw${dir==="v"?" v":""}"><img src="${esc(u)}" alt="${esc(bpT(kind))}">${bands}</div><figcaption><small>${esc(bpT(kind))}</small>${esc(bpT("qMarks"))}</figcaption></figure><button type="button" class="bp-qx" aria-label="${esc(U("faqClose"))}">×</button>`;
+  ov.innerHTML=`<figure class="bp-qf"><div class="bp-qw"><img src="${esc(u)}" alt="${esc(bpT(kind))}">${bands}</div><figcaption><small>${esc(bpT(kind))}</small>${esc(bpT("qMarks"))}</figcaption></figure><button type="button" class="bp-qx" aria-label="${esc(U("faqClose"))}">×</button>`;
   const close=()=>{ov.remove();document.removeEventListener("keydown",kd);try{prev&&prev.focus()}catch(e){}};
   const kd=e=>{if(e.key==="Escape")close()};
   ov.addEventListener("click",e=>{if(e.target===ov||e.target.closest(".bp-qx"))close()});document.addEventListener("keydown",kd);
