@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.31.0** (30 Out 2026).
+**Versão actual: 2.31.1** (30 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.31.0").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.31.1").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,12 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.31.1 · 30 Out 2026 · Cabeços do Terminal de Contentores de baixo para cima
+
+- **S** Plano do Terminal de Contentores: a escala de cabeços passa a crescer de baixo para cima. O Cais 2 fica em baixo e o Cais 5 em cima, na mesma ordem da fotografia do terminal; os navios acompanham a escala.
+- **S** O PDF descarregado do plano do Terminal de Contentores segue a mesma ordem.
+- **C** Só muda o número de versão.
 
 ### 2.31.0 · 30 Out 2026 · Fotografias dos terminais no plano de atracação
 - **Plano de atracação · fotografia de cada terminal:** na linha do tempo, cada cais mostra o seu troço de uma fotografia real do terminal, atrás do nome do cais. **[S, C]**
