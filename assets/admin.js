@@ -1997,8 +1997,8 @@ function bpTcgEd(b,v,qs){return`<div class="g3">${fText(b+".name","Navio")}${fTe
         <div class="card-h" style="margin-top:8px"><h3 style="font-size:1rem">Operações</h3></div>
         ${(v.ops||[]).map((o,k)=>bpOpEd(b,o,k,v.ops.length)).join("")}<button class="btn add" data-add="${b}.ops" data-tpl="bpop">+ Operação</button>`}
 
-/* 2.31.0 · uma fotografia horizontal por terminal; em cada cais marcam-se o início e o fim com linhas verticais
-   (s/e, % da largura); o cais ocupa a altura toda da fotografia.
+/* 2.31.0 · uma fotografia horizontal por terminal; os cais seguem de baixo para cima na fotografia.
+   Em cada cais marcam-se o início (em baixo) e o fim (em cima): s/e em % da altura a contar de baixo; o cais ocupa a largura toda.
    No site, cada cais mostra o seu rectângulo da fotografia ao lado da linha do tempo; a lupa abre a fotografia com os cais marcados. */
 const QM_SIDES=["s","e"];
 function qmKeys(t){if(t==="ct")return[2,3,4,5].map(q=>["q"+q,"Cais "+q]);const PL=bpPlansD(),qs=((PL.tcg&&PL.tcg.quays)||[]).map(q=>q.q);return(qs.length?qs:[6,7,8,9,10]).map(q=>["q"+q,"Cais "+q])}
@@ -2008,11 +2008,12 @@ function qmSeg(t,k){const I=(draft.berth.quayImg||{})[t]||{},m=(I.marks||{})[k]|
   if(!(isFinite(S)&&isFinite(E)&&S!==E)){S=+(i*100/n).toFixed(1);E=+((i+1)*100/n).toFixed(1)}
   return{s:S,e:E,t:0,b:100}}
 function qmFill(t){for(const [k] of qmKeys(t)){const g=qmSeg(t,k);for(const x of QM_SIDES)set(draft,`berth.quayImg.${t}.marks.${k}.${x}`,g[x])}}
-function qmGeo(g){const L=Math.min(g.s,g.e),R=Math.max(g.s,g.e),T=Math.min(g.t,g.b),B=Math.max(g.t,g.b);return{L,R,T,B}}
+/* s, e = início e fim do cais, em % da altura da fotografia a contar de baixo; o cais ocupa a largura toda */
+function qmGeo(g){return{L:0,R:100,T:100-Math.max(g.s,g.e),B:100-Math.min(g.s,g.e)}}
 function qmBand(t,k,l){const g=qmSeg(t,k),{L,R,T,B}=qmGeo(g),n=esc(l.replace("Cais ","")),ll=esc(l.toLowerCase());
   return`<div class="qm-b" data-qmb="${t}.${k}" style="left:${L}%;width:${R-L}%;top:${T}%;height:${B-T}%"><span>${esc(l)}</span></div>
-   <i class="qm-h s" tabindex="0" data-qmh="${t}.${k}.s" title="Início do ${ll} (arraste na horizontal)"><em>${n} ▸</em></i>
-   <i class="qm-h e" tabindex="0" data-qmh="${t}.${k}.e" title="Fim do ${ll} (arraste na horizontal)"><em>◂ ${n}</em></i>
+   <i class="qm-h s" tabindex="0" data-qmh="${t}.${k}.s" title="Início do ${ll}, em baixo (arraste para cima ou para baixo)"><em>${n} ▲ início</em></i>
+   <i class="qm-h e" tabindex="0" data-qmh="${t}.${k}.e" title="Fim do ${ll}, em cima (arraste para cima ou para baixo)"><em>fim ▼ ${n}</em></i>
 `}
 function qmEditor(t){const I=(draft.berth.quayImg||{})[t]||{},u=I.img,ks=qmKeys(t);
   const T=t==="tcg"?"Terminal de Carga Geral":"Terminal de Contentores";
@@ -2021,8 +2022,8 @@ function qmEditor(t){const I=(draft.berth.quayImg||{})[t]||{},u=I.img,ks=qmKeys(
    ${t==="ct"?ctQuaysEd():""}
    ${u?`<div class="f"><span class="lbl">Marque cada cais na fotografia</span>
      <div class="qm" data-qm="${t}"><img src="${esc(u)}" alt="Fotografia do ${esc(T)}" draggable="false">${ks.map(([k,l])=>qmBand(t,k,l)).join("")}</div>
-     <span class="hint">Arraste as marcas verticais: ▸ é o início e ◂ o fim de cada cais. Pode também escrever as posições na tabela, em % da largura da fotografia.</span></div>
-    <table class="mini-t qm-t"><thead><tr><th>Cais</th><th>Início ▸ (%)</th><th>Fim ◂ (%)</th></tr></thead><tbody>${ks.map(([k,l])=>{const g=qmSeg(t,k);
+     <span class="hint">Os cais seguem de baixo para cima na fotografia. Arraste as linhas para cima ou para baixo: <b>▲ início</b> marca onde o cais começa (em baixo) e <b>▼ fim</b> onde acaba (em cima). Pode também escrever as posições na tabela, em % da altura da fotografia a contar de baixo.</span></div>
+    <table class="mini-t qm-t"><thead><tr><th>Cais</th><th>Início ▲ (% de baixo)</th><th>Fim ▼ (% de baixo)</th></tr></thead><tbody>${ks.map(([k,l])=>{const g=qmSeg(t,k);
       return`<tr><td>${esc(l)}</td>${QM_SIDES.map(x=>`<td><input type="text" inputmode="decimal" data-p="berth.quayImg.${t}.marks.${k}.${x}" data-num data-qmi="${t}" value="${g[x]}" aria-label="${esc(l)}: ${{s:"início",e:"fim"}[x]}"></td>`).join("")}</tr>`}).join("")}</tbody></table>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn" data-qmeven="${t}">Dividir em partes iguais</button></div>`
     :`<p class="hint">Carregue a fotografia para marcar os cais.</p>`}</div>`}
@@ -2038,18 +2039,18 @@ function qmPaint(t){const ed=document.querySelector(`[data-qm="${t}"]`);if(!ed)r
   for(const [k] of qmKeys(t)){const g=qmSeg(t,k),{L,R,T,B}=qmGeo(g),bd=ed.querySelector(`[data-qmb="${t}.${k}"]`);
     if(bd)Object.assign(bd.style,{left:L+"%",width:(R-L)+"%",top:T+"%",height:(B-T)+"%"});
     const h=x=>ed.querySelector(`[data-qmh="${t}.${k}.${x}"]`);
-    for(const x of ["s","e"]){const el=h(x);if(el)Object.assign(el.style,{left:g[x]+"%",top:T+"%",height:(B-T)+"%"})}
+    for(const x of ["s","e"]){const el=h(x);if(el)Object.assign(el.style,{top:(100-g[x])+"%",left:"0",width:"100%",height:"0"})}
     for(const x of QM_SIDES){const inp=document.querySelector(`[data-p="berth.quayImg.${t}.marks.${k}.${x}"]`);if(inp&&inp!==document.activeElement)inp.value=g[x]}}}
 /* desenha as marcas logo que o editor aparece */
 new MutationObserver(()=>{for(const ed of document.querySelectorAll("[data-qm]:not([data-qmok])")){ed.setAttribute("data-qmok","");qmPaint(ed.dataset.qm)}}).observe(document.documentElement,{childList:true,subtree:true});
 let qmDrag=null;
 document.addEventListener("pointerdown",e=>{const h=e.target.closest&&e.target.closest("[data-qmh]");if(!h)return;e.preventDefault();const [t]=h.dataset.qmh.split(".");qmFill(t);qmDrag={h,ed:h.closest("[data-qm]"),path:h.dataset.qmh};h.classList.add("drag");try{h.setPointerCapture(e.pointerId)}catch(err){}});
 document.addEventListener("pointermove",e=>{if(!qmDrag)return;const r=qmDrag.ed.getBoundingClientRect(),[t,k,x]=qmDrag.path.split("."),vert=x==="t"||x==="b";
-  const p=Math.round(Math.max(0,Math.min(1,vert?(e.clientY-r.top)/r.height:(e.clientX-r.left)/r.width))*1000)/10;set(draft,`berth.quayImg.${t}.marks.${k}.${x}`,p);qmPaint(t)});
+  const p=Math.round(Math.max(0,Math.min(1,1-(e.clientY-r.top)/r.height))*1000)/10;set(draft,`berth.quayImg.${t}.marks.${k}.${x}`,p);qmPaint(t)});
 document.addEventListener("pointerup",()=>{if(!qmDrag)return;qmDrag.h.classList.remove("drag");qmDrag=null;changed(false)});
 /* teclado: setas movem a marca seleccionada 0,5% (Shift: 5%) */
 document.addEventListener("keydown",e=>{const h=e.target.closest&&e.target.closest("[data-qmh]");if(!h||!/^Arrow/.test(e.key))return;e.preventDefault();const [t,k,x]=h.dataset.qmh.split(".");qmFill(t);
-  const d=(e.key==="ArrowLeft"||e.key==="ArrowUp"?-1:1)*(e.shiftKey?5:.5),cur=+get(draft,`berth.quayImg.${t}.marks.${k}.${x}`)||0;set(draft,`berth.quayImg.${t}.marks.${k}.${x}`,Math.round(Math.max(0,Math.min(100,cur+d))*10)/10);qmPaint(t);changed(false)});
+  const d=(e.key==="ArrowDown"||e.key==="ArrowLeft"?-1:1)*(e.shiftKey?5:.5),cur=+get(draft,`berth.quayImg.${t}.marks.${k}.${x}`)||0;set(draft,`berth.quayImg.${t}.marks.${k}.${x}`,Math.round(Math.max(0,Math.min(100,cur+d))*10)/10);qmPaint(t);changed(false)});
 document.addEventListener("input",e=>{const el=e.target;if(el&&el.dataset&&el.dataset.qmi){const t=el.dataset.qmi;setTimeout(()=>qmPaint(t),0)}});
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-qmeven]");if(!b)return;const t=b.dataset.qmeven;if(draft.berth.quayImg&&draft.berth.quayImg[t])draft.berth.quayImg[t].marks={};qmFill(t);changed(true)});
 function bpView(){const B=draft.berth,PL=bpPlansD(),MT=bpMyTerms(),have=Object.keys(PL).filter(k=>PL[k]&&MT.includes(k));if(!MT.includes(bpTerm))bpTerm=MT[0];if(have.length&&!PL[bpTerm])bpTerm=have[0];

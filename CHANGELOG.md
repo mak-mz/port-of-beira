@@ -33,12 +33,13 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 
 ### 2.31.0 · 30 Out 2026 · Fotografias dos terminais no plano de atracação
 - **Plano de atracação · fotografia de cada terminal:** na linha do tempo, cada cais mostra o seu troço de uma fotografia real do terminal, atrás do nome do cais. **[S, C]**
-  - **Terminal de Carga Geral:** uma fotografia para os cais 6 a 10; cada linha mostra só a parte da fotografia entre o início e o fim desse cais.
-  - **Terminal de Contentores:** cada cais (2 a 5) mostra a sua parte da fotografia, direito (sem rodar), na sua parte da coluna “Ao longo do cais”.
+  - **Terminal de Carga Geral:** uma fotografia para os cais 6 a 10; cada linha mostra só a faixa da fotografia entre o início e o fim desse cais.
+  - **Terminal de Contentores:** cada cais (2 a 5) mostra a sua faixa da fotografia, direito (sem rodar), na sua parte da coluna “Ao longo do cais”.
   - As fotografias são sempre **horizontais**, nos dois terminais.
   - A lupa abre a fotografia inteira com todos os cais marcados e o cais escolhido em destaque. Fecha com ×, Esc ou um clique fora.
 - **Terminal de Contentores · cais 2 a 5:** a coluna “Ao longo do cais” passa a mostrar os **cais 2, 3, 4 e 5**, cada um à altura dos seus cabeços, com uma linha a separar os cais na linha do tempo. Os cabeços de cada cais indicam-se no CMS; sem eles, o site divide os cabeços do plano em quatro partes iguais. **[S, C]**
-- **CMS · Plano de atracação → Cais e fotografias dos terminais:** carregar uma fotografia horizontal por terminal e marcar, com linhas verticais, o início (▸) e o fim (◂) de cada cais, arrastando as marcas ou escrevendo as posições em % da largura. No CT, indicar também os cabeços de cada cais (do cabeço … ao cabeço …). **Dividir em partes iguais** repõe as marcas. **[C]**
+- **Favicon:** o site e o CMS passam a ter o ícone oficial da Cornelder (o mesmo de www.cornelder.co.mz) no separador do navegador e no ecrã principal do telemóvel (`favicon.ico`, `favicon.png`, `apple-touch-icon.png`). **[S, C]**
+- **CMS · Plano de atracação → Cais e fotografias dos terminais:** carregar uma fotografia horizontal por terminal; os cais seguem de baixo para cima na fotografia. Em cada cais arrastam-se para cima ou para baixo a linha **▲ início** (em baixo) e a linha **▼ fim** (em cima), ou escrevem-se as posições em % da altura, a contar de baixo. No CT, indicar também os cabeços de cada cais (do cabeço … ao cabeço …). **Dividir em partes iguais** repõe as marcas. **[C]**
   - Sem fotografia, a linha do tempo fica como antes. O nível Planeamento não vê nem altera as fotografias.
 
 ### 2.30.0 · 29 Out 2026 · Desempenho das consultas

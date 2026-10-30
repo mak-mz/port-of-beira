@@ -831,7 +831,7 @@ const BP={term:null,cats:null,op:"all",agent:"",q:"",zoom:30,sort:{k:"start",dir
 const bpTextOn=hex=>{const h=String(hex||"").replace("#","");if(h.length<6)return"#fff";const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);return(0.299*r+0.587*g+0.114*b)>150?"#1F140F":"#fff"};
 /* 2.31.0 · fotografia de cada terminal, com o início e o fim de cada cais marcados no CMS.
    Fotografias sempre na horizontal. berth.quayImg.tcg = {img, marks:{q6:{s,e},…}}; berth.quayImg.ct = {img, marks:{q2:{s,e},…}}, ctQuays:{q2:{from,to},…}
-   Cada cais: s, e = início e fim (% da largura); ocupa a altura toda da fotografia. */
+   Os cais seguem de baixo para cima: s, e = início e fim (% da altura, a contar de baixo); cada cais ocupa a largura toda. */
 const BPQ={};
 function bpQI(kind){return((data.berth||{}).quayImg||{})[kind]||{}}
 function bpQUrl(kind){const u=bpQI(kind).img;return u?safeUrl(u,{img:true,empty:""}):""}
@@ -845,7 +845,8 @@ function bpCtQuays(a0,a1){const Q=(data.berth||{}).ctQuays||{},n=v=>v===""||v==n
 function bpQSeg(kind,key){const I=bpQI(kind),m=(I.marks||{})[key]||{},ks=bpQKeys(kind),n=Math.max(1,ks.length),k=Math.max(0,ks.indexOf(key));
   const num=v=>v===""||v==null||!isFinite(+v)?NaN:Math.max(0,Math.min(100,+v));let S=num(m.s),E=num(m.e);
   if(!(isFinite(S)&&isFinite(E)&&S!==E)){S=k*100/n;E=(k+1)*100/n}
-  return{L:Math.min(S,E),R:Math.max(S,E),T:0,B:100}}
+  /* s, e = início e fim do cais em % da altura da fotografia, a contar de baixo; largura toda */
+  return{L:0,R:100,T:100-Math.max(S,E),B:100-Math.min(S,E)}}
 function bpQDim(u){if(BPQ[u])return BPQ[u].w?BPQ[u]:null;BPQ[u]={};const im=new Image();im.onload=()=>{BPQ[u]={w:im.naturalWidth,h:im.naturalHeight};try{bpGantt()}catch(e){}};im.src=u;return null}
 /* fundo de uma caixa W×H com o rectângulo g (% da fotografia) a cobri-la, centrado */
 function bpQFit(d,g,W,H){const rx=g.L/100*d.w,ry=g.T/100*d.h,rw=Math.max(1,(g.R-g.L)/100*d.w),rh=Math.max(1,(g.B-g.T)/100*d.h),sc=Math.max(W/rw,H/rh);

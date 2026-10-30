@@ -21,6 +21,7 @@ Sem `config.js` preenchido, tudo funciona em **modo local**, como na versão 1 (
 | `admin.html` | Gestor de conteúdos (abre em `/admin`) |
 | `config.js` | **O único ficheiro a editar**: URL e chave publicável do Supabase |
 | `vercel.json` | Configuração da Vercel: endereços limpos, cache e segurança |
+| `favicon.ico`, `favicon.png`, `apple-touch-icon.png` | Ícone da Cornelder no separador do navegador e no ecrã do telemóvel (v2.31.0) |
 | `robots.txt` | Impede os motores de busca de indexar o `/admin` |
 | `videos/` | Opcional: vídeos do hero servidos pela Vercel |
 | `supabase/01-estrutura.sql` | Cria tabelas, regras de segurança e o bucket de ficheiros |
