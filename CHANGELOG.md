@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.31.1** (30 Out 2026).
+**Versão actual: 2.31.2** (30 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.31.1").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.31.2").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,11 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.31.2 · 30 Out 2026 · Uma só lupa no Terminal de Contentores
+
+- **S** Plano do Terminal de Contentores: fica só uma lupa, no Cais 2. Ao carregar, abre a fotografia do terminal com todos os cais marcados, como antes.
+- **C** Só muda o número de versão.
 
 ### 2.31.1 · 30 Out 2026 · Cabeços do Terminal de Contentores de baixo para cima
 
