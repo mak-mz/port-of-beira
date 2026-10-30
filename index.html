@@ -97,6 +97,8 @@ select.bp-in{width:auto}
 .bp-blk .bs{font-family:var(--f-data);font-size:.72rem;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
 .bp-blk.un,.bp-hatch{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.24) 0 6px,transparent 6px 12px)}
 .bp-blk.dim{opacity:.13;pointer-events:none}
+/* 2.32.0 · navios em faixas (sobreposições): bloco mais baixo, só nome e uma linha */
+.bp-blk.ln{padding:4px 8px;gap:0}.bp-blk.ln .bs+.bs{display:none}
 .bp-legend{display:flex;flex-wrap:wrap;gap:8px 20px;padding:12px 16px;border-top:1px solid var(--line);font-family:var(--f-data);font-size:.82rem;color:var(--muted)}
 .bp-legend span{display:inline-flex;align-items:center;gap:7px}.bp-legend i{width:20px;height:12px;border-radius:3px;display:inline-block}.bp-legend .bp-hatch{background-color:var(--bp-bagged)}
 .bp-tw{margin-top:0}
@@ -251,6 +253,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .lang{display:inline-flex;border-radius:999px;box-shadow:inset 0 0 0 1px currentColor;padding:2px;gap:2px;opacity:.9}
 .lang button{border:0;background:none;padding:2px 9px;border-radius:999px;font-family:var(--label-f,var(--f-data));font-weight:500;font-size:.72rem;letter-spacing:var(--ls-label)}
 .lang button[aria-pressed="true"]{background:var(--orange);color:#1F140F}
+/* 2.32.0 · chinês simplificado: letra do sistema para os caracteres chineses, sem espaçamento entre letras */
+.lang button[lang="zh-CN"]{letter-spacing:0;font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Source Han Sans SC",sans-serif}
+html:lang(zh-CN) :is(h1,h2,h3,h4,.eyebrow,.kicker){letter-spacing:0}
+html:lang(zh-CN) body{line-break:strict}
 .bar{display:flex;align-items:center;gap:20px;height:var(--bar-h)}
 .hdr:not(.solid):not(.open){background:var(--hbBg,none)}
 .hdr.hb-blur:not(.solid):not(.open){backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
@@ -1101,8 +1107,9 @@ footer .soc{margin-top:18px;flex-wrap:wrap}
 <div id="toastRoot" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="assets/store.js?v=2.31.3"></script>
-<script src="assets/site.js?v=2.31.3"></script>
+<script src="assets/i18n-zh.js?v=2.32.0"></script>
+<script src="assets/store.js?v=2.32.0"></script>
+<script src="assets/site.js?v=2.32.0"></script>
 
 </body>
 </html>

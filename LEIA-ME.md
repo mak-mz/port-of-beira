@@ -37,6 +37,7 @@ Sem `config.js` preenchido, tudo funciona em **modo local**, como na versão 1 (
 | `supabase/functions/cdm-admin/index.ts` | Edge Function da gestão de utilizadores no CMS (v2.29.1). Publicar com **Verify JWT** desligado |
 | `Manual-CMS-Port-of-Beira.docx` | Manual de utilização do CMS (v2.31.0) |
 | `assets/` | Código do site e do CMS (carregado pelos .html) |
+| `assets/i18n-zh.js` | Versão em chinês simplificado (中文): textos do site, do plano de atracação e tradução incluída do conteúdo (v2.32.0) |
 | `vendor/` | Biblioteca PDF.js alojada no próprio site |
 
 ---

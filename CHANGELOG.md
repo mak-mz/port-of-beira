@@ -2,11 +2,11 @@
 
 Cornelder de Moçambique · site institucional do Porto da Beira.
 
-**Versão actual: 2.31.3** (30 Out 2026).
+**Versão actual: 2.32.0** (30 Out 2026).
 
 ## Onde ver a versão
 
-- **No CMS:** no rodapé da barra lateral ("Versão 2.31.3").
+- **No CMS:** no rodapé da barra lateral ("Versão 2.32.0").
 - **No site:** no código da página, na etiqueta `<meta name="generator">`.
 
 ## Numeração
@@ -30,6 +30,19 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ---
 
 ## Versão 2: Supabase + Vercel
+
+### 2.32.0 · 30 Out 2026 · Versão em chinês e plano de atracação sem sobreposições
+
+- **S** Nova língua: **chinês simplificado (中文)**, no selector EN · PT · 中文 do cabeçalho e do rodapé. Abre em chinês quando o navegador está em chinês.
+  - Textos do site, menus, formulários, assistente virtual e plano de atracação traduzidos (`assets/i18n-zh.js`).
+  - Conteúdo: o site usa o campo 中文 do CMS; se estiver vazio, usa a tradução incluída do texto inglês; se não houver nenhuma, mostra o inglês.
+  - Datas e números no formato chinês; nomes de países e cidades do mapa em chinês.
+  - O assistente virtual responde a perguntas escritas em chinês.
+  - O PDF do plano de atracação sai em inglês quando o site está em chinês (o gerador de PDF não tem letra chinesa).
+- **S** Plano de atracação: navios que se cruzam no mesmo cais e às mesmas horas deixam de se tapar. Na Carga Geral ficam em faixas, uma por cima da outra, e a linha do cais fica mais alta. Nos Contentores repartem entre si os cabeços que ocupam em conjunto. O mesmo navio repetido no plano passa a um só bloco. O PDF segue a mesma arrumação.
+- **C** Importar o TCG Berth Plan: os vários rectângulos de um mesmo bloco do PDF juntam-se num só navio, e o mesmo navio lido duas vezes fica um só. Era a principal causa das sobreposições na Carga Geral.
+- **C** Plano de atracação: retirados os avisos de erros ao importar, rever e publicar os planos ("com avisos", "Sem avisos", "OK" e a lista de avisos por navio).
+- **C** Campos de texto com uma terceira coluna, 中文, com a tradução incluída a cinzento. Nos textos formatados há um separador 中文 e o botão "Copiar a tradução incluída para editar". Em Textos do site há a coluna 中文.
 
 ### 2.31.3 · 30 Out 2026 · Fotografias dos cais sem filtro fixo
 
