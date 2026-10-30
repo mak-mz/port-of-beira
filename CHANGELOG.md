@@ -31,9 +31,11 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 
 ## Versão 2: Supabase + Vercel
 
-### 2.31.2 · 30 Out 2026 · Uma só lupa no Terminal de Contentores
+### 2.31.2 · 30 Out 2026 · Uma só lupa e cais sem linhas separadoras (os dois terminais)
 
-- **S** Plano do Terminal de Contentores: fica só uma lupa, no Cais 2. Ao carregar, abre a fotografia do terminal com todos os cais marcados, como antes.
+- **S** Terminal de Contentores e Terminal de Carga Geral: fica só uma lupa, no primeiro cais (Cais 2 e Cais 6). Ao carregar, abre a fotografia do terminal com todos os cais marcados, como antes.
+- **S** Sem linhas separadoras sobre a fotografia, na coluna dos cais; o véu escuro passa a ser igual em todos os cais, para a fotografia seguir contínua. As linhas da linha do tempo mantêm-se.
+- **S** Carga Geral: os cais passam a seguir de baixo para cima (Cais 6 em baixo, Cais 10 em cima), como no Terminal de Contentores e na fotografia. O PDF descarregado segue a mesma ordem.
 - **C** Só muda o número de versão.
 
 ### 2.31.1 · 30 Out 2026 · Cabeços do Terminal de Contentores de baixo para cima

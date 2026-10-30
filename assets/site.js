@@ -851,14 +851,16 @@ function bpQDim(u){if(BPQ[u])return BPQ[u].w?BPQ[u]:null;BPQ[u]={};const im=new 
 /* fundo de uma caixa W×H com o rectângulo g (% da fotografia) a cobri-la, centrado */
 function bpQFit(d,g,W,H){const rx=g.L/100*d.w,ry=g.T/100*d.h,rw=Math.max(1,(g.R-g.L)/100*d.w),rh=Math.max(1,(g.B-g.T)/100*d.h),sc=Math.max(W/rw,H/rh);
   return{size:`${(d.w*sc).toFixed(1)}px ${(d.h*sc).toFixed(1)}px`,pos:`${(W/2-(rx+rw/2)*sc).toFixed(1)}px ${(H/2-(ry+rh/2)*sc).toFixed(1)}px`}}
-function bpQLab(kind,q,inner,extra="",style="",h=0){const u=bpQUrl(kind);if(!u)return`<div class="bp-lab${extra}"${style?` style="${style}"`:""}>${inner}</div>`;
+function bpQLab(kind,q,inner,extra="",style="",h=0,zoom=true){const u=bpQUrl(kind);if(!u)return`<div class="bp-lab${extra}"${style?` style="${style}"`:""}>${inner}</div>`;
   const d=bpQDim(u),W=130;let ist=`background-image:${cssUrl(u)};`;
   /* fotografias sempre na horizontal: cada caixa mostra, direita, o troço marcado do cais, a cobrir a caixa */
   const g=bpQSeg(kind,kind==="ct"?"quay":"q"+q),H=kind==="ct"?(h||260):82,f=d?bpQFit(d,g,W,H):null;
   ist+=f?`background-size:${f.size};background-position:${f.pos}`:`background-size:cover;background-position:center`;
   const cap=kind==="ct"?bpT("ct"):`${bpT("quay")} ${q}`;
-  return`<div class="bp-lab bp-ph${extra}"${style?` style="${style}"`:""}><i class="bp-qi" style="${esc(ist)}" aria-hidden="true"></i>${inner}<button type="button" class="bp-qz" data-bpqimg="${esc(kind)}" data-q="${esc(String(q))}" aria-label="${esc(bpT("qPhoto",{q:cap}))}" title="${esc(bpT("qPhoto",{q:cap}))}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8v6M8 11h6"/></svg></button></div>`}
+  return`<div class="bp-lab bp-ph${extra}"${style?` style="${style}"`:""}><i class="bp-qi" style="${esc(ist)}" aria-hidden="true"></i>${inner}${zoom?`<button type="button" class="bp-qz" data-bpqimg="${esc(kind)}" data-q="${esc(String(q))}" aria-label="${esc(bpT("qPhoto",{q:cap}))}" title="${esc(bpT("qPhoto",{q:cap}))}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8v6M8 11h6"/></svg></button>`:""}</div>`}
 /* fotografia inteira do terminal, com os cais marcados */
+function bpTcgRows(B){return[...B.quays].sort((a,b)=>(+b.q||0)-(+a.q||0))}
+function bpTcgLow(B){const r=bpTcgRows(B);return r.length?r[r.length-1].q:null}
 function bpQOpen(kind,q){const u=bpQUrl(kind);if(!u)return;const prev=document.activeElement;
   const ks=bpQKeys(kind);
   const bands=ks.map(k=>{const g=bpQSeg(kind,k),on=k==="q"+q,lab=`${bpT("quay")} ${k.slice(1)}`;
@@ -1004,9 +1006,10 @@ function bpGantt(first){const B=BP.B,box=document.getElementById("bpGantt");if(!
       secs+=`<div class="bp-cq${u?" ph":""}" style="top:${y0}px;height:${hh}px">${ph}<b>${esc(cap)}</b>${hh>40?`<span>${esc(z.est?bpT("bollards"):`${bpT("bShort")} ${bpNf(z.f,0)}–${bpNf(z.t,0)}`)}</span>`:""}${u&&hh>34&&!zm&&(zm=true)?`<button type="button" class="bp-qz" data-bpqimg="ct" data-q="${z.q}" aria-label="${esc(bpT("qPhoto",{q:cap}))}" title="${esc(bpT("qPhoto",{q:cap}))}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8v6M8 11h6"/></svg></button>`:""}</div>`;
       if(z.f>a0)bl+=`<div class="bp-qline" style="top:${Y(cl(z.f))}px"></div>`}
     rows+=`<div class="bp-row"><div class="bp-lab bp-blab bp-cqs" style="height:${Hh}px">${secs}${ticks}</div><div class="bp-trk" style="width:${W}px;height:${Hh}px">${bg}${bl}${nl}</div></div>`}
-  else for(const q of B.quays){const here=B.V.filter(v=>v.quay===q.q);let bl=here.length?"":`<div class="bp-idle" style="left:0;right:0"><span>${esc(bpT("noAllocQ",{q:q.q}))}</span></div>`;
+  /* 2.31.2 · Carga Geral como nos Contentores: cais de baixo para cima (6 em baixo, 10 em cima), uma só lupa no cais 6 */
+  else for(const q of bpTcgRows(B)){const here=B.V.filter(v=>v.quay===q.q);let bl=here.length?"":`<div class="bp-idle" style="left:0;right:0"><span>${esc(bpT("noAllocQ",{q:q.q}))}</span></div>`;
     for(const v of here){const l=X(v.s),w=Math.max(6,X(v.e)-l-3);bl+=blk(v,`left:${l+1}px;width:${w}px`)}
-    rows+=`<div class="bp-row">${bpQLab("tcg",q.q,`<b>${esc(bpT("quay"))} ${q.q}</b><span>${q.len!=null?q.len.toFixed(2)+" m":""}${q.cd!=null?"<br>CD "+q.cd.toFixed(2)+" m":""}${q.minloa?`<br>min LOA ${q.minloa} m`:""}</span>`)}<div class="bp-trk bp-q" style="width:${W}px">${bg}${bl}${nl}</div></div>`}
+    rows+=`<div class="bp-row">${bpQLab("tcg",q.q,`<b>${esc(bpT("quay"))} ${q.q}</b><span>${q.len!=null?q.len.toFixed(2)+" m":""}${q.cd!=null?"<br>CD "+q.cd.toFixed(2)+" m":""}${q.minloa?`<br>min LOA ${q.minloa} m`:""}</span>`,"","",0,q.q===bpTcgLow(B))}<div class="bp-trk bp-q" style="width:${W}px">${bg}${bl}${nl}</div></div>`}
   const keep=box.scrollLeft;document.getElementById("bpGI").innerHTML=rows;box.scrollLeft=first?Math.max(0,X(B.inRange?B.NOW:B.T0)-dayW*1.5):keep}
 function bpBoxCell(x){return x?`${bpNf(x.total)}<br><span class="bp-mut">${bpNf(x.teu)} TEU</span>`:"–"}
 function bpTable(){const B=BP.B,tb=document.getElementById("bpTB");if(!tb)return;const ord={now:0,next:1,plan:2,done:3},k=BP.sort.k,dir=BP.sort.dir,ct=B.kind==="ct";
@@ -1131,7 +1134,7 @@ function bpPdfPlan(J,B){const doc=new J({orientation:"landscape",unit:"mm",forma
     K.col(BP_PC.ink);K.font(6.3,"bold");K.text(bpT("quayLen"),M,trTop+3.5);K.font(5.3);K.col(BP_PC.muted);K.text(bpT("bollards"),M,trTop+6);
     for(let b=Math.ceil(a0);b<=a1;b+=2){const y=Y(b);K.draw([232,232,240]);doc.setLineWidth(.1);doc.line(gx,y,W-M,y);K.font(5.3);K.col(BP_PC.muted);K.text(String(b),gx-1.2,y+1.6,{align:"right"})}
     for(const v of B.V){if(v.b1==null||v.b2==null)continue;const y=Y(Math.max(v.b1,v.b2)),h=Math.max(2.6,Y(Math.min(v.b1,v.b2))-y-.4),x=X(v.s),w=Math.max(1,X(v.e)-x-.4);blk(v,x+.2,y+.2,w,h)}}
-  else{const n=Math.max(1,B.quays.length),rh=trH/n;B.quays.forEach((q,i)=>{const y=trTop+i*rh;K.draw(BP_PC.line);doc.setLineWidth(.15);if(i)doc.line(M,y,W-M,y);
+  else{const n=Math.max(1,B.quays.length),rh=trH/n;bpTcgRows(B).forEach((q,i)=>{const y=trTop+i*rh;K.draw(BP_PC.line);doc.setLineWidth(.15);if(i)doc.line(M,y,W-M,y);
       K.col(BP_PC.ink);K.font(7.5,"bold");K.text(`${bpT("quay")} ${q.q}`,M,y+4);K.font(5.3);K.col(BP_PC.muted);
       [q.len!=null?q.len.toFixed(2)+" m":"",q.cd!=null?"CD "+q.cd.toFixed(2)+" m":"",q.minloa?"min LOA "+q.minloa+" m":""].filter(Boolean).forEach((s,k)=>K.text(s,M,y+6.8+k*2.4));
       const here=B.V.filter(v=>v.quay===q.q);if(!here.length){K.font(6.5);K.col(BP_PC.muted);K.text(bpT("noAllocQ",{q:q.q}),gx+3,y+rh/2+1)}

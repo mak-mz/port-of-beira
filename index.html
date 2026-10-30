@@ -152,7 +152,7 @@ body.bp-lock{overflow:hidden}
 /* 2.31.0 · fotografias dos cais */
 .bp-lab.bp-ph{overflow:hidden;background:var(--navy-deep,#1C1C4A)}
 .bp-qi{position:absolute;inset:0;z-index:-1;background:center/cover no-repeat;pointer-events:none}
-.bp-qi::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,28,74,.18) 0%,rgba(28,28,74,.5) 55%,rgba(28,28,74,.78) 100%)}
+.bp-qi::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(28,28,74,.62),rgba(28,28,74,.4))} /* 2.31.2 · véu igual em todos os cais: sem faixas entre eles */
 .bp-ph b,.bp-ph span{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45)}
 .bp-ph span{color:rgba(255,255,255,.88)}
 .bp-ph .bp-btk{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7)}
@@ -180,7 +180,7 @@ body.bp-lock{overflow:hidden}
 .bp-cq:nth-child(odd){background:var(--surface-2,#ECECF4)}
 .bp-cq b{font-family:var(--f-display);font-weight:400;font-size:1.05rem;color:var(--accent);line-height:1.1;position:relative}
 .bp-cq span{font-family:var(--f-data);font-size:.68rem;color:var(--muted);position:relative}
-.bp-cq.ph{background:#1C1C4A;border-top-color:rgba(255,255,255,.6)}
+.bp-cq.ph{background:#1C1C4A;border-top:0} /* 2.31.2 · sem linhas separadoras sobre a fotografia */
 .bp-cq.ph b,.bp-cq.ph span{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 .bp-cq .bp-qi{z-index:0}
 .bp-cq .bp-qz{top:auto;bottom:6px;left:12px;right:auto}
