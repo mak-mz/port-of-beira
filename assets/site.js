@@ -835,10 +835,16 @@ const bpTextOn=hex=>{const h=String(hex||"").replace("#","");if(h.length<6)retur
 const BPQ={};
 function bpQI(kind){return((data.berth||{}).quayImg||{})[kind]||{}}
 function bpQUrl(kind){const u=bpQI(kind).img;return u?safeUrl(u,{img:true,empty:""}):""}
-function bpQKeys(kind){return kind==="ct"?["quay"]:((BP.B&&BP.B.kind==="tcg"&&BP.B.quays)||[]).map(q=>"q"+q.q)}
+/* cais de cada terminal: CT 2 a 5, TCG 6 a 10 (ou os do plano importado) */
+const BP_CTQ=[2,3,4,5],BP_TCGQ=[6,7,8,9,10];
+function bpQKeys(kind){if(kind==="ct")return BP_CTQ.map(q=>"q"+q);const qs=((BP.B&&BP.B.kind==="tcg"&&BP.B.quays)||[]).map(q=>q.q);return(qs.length?qs:BP_TCGQ).map(q=>"q"+q)}
+/* cabeços de cada cais do CT (CMS → Plano de atracação → Fotografias e cais dos terminais); sem eles, divide os cabeços do plano em 4 */
+function bpCtQuays(a0,a1){const Q=(data.berth||{}).ctQuays||{},n=v=>v===""||v==null||!isFinite(+v)?NaN:+v;
+  const ok=BP_CTQ.every(q=>{const r=Q["q"+q]||{};return isFinite(n(r.from))&&isFinite(n(r.to))});
+  return BP_CTQ.map((q,i)=>{const r=Q["q"+q]||{};let f=ok?n(r.from):a0+(a1-a0)*i/4,t=ok?n(r.to):a0+(a1-a0)*(i+1)/4;return{q,f:Math.min(f,t),t:Math.max(f,t),est:!ok}})}
 function bpQSeg(kind,key){const I=bpQI(kind),m=(I.marks||{})[key]||{},ks=bpQKeys(kind),n=Math.max(1,ks.length),k=Math.max(0,ks.indexOf(key));
   const num=v=>v===""||v==null||!isFinite(+v)?NaN:Math.max(0,Math.min(100,+v));let S=num(m.s),E=num(m.e),T=num(m.t),B=num(m.b);
-  if(!(isFinite(S)&&isFinite(E)&&S!==E)){S=kind==="ct"?0:k*100/n;E=kind==="ct"?100:(k+1)*100/n}
+  if(!(isFinite(S)&&isFinite(E)&&S!==E)){S=k*100/n;E=(k+1)*100/n}
   if(!(isFinite(T)&&isFinite(B)&&T!==B)){T=0;B=100}
   return{L:Math.min(S,E),R:Math.max(S,E),T:Math.min(T,B),B:Math.max(T,B)}}
 function bpQDim(u){if(BPQ[u])return BPQ[u].w?BPQ[u]:null;BPQ[u]={};const im=new Image();im.onload=()=>{BPQ[u]={w:im.naturalWidth,h:im.naturalHeight};try{bpGantt()}catch(e){}};im.src=u;return null}
@@ -854,8 +860,8 @@ function bpQLab(kind,q,inner,extra="",style="",h=0){const u=bpQUrl(kind);if(!u)r
   return`<div class="bp-lab bp-ph${extra}"${style?` style="${style}"`:""}><i class="bp-qi" style="${esc(ist)}" aria-hidden="true"></i>${inner}<button type="button" class="bp-qz" data-bpqimg="${esc(kind)}" data-q="${esc(String(q))}" aria-label="${esc(bpT("qPhoto",{q:cap}))}" title="${esc(bpT("qPhoto",{q:cap}))}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8v6M8 11h6"/></svg></button></div>`}
 /* fotografia inteira do terminal, com os cais marcados */
 function bpQOpen(kind,q){const u=bpQUrl(kind);if(!u)return;const prev=document.activeElement;
-  const ks=kind==="ct"?["quay"]:bpQKeys("tcg");
-  const bands=ks.map(k=>{const g=bpQSeg(kind,k),on=kind==="ct"||k==="q"+q,lab=kind==="ct"?bpT("ct"):`${bpT("quay")} ${k.slice(1)}`;
+  const ks=bpQKeys(kind);
+  const bands=ks.map(k=>{const g=bpQSeg(kind,k),on=k==="q"+q,lab=`${bpT("quay")} ${k.slice(1)}`;
     return`<div class="bp-qb${on?" on":""}" style="left:${g.L}%;width:${g.R-g.L}%;top:${g.T}%;height:${g.B-g.T}%"><span>${esc(lab)}</span></div>`}).join("");
   const ov=document.createElement("div");ov.className="bp-qov";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-label",bpT(kind));
   ov.innerHTML=`<figure class="bp-qf"><div class="bp-qw"><img src="${esc(u)}" alt="${esc(bpT(kind))}">${bands}</div><figcaption><small>${esc(bpT(kind))}</small>${esc(bpT("qMarks"))}</figcaption></figure><button type="button" class="bp-qx" aria-label="${esc(U("faqClose"))}">×</button>`;
@@ -988,7 +994,14 @@ function bpGantt(first){const B=BP.B,box=document.getElementById("bpGantt");if(!
     for(let b=Math.ceil(a0);b<=a1;b++){if((b-Math.ceil(a0))%2)continue;ticks+=`<span class="bp-btk" style="top:${Y(b)}px">${b}</span>`;bg+=``}
     for(let b=Math.ceil(a0);b<=a1;b+=2)bl+=`<div class="bp-hl" style="top:${Y(b)}px"></div>`;
     for(const v of B.V){if(v.b1==null||v.b2==null)continue;const t=Y(Math.min(v.b1,v.b2)),h=Math.max(18,Y(Math.max(v.b1,v.b2))-t-2),l=X(v.s),w=Math.max(6,X(v.e)-l-3);bl+=blk(v,`left:${l+1}px;width:${w}px;top:${t+1}px;height:${h}px;bottom:auto`)}
-    rows+=`<div class="bp-row">${bpQLab("ct","",`<b>${esc(bpT("quayLen"))}</b>${ticks}`," bp-blab",`height:${Hh}px`,Hh)}<div class="bp-trk" style="width:${W}px;height:${Hh}px">${bg}${bl}${nl}</div></div>`}
+    /* cais 2 a 5 ao longo dos cabeços, cada um com o seu rectângulo da fotografia do terminal */
+    const u=bpQUrl("ct"),d=u?bpQDim(u):null,cl=b=>Math.max(a0,Math.min(a1,b));let secs="";
+    for(const z of bpCtQuays(a0,a1)){const y0=Y(cl(z.f)),y1=Y(cl(z.t)),hh=y1-y0;if(hh<4)continue;
+      let ph="";if(u){const f=d?bpQFit(d,bpQSeg("ct","q"+z.q),130,hh):null;ph=`<i class="bp-qi" style="${esc(`background-image:${cssUrl(u)};`+(f?`background-size:${f.size};background-position:${f.pos}`:"background-size:cover;background-position:center"))}" aria-hidden="true"></i>`}
+      const cap=`${bpT("quay")} ${z.q}`;
+      secs+=`<div class="bp-cq${u?" ph":""}" style="top:${y0}px;height:${hh}px">${ph}<b>${esc(cap)}</b>${hh>40?`<span>${esc(z.est?bpT("bollards"):`${bpT("bShort")} ${bpNf(z.f,0)}–${bpNf(z.t,0)}`)}</span>`:""}${u&&hh>34?`<button type="button" class="bp-qz" data-bpqimg="ct" data-q="${z.q}" aria-label="${esc(bpT("qPhoto",{q:cap}))}" title="${esc(bpT("qPhoto",{q:cap}))}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8v6M8 11h6"/></svg></button>`:""}</div>`;
+      if(z.f>a0)bl+=`<div class="bp-qline" style="top:${Y(cl(z.f))}px"></div>`}
+    rows+=`<div class="bp-row"><div class="bp-lab bp-blab bp-cqs" style="height:${Hh}px">${secs}${ticks}</div><div class="bp-trk" style="width:${W}px;height:${Hh}px">${bg}${bl}${nl}</div></div>`}
   else for(const q of B.quays){const here=B.V.filter(v=>v.quay===q.q);let bl=here.length?"":`<div class="bp-idle" style="left:0;right:0"><span>${esc(bpT("noAllocQ",{q:q.q}))}</span></div>`;
     for(const v of here){const l=X(v.s),w=Math.max(6,X(v.e)-l-3);bl+=blk(v,`left:${l+1}px;width:${w}px`)}
     rows+=`<div class="bp-row">${bpQLab("tcg",q.q,`<b>${esc(bpT("quay"))} ${q.q}</b><span>${q.len!=null?q.len.toFixed(2)+" m":""}${q.cd!=null?"<br>CD "+q.cd.toFixed(2)+" m":""}${q.minloa?`<br>min LOA ${q.minloa} m`:""}</span>`)}<div class="bp-trk bp-q" style="width:${W}px">${bg}${bl}${nl}</div></div>`}

@@ -34,10 +34,11 @@ A numeração segue o padrão **MAIOR.MENOR.CORRECÇÃO**:
 ### 2.31.0 · 30 Out 2026 · Fotografias dos terminais no plano de atracação
 - **Plano de atracação · fotografia de cada terminal:** na linha do tempo, cada cais mostra o seu troço de uma fotografia real do terminal, atrás do nome do cais. **[S, C]**
   - **Terminal de Carga Geral:** uma fotografia para os cais 6 a 10; cada linha mostra só o rectângulo marcado desse cais.
-  - **Terminal de Contentores:** a fotografia aparece direita (sem rodar) na coluna “Ao longo do cais”, recortada ao rectângulo marcado do cais.
+  - **Terminal de Contentores:** cada cais (2 a 5) mostra o seu rectângulo da fotografia, direito (sem rodar), na sua parte da coluna “Ao longo do cais”.
   - As fotografias são sempre **horizontais**, nos dois terminais.
   - A lupa abre a fotografia inteira com todos os cais marcados e o cais escolhido em destaque. Fecha com ×, Esc ou um clique fora.
-- **CMS · Plano de atracação → Fotografias dos terminais:** carregar uma fotografia horizontal por terminal e marcar cada cais como um rectângulo: início (▸) e fim (◂) na horizontal, topo (▾) e base (▴) na vertical, arrastando as marcas ou escrevendo as posições em %. **Mesmo topo e base para todos** copia a altura do primeiro cais para os outros. **Dividir em partes iguais** repõe as marcas. **[C]**
+- **Terminal de Contentores · cais 2 a 5:** a coluna “Ao longo do cais” passa a mostrar os **cais 2, 3, 4 e 5**, cada um à altura dos seus cabeços, com uma linha a separar os cais na linha do tempo. Os cabeços de cada cais indicam-se no CMS; sem eles, o site divide os cabeços do plano em quatro partes iguais. **[S, C]**
+- **CMS · Plano de atracação → Cais e fotografias dos terminais:** carregar uma fotografia horizontal por terminal e marcar cada cais como um rectângulo: início (▸) e fim (◂) na horizontal, topo (▾) e base (▴) na vertical, arrastando as marcas ou escrevendo as posições em %. **Mesmo topo e base para todos** copia a altura do primeiro cais para os outros. No CT, indicar também os cabeços de cada cais (do cabeço … ao cabeço …). **Dividir em partes iguais** repõe as marcas. **[C]**
   - Sem fotografia, a linha do tempo fica como antes. O nível Planeamento não vê nem altera as fotografias.
 
 ### 2.30.0 · 29 Out 2026 · Desempenho das consultas

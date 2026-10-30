@@ -2001,11 +2001,11 @@ function bpTcgEd(b,v,qs){return`<div class="g3">${fText(b+".name","Navio")}${fTe
    s/e = início e fim (vertical, % da largura), t/b = topo e base (horizontal, % da altura).
    No site, cada cais mostra o seu rectângulo da fotografia ao lado da linha do tempo; a lupa abre a fotografia com os cais marcados. */
 const QM_SIDES=["s","e","t","b"];
-function qmKeys(t){if(t==="ct")return[["quay","Cais"]];const PL=bpPlansD(),qs=((PL.tcg&&PL.tcg.quays)||[]).map(q=>q.q);return(qs.length?qs:[6,7,8,9,10]).map(q=>["q"+q,"Cais "+q])}
+function qmKeys(t){if(t==="ct")return[2,3,4,5].map(q=>["q"+q,"Cais "+q]);const PL=bpPlansD(),qs=((PL.tcg&&PL.tcg.quays)||[]).map(q=>q.q);return(qs.length?qs:[6,7,8,9,10]).map(q=>["q"+q,"Cais "+q])}
 function qmSeg(t,k){const I=(draft.berth.quayImg||{})[t]||{},m=(I.marks||{})[k]||{},ks=qmKeys(t).map(x=>x[0]),n=ks.length,i=Math.max(0,ks.indexOf(k));
   const num=v=>v===""||v==null||!isFinite(+v)?NaN:Math.max(0,Math.min(100,+v));
   let S=num(m.s),E=num(m.e),T=num(m.t),B=num(m.b);
-  if(!(isFinite(S)&&isFinite(E)&&S!==E)){S=t==="ct"?0:+(i*100/n).toFixed(1);E=t==="ct"?100:+((i+1)*100/n).toFixed(1)}
+  if(!(isFinite(S)&&isFinite(E)&&S!==E)){S=+(i*100/n).toFixed(1);E=+((i+1)*100/n).toFixed(1)}
   if(!(isFinite(T)&&isFinite(B)&&T!==B)){T=0;B=100}
   return{s:S,e:E,t:T,b:B}}
 function qmFill(t){for(const [k] of qmKeys(t)){const g=qmSeg(t,k);for(const x of QM_SIDES)set(draft,`berth.quayImg.${t}.marks.${k}.${x}`,g[x])}}
@@ -2019,16 +2019,23 @@ function qmBand(t,k,l){const g=qmSeg(t,k),{L,R,T,B}=qmGeo(g),n=esc(l.replace("Ca
 function qmEditor(t){const I=(draft.berth.quayImg||{})[t]||{},u=I.img,ks=qmKeys(t);
   const T=t==="tcg"?"Terminal de Carga Geral":"Terminal de Contentores";
   return`<div class="card"><div class="card-h"><h3>${T}</h3>${u?`<span class="tag ok">Com fotografia</span>`:""}</div>
-   ${fImg(`berth.quayImg.${t}.img`,"Fotografia do terminal",t==="tcg"?"Fotografia <b>horizontal</b>, aérea, com os cais 6 a 10 à vista da esquerda para a direita. Recomendado: 1920 × 1080 px, JPG.":"Fotografia <b>horizontal</b>, aérea, com o cais do Terminal de Contentores à vista da esquerda para a direita. Recomendado: 1920 × 1080 px, JPG.",{cover:true,max:1920})}
-   ${u?`<div class="f"><span class="lbl">Marque ${t==="tcg"?"cada cais":"o cais"} na fotografia</span>
+   ${fImg(`berth.quayImg.${t}.img`,"Fotografia do terminal","Fotografia <b>horizontal</b>, aérea, com os cais "+(t==="tcg"?"6 a 10":"2 a 5")+" à vista. Recomendado: 1920 × 1080 px, JPG.",{cover:true,max:1920})}
+   ${t==="ct"?ctQuaysEd():""}
+   ${u?`<div class="f"><span class="lbl">Marque cada cais na fotografia</span>
      <div class="qm" data-qm="${t}"><img src="${esc(u)}" alt="Fotografia do ${esc(T)}" draggable="false">${ks.map(([k,l])=>qmBand(t,k,l)).join("")}</div>
      <span class="hint">Cada cais é um rectângulo. Arraste ▸ (início) e ◂ (fim) na horizontal, e ▾ (topo) e ▴ (base) na vertical. Pode também escrever as posições na tabela, em % da largura e da altura da fotografia.</span></div>
     <table class="mini-t qm-t"><thead><tr><th>Cais</th><th>Início ▸ (%)</th><th>Fim ◂ (%)</th><th>Topo ▾ (%)</th><th>Base ▴ (%)</th></tr></thead><tbody>${ks.map(([k,l])=>{const g=qmSeg(t,k);
       return`<tr><td>${esc(l)}</td>${QM_SIDES.map(x=>`<td><input type="text" inputmode="decimal" data-p="berth.quayImg.${t}.marks.${k}.${x}" data-num data-qmi="${t}" value="${g[x]}" aria-label="${esc(l)}: ${{s:"início",e:"fim",t:"topo",b:"base"}[x]}"></td>`).join("")}</tr>`}).join("")}</tbody></table>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">${t==="tcg"?`<button class="btn" data-qmeven="${t}">Dividir em partes iguais</button><button class="btn" data-qmsame="${t}" title="Copia o topo e a base do Cais ${esc(String(ks[0][1]).replace("Cais ",""))} para os outros">Mesmo topo e base para todos</button>`:`<button class="btn" data-qmeven="${t}">Cais em toda a fotografia</button>`}</div>`
-    :`<p class="hint">Carregue a fotografia para marcar ${t==="tcg"?"os cais":"o cais"}.</p>`}</div>`}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn" data-qmeven="${t}">Dividir em partes iguais</button><button class="btn" data-qmsame="${t}" title="Copia o topo e a base do ${esc(ks[0][1])} para os outros">Mesmo topo e base para todos</button></div>`
+    :`<p class="hint">Carregue a fotografia para marcar os cais.</p>`}</div>`}
+/* cabeços de cada cais do CT: posicionam os cais 2 a 5 na linha do tempo (eixo dos cabeços) */
+function ctQuaysEd(){const PL=bpPlansD(),ax=(PL.ct&&PL.ct.axis)||null,Q=draft.berth.ctQuays||{};
+  const ok=[2,3,4,5].every(q=>{const r=Q["q"+q]||{};return r.from!==""&&r.from!=null&&r.to!==""&&r.to!=null});
+  return`<div class="f"><span class="lbl">Cabeços de cada cais</span>
+   <table class="mini-t qm-t"><thead><tr><th>Cais</th><th>Do cabeço</th><th>Ao cabeço</th></tr></thead><tbody>${[2,3,4,5].map(q=>`<tr><td>Cais ${q}</td>${["from","to"].map(x=>`<td><input type="text" inputmode="decimal" data-p="berth.ctQuays.q${q}.${x}" data-num value="${esc(get(draft,`berth.ctQuays.q${q}.${x}`)??"")}" aria-label="Cais ${q}: ${x==="from"?"do cabeço":"ao cabeço"}"></td>`).join("")}</tr>`).join("")}</tbody></table>
+   <span class="hint">${ok?"Os cais aparecem na linha do tempo do site à altura destes cabeços.":`<b>Preencha os quatro cais</b> para os mostrar à altura certa. Até lá, o site divide os cabeços do plano${ax?` (${esc(String(ax.min))} a ${esc(String(ax.max))})`:""} em quatro partes iguais.`}</span></div>`}
 function bpPhotosCard(PL){const Q=draft.berth.quayImg||{},n=["tcg","ct"].filter(t=>Q[t]&&Q[t].img).length;
-  return`<details class="card collapse" data-ck="bp-photos"><summary>Fotografias dos terminais <small class="hint">${n?n+" de 2 com fotografia":"Opcional"} · no site, cada cais mostra a sua parte da fotografia ao lado da linha do tempo.</small></summary><div>${qmEditor("tcg")}${qmEditor("ct")}</div></details>`}
+  return`<details class="card collapse" data-ck="bp-photos"><summary>Cais e fotografias dos terminais <small class="hint">TCG: cais 6 a 10 · CT: cais 2 a 5 · ${n?n+" de 2 com fotografia":"fotografias opcionais"}</small></summary><div>${qmEditor("tcg")}${qmEditor("ct")}</div></details>`}
 function qmPaint(t){const ed=document.querySelector(`[data-qm="${t}"]`);if(!ed)return;
   for(const [k] of qmKeys(t)){const g=qmSeg(t,k),{L,R,T,B}=qmGeo(g),bd=ed.querySelector(`[data-qmb="${t}.${k}"]`);
     if(bd)Object.assign(bd.style,{left:L+"%",width:(R-L)+"%",top:T+"%",height:(B-T)+"%"});
